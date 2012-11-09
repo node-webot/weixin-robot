@@ -4,22 +4,22 @@ LOG_FILE = ./tmp.log
 TEST_TEXT_MSG = "@./test/wx_text.xml"
 TEST_GEO_MSG = "@./test/wx_geo.xml"
 TEST_URI = "http://weixin-event.herokuapp.com/"
-TEST_URI2 = "http://0.0.0.0:3000/"
+TEST_URI_LOCAL = "http://0.0.0.0:3000/"
 
 req:
+	clear
+	curl -d $(TEST_TEXT_MSG) $(TEST_URI_LOCAL)
+	@echo "\n"
+	@echo "\n"
+	curl -d $(TEST_GEO_MSG) $(TEST_URI_LOCAL)
+	@echo "\n"
+
+req_remote:
 	clear
 	curl -d $(TEST_TEXT_MSG) $(TEST_URI)
 	@echo "\n"
 	@echo "\n"
 	curl -d $(TEST_GEO_MSG) $(TEST_URI)
-	@echo "\n"
-
-req2:
-	clear
-	curl -d $(TEST_TEXT_MSG) $(TEST_URI2)
-	@echo "\n"
-	@echo "\n"
-	curl -d $(TEST_GEO_MSG) $(TEST_URI2)
 	@echo "\n"
 
 test:

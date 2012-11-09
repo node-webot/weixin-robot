@@ -6,9 +6,9 @@ var debug = require('debug');
 var log = debug('wx');
 var error = debug('wx:error');
 
-var conf = require('./config');
-var douban = require('./douban');
-var weixin = require('./weixin');
+var conf = require('./lib/config');
+var douban = require('./lib/douban');
+var weixin = require('./lib/weixin');
 
 var WX_TOKEN = conf.weixin;
 
