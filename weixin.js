@@ -6,6 +6,9 @@ var weixin = function() {};
 var data = require('./data');
 var cities = data.cities;
 
+// 记住用户之前的城市
+var user_cities = {};
+
 Array.prototype.sample = function(size) {
   var arr = this;
   var shuffled = arr.slice(0), i = arr.length, min = i - size, temp, index;
@@ -35,6 +38,12 @@ weixin.parse = function(b) {
     ret.act = 'events_list';
 
     var param =  weixin.parseText(d.Content);
+    if (!param) return;
+    if (param.loc) {
+      user_cities[ret.receiver] = param.loc
+    } else {
+      param.loc = user_cities[ret.receiver] || 'china';
+    }
     param.count = 20;
     ret.param = param;
     return ret;
@@ -42,7 +51,7 @@ weixin.parse = function(b) {
     ret.act = 'nearby';
 
     var param = weixin.parseLoc(d);
-    param.count = 5;
+    param.count = 3;
     ret.param = param;
     return ret;
   } else {
