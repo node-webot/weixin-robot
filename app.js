@@ -37,13 +37,10 @@ app.post('/', parse_body, function(req, res, next) {
     res.send(msg);
   });
 });
-app.configure('hero', function() {
-  app.set('listening', 45805);
-});
 app.configure('vps', function() {
   app.set('listening', 2012);
 });
-app.listen(app.get('listening') || 3000);
+app.listen(app.get('listening') || process.env.PORT || 3000);
 
 function check_sig(req, res, next) {
   var sig = req.params.signature;
