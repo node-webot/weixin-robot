@@ -38,7 +38,7 @@ app.post('/', parse_body, function(req, res, next) {
   });
 });
 app.configure('hero', function() {
-  app.set('listening', 5000);
+  app.set('listening', 45805);
 });
 app.configure('vps', function() {
   app.set('listening', 2012);
