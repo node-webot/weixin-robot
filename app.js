@@ -41,7 +41,7 @@ app.configure('development', function() {
   app.listen(3000);
 });
 app.configure('production', function() {
-  app.listen(8001);
+  app.listen(80);
 });
 app.configure('vps', function() {
   app.listen(9891);
