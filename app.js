@@ -43,15 +43,15 @@ app.configure('vps', function() {
 app.listen(app.get('listening') || process.env.PORT || 3000);
 
 function check_sig(req, res, next) {
-  var sig = req.params.signature;
-  var timestamp = req.params.timestamp;
-  var nonce = req.params.nonce;
+  var sig = req.query.signature;
+  var timestamp = req.query.timestamp;
+  var nonce = req.query.nonce;
   var s = [WX_TOKEN, timestamp, nonce].sort().join('');
   var shasum = crypto.createHash('sha1');
   shasum.update(s);
-  if (shasum.digest('hex') == sig) {
-    res.send(echostr);
-    next();
+  var dig = shasum.digest('hex');
+  if (dig == sig) {
+    return res.send(req.query.echostr);
   }
   return halt_req(res);
 }
