@@ -1,0 +1,28 @@
+{
+  "name": "weixin-event",
+  "version": "0.0.1",
+  "homepage": "http:/www.douban.com/location/",
+  "description": "豆瓣同城微信接口",
+  "private": true,
+  "contributors": [
+    "ktmud <jyyjcc@gmail.com> (http://ktmud.com)"
+  ],
+  "dependencies": {
+    "debug": "*",
+    "express": ">= 3.0.0beta2",
+    "xml2json": ">= 0.3.2"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*"
+  },
+  "engines": {
+    "node" : ">=0.6.0"
+  },
+  "subdomain": "wechat_event",
+  "scripts": {
+    "prepublish" : "npm prune",
+    "test": "make test",
+    "start": "node app.js"
+  }
+}
