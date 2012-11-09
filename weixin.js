@@ -93,7 +93,8 @@ weixin.parseLoc = function(d) {
 
 function eventItem(item) {
   return '<item><Title><![CDATA[' + item.title + ']]></Title>' +
-  '<Discription><![CDATA[' + item.description + ']]></Discription>' +
+  '<Discription><![CDATA[' + item.owner.name + ' / ' +
+  (item.participant_count + item.wisher_count) + '人关注 / ' + item.address + ']]></Discription>' +
   '<PicUrl><![CDATA[' + item.image_lmobile + ']]></PicUrl>' +
   '<Url><![CDATA[' + item.adapt_url + ']]></Url>' +
   '</item>';
@@ -105,7 +106,7 @@ weixin.makeMsg = function makeMsg(info) {
     info.items = info.douban_ret.events.slice(0, 3);
   }
 
-  var now = new Date() / 1000;
+  var now = parseInt(new Date() / 1000, 10);
   var xml = '<xml><ToUserName><![CDATA[' + info.receiver + ']]></ToUserName>' +
   '<FromUserName><![CDATA[' + info.sender + ']]></FromUserName>' +
   '<CreateTime>' + now + '</CreateTime>' +
