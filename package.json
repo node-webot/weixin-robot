@@ -18,6 +18,7 @@
   },
   "engines": {
     "node" : ">=0.6.0"
+    "npm" : ">=1.1.6"
   },
   "subdomain": "wechat_event",
   "scripts": {
