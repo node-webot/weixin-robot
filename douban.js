@@ -4,7 +4,7 @@ var https = require('https');
 var http = require('http');
 var debug = require('debug');
 var error = debug('wx:douban:error');
-var log = debug('wx:douban:log');
+var log = debug('wx');
 var data = require('./data');
 var cities = data.cities;
 
@@ -67,6 +67,7 @@ module.exports = {
       }, function(err, ret) {
         try {
           var loc_name = ret.list[0].city.name || ret.list[0].province.name;
+          log('latlng to loc_name: ', loc_name);
           for (var i in cities) {
             var item = cities[i];
             if (loc_name.indexOf(item['name']) === 0) {

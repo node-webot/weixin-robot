@@ -2,7 +2,9 @@ var crypto = require('crypto');
 var url = require('url');
 
 var express = require('express');
-var debug = require('debug')('wx:error');
+var debug = require('debug');
+var log = debug('wx');
+var error = debug('wx:error');
 
 var conf = require('./config');
 var douban = require('./douban');
@@ -20,7 +22,7 @@ app.post('/', parse_body, function(req, res, next) {
     if (err == 400) return halt_req(res);
     if (err) {
       res.statusCode = 500;
-      debug('request douban failed: ', err, ', ret: ',  ret);
+      error('request douban failed: ', err, ', ret: ',  ret);
       return res.json(err);
     }
 
@@ -30,7 +32,7 @@ app.post('/', parse_body, function(req, res, next) {
     try {
       msg = weixin.makeMsg(info)
     } catch (e) {
-      debug('make message failed:', e, info);
+      error('make message failed:', e, info);
       return halt_req(res);
     }
     res.type('xml');
@@ -40,7 +42,9 @@ app.post('/', parse_body, function(req, res, next) {
 app.configure('vps', function() {
   app.set('listening', 2012);
 });
-app.listen(app.get('listening') || process.env.PORT || 3000);
+var port = app.get('listening') || process.env.PORT || 3000;
+log('listening on ', port);
+app.listen(port);
 
 function check_sig(req, res, next) {
   var sig = req.query.signature;
@@ -69,7 +73,7 @@ function parse_body(req, res, next) {
   req.on('end', function() {
     req.info = weixin.parse(b);
     if (!req.info) {
-      debug('parse request failed');
+      error('parse request failed');
       return halt_req(res);
     }
     next();
