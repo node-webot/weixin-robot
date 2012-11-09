@@ -57,10 +57,11 @@ weixin.parseText = function(msg) {
     // message starts with a city's Chinese name
     if (msg.indexOf(item['name']) === 0) {
       params['loc'] = item['id'];
-      var type_str = msg.replace(item['name'], '').replace('活动', '');
+      var type_str = msg.replace(item['name'], '').replace('活动', '').replace(/\s+/g, '');
       var types = data.types;
       for (var j in types) {
-        if (types[j] == type_str) {
+        // fuzzy match for event type
+        if (type_str.indexOf(types[j]) != -1) {
           params['type'] = j;
           break;
         }
