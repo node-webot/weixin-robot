@@ -16,7 +16,7 @@ var app = express();
 app.enable('trust proxy');
 
 app.get('/', check_sig);
-app.post('/', check_sig, parse_body, function(req, res, next) {
+app.post('/', parse_body, function(req, res, next) {
   var info = req.info;
   douban[info.act](info.param, function(err, ret) {
     if (err == 400) return halt_req(res);

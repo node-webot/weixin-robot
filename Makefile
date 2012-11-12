@@ -3,7 +3,7 @@ LOG_FILE = ./tmp.log
 
 TEST_TEXT_MSG = "@./test/wx_text.xml"
 TEST_GEO_MSG = "@./test/wx_geo.xml"
-TEST_URI = "http://weixin-event.herokuapp.com/"
+TEST_URI = "http://wx.kanfa.org/"
 TEST_URI_LOCAL = "http://0.0.0.0:3000/"
 
 req:
