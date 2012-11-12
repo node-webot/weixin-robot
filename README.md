@@ -4,6 +4,8 @@
 
 已经部署在 heroku 上： http://weixin-event.herokuapp.com/
 
+运行前请新建一个 config.js 文件
+
 ## TODO:
 
 1. 用 memcache 存储用户上一次指定的城市
