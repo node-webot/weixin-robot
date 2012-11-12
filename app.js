@@ -16,7 +16,7 @@ var app = express();
 app.enable('trust proxy');
 
 app.get('/', check_sig);
-app.post('/', parse_body, function(req, res, next) {
+app.post('/', check_sig, parse_body, function(req, res, next) {
   var info = req.info;
   douban[info.act](info.param, function(err, ret) {
     if (err == 400) return halt_req(res);
@@ -40,7 +40,7 @@ app.post('/', parse_body, function(req, res, next) {
   });
 });
 app.configure('vps', function() {
-  app.set('listening', 2012);
+  app.set('listening', 9984);
 });
 var port = app.get('listening') || process.env.PORT || 3000;
 log('listening on ', port);
