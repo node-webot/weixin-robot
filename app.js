@@ -40,7 +40,7 @@ app.post('/', check_sig, parse_body, function(req, res, next) {
   });
 });
 app.configure('vps', function() {
-  app.set('listening', 9984);
+  app.set('listening', 9880);
 });
 var port = app.get('listening') || process.env.PORT || 3000;
 log('listening on ', port);
