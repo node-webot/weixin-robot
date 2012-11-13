@@ -6,7 +6,7 @@ var debug = require('debug');
 var log = debug('wx');
 var error = debug('wx:error');
 
-var conf = require('./config');
+var conf = require('./conf');
 var douban = require('./lib/douban');
 var weixin = require('./lib/weixin');
 
@@ -16,35 +16,33 @@ var app = express();
 app.enable('trust proxy');
 
 app.get('/', check_sig);
-app.post('/', parse_body, function(req, res, next) {
+app.post('/', check_sig, parse_body, function(req, res, next) {
   var info = req.info;
+
+  res.type('xml');
+
+  function end() {
+    res.send(weixin.makeMsg(info));
+  }
+
+  if (!info || !info.act || !(info.act in douban)) return end();
+
   douban[info.act](info.param, function(err, ret) {
-    if (err == 400) return halt_req(res);
     if (err) {
       res.statusCode = 500;
+      info.error = err;
       error('request douban failed: ', err, ', ret: ',  ret);
-      return res.json(err);
+      return end();
     }
-
     info.douban_ret = ret;
-
-    var msg;
-    try {
-      msg = weixin.makeMsg(info)
-    } catch (e) {
-      error('make message failed:', e, info);
-      return halt_req(res);
-    }
-    res.type('xml');
-    res.send(msg);
+    end();
   });
 });
-app.configure('vps', function() {
-  app.set('listening', 9880);
+var port = conf.port || 3000;
+var hostname = conf.hostname || '127.0.0.1';
+app.listen(port, hostname, function() {
+  log('listening on ', hostname, port);
 });
-var port = app.get('listening') || process.env.PORT || 3000;
-log('listening on ', port);
-app.listen(port);
 
 function check_sig(req, res, next) {
   var sig = req.query.signature;
@@ -55,13 +53,18 @@ function check_sig(req, res, next) {
   shasum.update(s);
   var dig = shasum.digest('hex');
   if (dig == sig) {
-    return res.send(req.query.echostr);
+    if (req.method == 'GET') {
+      return res.send(req.query.echostr);
+    } else {
+      return next();
+    }
   }
-  return halt_req(res);
+  return block_req(res);
 }
 
-function halt_req(res) {
-  return res.json({ 'r': 400, 'msg': 'bad request' });
+function block_req(res) {
+  res.statusCode = 403;
+  return res.json({ 'r': 403, 'msg': 'Where is your key?' });
 }
 
 function parse_body(req, res, next) {
@@ -72,10 +75,6 @@ function parse_body(req, res, next) {
   });
   req.on('end', function() {
     req.info = weixin.parse(b);
-    if (!req.info) {
-      error('parse request failed');
-      return halt_req(res);
-    }
     next();
   });
 }
