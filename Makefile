@@ -1,34 +1,26 @@
 LOG_FILE = ./tmp.log
 
-nonce="1928374"
-timestamp=`date +%s`
-sig=`md5 -s $(str)`
+nonce="19283749"
+# token for test environment
+token="keyboarddog"
+timestamp=$(shell date +%s)
+# how can this sort happen?
+str_arr=$(sort $(nonce) $(timestamp) $(token))
+str=$(subst $(eval) ,,$(str_arr))
+sig=`md5 -qs $(str)`
 
-TEST_TEXT_MSG = "@./test/wx_text.xml"
-TEST_GEO_MSG = "@./test/wx_geo.xml"
-TEST_EMPTY_MSG = "@./test/wx_geo.xml"
-TEST_URI = "http://wx.kanfa.org/?signature=$(sig)&timestamp=$(timestamp)&nonce=$(nonce)"
-TEST_URI_LOCAL = "http://0.0.0.0:3000/"
+TEST_URI="http://wx.kanfa.org/?signature=$(sig)&timestamp=$(timestamp)&nonce=$(nonce)"
+TEST_URI_LOCAL="http://0.0.0.0:3000/?signature=$(sig)&timestamp=$(timestamp)&nonce=$(nonce)"
+
+# interactive model
+send: clear
+	@read -p '输入要发送的文字：' txt;\
+	xx=`cat ./test/wx_text.xml | sed s/{text}/$${txt}/`;\
+	curl -d "$$xx" $(TEST_URI_LOCAL)
+	@echo "\n"
 
 clear:
 	@clear
-
-t: clear test_text test_geo
-
-test_text:
-	curl -d $(TEST_TEXT_MSG) $(TEST_URI_LOCAL)
-	@echo "\n"
-
-test_geo:
-	curl -d $(TEST_GEO_MSG) $(TEST_URI_LOCAL)
-	@echo "\n"
-
-req_remote: clear
-	curl -d $(TEST_TEXT_MSG) $(TEST_URI)
-	@echo "\n"
-	@echo "\n"
-	curl -d $(TEST_GEO_MSG) $(TEST_URI)
-	@echo "\n"
 
 test: clear
 	./node_modules/mocha/bin/mocha

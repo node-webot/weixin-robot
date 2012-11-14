@@ -15,6 +15,7 @@
   "devDependencies": {
     "mocha": "*",
     "should": "*",
+    "color": "*",
     "chai": "*"
   },
   "engines": {

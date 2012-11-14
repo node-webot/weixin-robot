@@ -1,4 +1,5 @@
 --require should
+--reporter spec
 --ui bdd
 --growl
 --slow 500

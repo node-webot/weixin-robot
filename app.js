@@ -9,6 +9,7 @@ var error = debug('wx:error');
 var conf = require('./conf');
 var douban = require('./lib/douban');
 var weixin = require('./lib/weixin');
+var messages = require('./data/messages');
 
 var WX_TOKEN = conf.weixin;
 
@@ -25,16 +26,25 @@ app.post('/', check_sig, parse_body, function(req, res, next) {
     res.send(weixin.makeMsg(info));
   }
 
-  if (!info || !info.act || !(info.act in douban)) return end();
+  if (!info || !info.act || !(info.act in douban)) {
+    info.content = messages['400'];
+    return end();
+  }
 
   douban[info.act](info.param, function(err, ret) {
     if (err) {
-      res.statusCode = 500;
-      info.error = err;
+      //res.statusCode = (typeof err === 'number' ? err : 500);
+      info.content = ret || messages['503'];
       error('request douban failed: ', err, ', ret: ',  ret);
       return end();
     }
-    info.douban_ret = ret;
+    if (ret instanceof Array) {
+      info.items = ret;
+    } else if (typeof ret == 'string') {
+      info.content = ret;
+    } else {
+      info.content = messages['400'];
+    }
     end();
   });
 });
