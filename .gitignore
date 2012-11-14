@@ -1,4 +1,4 @@
-config.js
+conf/vps.js
 node_modules
 npm*
 cache
@@ -7,7 +7,6 @@ stable_cache
 *.bak
 .DS_Store
 var/*.log
-conf/*
 static/*.html
 static/*.txt
 static/.file_etags
