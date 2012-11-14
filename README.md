@@ -1,10 +1,10 @@
 # 豆瓣同城微信帐号自动回复系统
 
+添加微信帐号 douban-event ，试试效果
+
 使用 nodejs 构建，欢迎 fork
 
-已经部署在 heroku 上： http://weixin-event.herokuapp.com/
-
-运行前请新建一个 config.js 文件
+支持用正则做一些自动回复，大家可以编辑 `data/responses.js`
 
 ## TODO:
 
