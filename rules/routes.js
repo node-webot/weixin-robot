@@ -23,10 +23,8 @@ var gags = parser.txt2dialog(fs.readFileSync(__dirname + '/gags.txt', 'utf-8'));
 dialogs = dialogs.concat(gags);
 dialogs = dialogs.concat(require('./dialogs.js'));
 
-console.log(dialogs);
-
 function contains(str, p) {
-  if (typeof str == 'string') {
+  if (typeof p == 'string') {
     return str.indexOf(p) !== -1;
   } else {
     return str.search(p) !== -1;
@@ -71,6 +69,7 @@ router.set('list', {
       if (q) {
         this.waiter.pass(uid);
         info.param['q'] = q;
+        info.ended = true;
         return douban.search(info.param, next);
       }
     }
@@ -84,6 +83,7 @@ router.set('list', {
     // 如果有搜索关键字
     if (info.param['q']) {
       if (info.param['type']) return next();
+      info.ended = true;
       return douban.search(info.param, next);
     }
 
