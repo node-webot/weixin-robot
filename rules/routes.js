@@ -19,6 +19,8 @@ router.set('location', function(info, next) {
 
 
 var dialogs = parser.txt2dialog(fs.readFileSync(__dirname + '/dialogs.txt', 'utf-8'));
+var gags = parser.txt2dialog(fs.readFileSync(__dirname + '/gags.txt', 'utf-8'));
+dialogs = dialogs.concat(gags);
 dialogs = dialogs.concat(require('./dialogs.js'));
 
 console.log(dialogs);
