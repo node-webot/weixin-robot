@@ -19,9 +19,10 @@ var text_msg = fs.readFileSync(__dirname + '/test/wx_geo.xml', 'utf-8');
 
 function run() {
   rl.question('x: ', function(text) {
+    var text = text || '23.08';
     var t = text_msg.replace('23.0886', text);
     rl.question('y:', function(text) {
-      var text = text || '北京本周展览活动';
+      var text = text || '113.24';
       var req = request.build('POST /', makeQ(), function(err, ret) {
         console.log(ret);
         var xml = JSON.parse(xml2json.toJson(ret)).xml;

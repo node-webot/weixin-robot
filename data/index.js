@@ -1,7 +1,6 @@
 module.exports = {
 	'cities': require('./cities'),
 	'messages': require('./messages'),
-	'responses': require('./responses'),
 	'types': {
 		//"1001": "小型现场|live",
 		//"1002": "音乐会",

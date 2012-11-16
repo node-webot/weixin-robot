@@ -21,9 +21,11 @@ function run() {
   rl.question('The text: ', function(text) {
     var text = text || '北京本周展览活动';
     var req = request.build('POST /', makeQ(), function(err, ret) {
-      console.log(ret);
-      var xml = JSON.parse(xml2json.toJson(ret)).xml;
-      if (err) throw err;
+      try {
+        var xml = JSON.parse(xml2json.toJson(ret)).xml;
+      } catch (e) {
+        console.log(err, ret);
+      }
       console.log(xml);
       console.log('\n');
       run();

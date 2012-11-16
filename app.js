@@ -6,10 +6,11 @@ var debug = require('debug');
 var log = debug('wx');
 var error = debug('wx:error');
 
-var conf = require('./conf');
-var douban = require('./lib/douban');
+var robot = require('./lib/robot')(require('./rules/routes'), require('./rules/waits'));
 var weixin = require('./lib/weixin');
-var messages = require('./data/messages');
+var conf = require('./conf');
+var data = require('./data');
+var messages = data.messages;
 
 var WX_TOKEN = conf.weixin;
 
@@ -26,24 +27,23 @@ app.post('/', check_sig, parse_body, function(req, res, next) {
     res.send(weixin.makeMsg(info));
   }
 
-  if (!info || !info.act || !(info.act in douban)) {
-    info.content = messages['400'];
+  if (!info) {
+    info.reply = messages['400'];
     return end();
   }
 
-  douban[info.act](info.param, function(err, ret) {
-    if (err) {
+  robot.reply(info, function(err, ret) {
+    if (err || !ret) {
       //res.statusCode = (typeof err === 'number' ? err : 500);
-      info.content = ret || messages['503'];
-      error('request douban failed: ', err, ', ret: ',  ret);
+      info.reply = ret || messages[String(err)] || messages['503'];
       return end();
     }
     if (ret instanceof Array) {
       info.items = ret;
     } else if (typeof ret == 'string') {
-      info.content = ret;
+      info.reply = ret;
     } else {
-      info.content = messages['400'];
+      info.reply = messages['400'];
     }
     end();
   });
