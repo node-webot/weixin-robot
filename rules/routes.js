@@ -21,6 +21,16 @@ router.set('location', function(info, next) {
 var dialogs = parser.txt2dialog(fs.readFileSync(__dirname + '/dialogs.txt', 'utf-8'));
 dialogs = dialogs.concat(require('./dialogs.js'));
 
+console.log(dialogs);
+
+function contains(str, p) {
+  if (typeof str == 'string') {
+    return str.indexOf(p) !== -1;
+  } else {
+    return str.search(p) !== -1;
+  }
+}
+
 // 先看一下是否可以直接对话 
 router.set('dialog', {
   'handler': function(info) {
@@ -29,7 +39,7 @@ router.set('dialog', {
       var r, ret;
       for (var i = 0, l = dialogs.length; i < l; i++) {
         r = dialogs[i];
-        if (text.search(r[0]) !== -1) {
+        if (contains(text, r[0])) {
           ret = r[1];
           if (ret instanceof Array) return ret.sample(1)[0];
           if (typeof ret === 'function') return ret(info);
