@@ -2,7 +2,8 @@ var fs = require('fs');
 var data = require('../data');
 var messages = data.messages;
 
-var User = require('../lib/user').User;
+var user = require('../lib/user');
+var User = user.User;
 var parser = require('../lib/parser');
 var douban = require('../lib/douban');
 var router = require('../lib/router')();
@@ -11,6 +12,7 @@ var router = require('../lib/router')();
 router.set('location', function(info, next) {
   parser.geo2loc(info.param, function(loc_id) {
     info.param.loc = loc_id;
+    if (loc_id) user(info.uid).loc(loc_id);
     return douban.nearby(info.param, next);
   });
 });
