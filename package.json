@@ -1,6 +1,6 @@
 {
   "name": "weixin-event",
-  "version": "0.0.2",
+  "version": "0.1",
   "homepage": "http:/www.douban.com/location/",
   "description": "豆瓣同城微信接口",
   "private": true,
