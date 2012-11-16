@@ -28,9 +28,9 @@ module.exports = {
 		"commonweal": "公益",
 		"travel": "旅行|旅游",
 		"sports": "运动",
-		"drama": "戏剧|话剧|音乐剧|舞台剧",
+		"drama": "戏剧",
 		"music": "音乐|演出",
-		"exhibition": "展览|画展",
+		"exhibition": "展览",
 		"party": "聚会|约会"
   },
   'day_types': {

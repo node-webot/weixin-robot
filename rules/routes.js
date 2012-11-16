@@ -59,10 +59,13 @@ router.set('list', {
     } else {
       loc = info.param.loc = u.loc();
     }
-    if (!loc) next('CITY_404');
+    if (!loc) return next('CITY_404');
 
     // 如果有搜索关键字
-    if (info.param['q']) next();
+    if (info.param['q']) {
+      if (info.param['type']) return next();
+      return douban.search(info.param, next);
+    }
 
     douban.list(info.param, next);
   }
