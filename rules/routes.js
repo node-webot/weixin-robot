@@ -81,10 +81,13 @@ router.set('list', {
     if (!loc) return next('CITY_404');
 
     // 如果有搜索关键字
-    if (info.param['q']) {
-      if (info.param['type']) return next();
+    if (info.param['type'] && info.param['q']) {
       info.ended = true;
       return douban.search(info.param, next);
+    }
+    if (info.param['q']) {
+      next();
+      return;
     }
 
     douban.list(info.param, next);
