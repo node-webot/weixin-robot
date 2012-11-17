@@ -102,7 +102,7 @@ router.set('list', {
 router.set('short_text', {
   'pattern': function(info) {
     var text = info.param && info.param['q'] || info.text;
-    return text.length > 1 && text.length < 10;
+    return text.length > 1 && text.length < 8;
   },
   'handler': function(info, next) {
     var tip = this.waiter.reserve(info.from, 'search', info);
