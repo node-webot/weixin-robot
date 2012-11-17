@@ -8,7 +8,7 @@ var rules = {};
 rules['search'] = {
   'tip': function(uid, info) {
     var q = info.param && info.param['q'] || info.text;
-    var loc_id = info.param && info.param['loc'] || user(uid).loc();
+    var loc_id = info.param && info.param['loc'];
 
     // save user data
     this.data(uid, { 'q': q, 'loc': loc_id });

@@ -14,11 +14,6 @@ var messages = data.messages;
 
 var WX_TOKEN = conf.weixin;
 
-process.on('uncaughtException', function(err) {
-  error(err);
-  if (err.stack) error(err.stack);
-});
-
 var app = express();
 app.enable('trust proxy');
 

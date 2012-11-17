@@ -1,4 +1,3 @@
-var fs = require('fs');
 var data = require('../data');
 var messages = data.messages;
 
@@ -12,16 +11,11 @@ var router = require('../lib/router')();
 router.set('location', function(info, next) {
   parser.geo2loc(info.param, function(loc_id) {
     info.param.loc = loc_id;
-    if (loc_id) user(info.uid).loc(loc_id);
+    if (loc_id) user(info.uid).setLoc(loc_id);
     return douban.nearby(info.param, next);
   });
 });
 
-
-var dialogs = parser.txt2dialog(fs.readFileSync(__dirname + '/dialogs.txt', 'utf-8'));
-var gags = parser.txt2dialog(fs.readFileSync(__dirname + '/gags.txt', 'utf-8'));
-dialogs = dialogs.concat(gags);
-dialogs = dialogs.concat(require('./dialogs.js'));
 
 function contains(str, p) {
   if (typeof p == 'string') {
@@ -31,6 +25,7 @@ function contains(str, p) {
   }
 }
 
+var dialogs = require('./dialogs');
 // 先看一下是否可以直接对话 
 router.set('dialog', {
   'handler': function(info) {
@@ -64,7 +59,7 @@ router.set('list', {
     var loc = info.param && info.param['loc'];
 
     if (want_city && loc) {
-      u.loc(loc);
+      u.setLoc(loc);
       var q = this.waiter.data(uid, 'q');
       if (q) {
         this.waiter.pass(uid);
@@ -73,24 +68,34 @@ router.set('list', {
         return douban.search(info.param, next);
       }
     }
+
     if (loc) {
-      u.loc(loc);
+      u.setLoc(loc);
+      cb(loc);
     } else {
-      loc = info.param.loc = u.loc();
-    }
-    if (!loc) return next('CITY_404');
-
-    // 如果有搜索关键字
-    if (info.param['type'] && info.param['q']) {
-      info.ended = true;
-      return douban.search(info.param, next);
-    }
-    if (info.param['q']) {
-      next();
-      return;
+      u.getLoc(function(err, loc) {
+        if (loc) {
+          info.param['loc'] = loc;
+          u.setLoc(loc);
+        }
+        cb(loc);
+      });
     }
 
-    douban.list(info.param, next);
+    function cb(loc) {
+      if (!loc) return next('CITY_404');
+
+      // 如果有搜索关键字
+      if (info.param['type'] && info.param['q']) {
+        info.ended = true;
+        return douban.search(info.param, next);
+      }
+      if (info.param['q']) {
+        next();
+        return;
+      }
+      douban.list(info.param, next);
+    }
   }
 });
 // 最后提示是否搜索

@@ -1,89 +1,89 @@
 var cities = [{
-  "name": "北京|peking|beijing|帝都|和你一样|跟你一样|燕京",
+  "name": "北京|peking|beijing|帝都|和你一样|跟你一样|燕京|bj",
   "id": "108288"
 },
 {
-  "name": "上海|shanghai|魔都",
+  "name": "上海|shanghai|魔都|sh",
   "id": "108296"
 },
 {
-  "name": "广州|guangzhou|羊城|广",
+  "name": "广州|guangzhou|羊城|广|gz",
   "id": "118281"
 },
 {
-  "name": "武汉|wuhan|武昌|汉口|汉阳",
+  "name": "武汉|wuhan|武昌|汉口|汉阳|wh",
   "id": "118254"
 },
 {
-  "name": "深圳|shenzhen",
+  "name": "深圳|shenzhen|sz",
   "id": "118282"
 },
 {
-  "name": "成都|chengdu|榕城",
+  "name": "成都|chengdu|榕城|cd",
   "id": "118318"
 },
 {
-  "name": "杭州|hangzhou",
+  "name": "杭州|hangzhou|hz|杭",
   "id": "118172"
 },
 {
-  "name": "南京|nanjing",
+  "name": "南京|nanjing|nj",
   "id": "118159"
 },
 {
-  "name": "西安|xian|长安|changan",
+  "name": "西安|xian|长安|changan|xa",
   "id": "118371"
 },
 {
-  "name": "重庆|chongqing|红都",
+  "name": "重庆|chongqing|红都|cq",
   "id": "108309"
 },
 {
-  "name": "郑州|zhengzhou",
+  "name": "郑州|zhengzhou|zz",
   "id": "118237"
 },
 {
-  "name": "长沙|changsha",
+  "name": "长沙|changsha|cs",
   "id": "118267"
 },
 {
-  "name": "天津|tianjing",
+  "name": "天津|tianjing|tj",
   "id": "108289"
 },
 {
-  "name": "福州|fuzhou",
+  "name": "福州|fuzhou|fz",
   "id": "118200"
 },
 {
-  "name": "苏州|suzhou",
+  "name": "苏州|suzhou|sz",
   "id": "118163"
 },
 {
-  "name": "沈阳|shenyang",
+  "name": "沈阳|shenyang|sy",
   "id": "118123"
 },
 {
-  "name": "温州|wenzhou",
+  "name": "温州|wenzhou|wz",
   "id": "118174"
 },
 {
-  "name": "哈尔滨|harbin",
+  "name": "哈尔滨|harbin|hrb",
   "id": "118146"
 },
 {
-  "name": "青岛|tsingtao|qingdao",
+  "name": "青岛|tsingtao|qingdao|qd",
   "id": "118221"
 },
 {
-  "name": "济南|jinan",
+  "name": "济南|jinan|jn",
   "id": "118220"
 },
 {
-  "name": "大连|dalian",
+  "name": "大连|dalian|dl",
   "id": "118124"
 },
 {
-  "name": "厦门|xiamen",
+  "name": "厦门|xiamen|xm",
   "id": "118201"
 },
 {
@@ -91,15 +91,15 @@ var cities = [{
   "id": "118137"
 },
 {
-  "name": "宁波|ningbo",
+  "name": "宁波|ningbo|nb",
   "id": "118173"
 },
 {
-  "name": "合肥|hefei",
+  "name": "合肥|hefei|hf",
   "id": "118183"
 },
 {
-  "name": "石家庄|shijiazhuang",
+  "name": "石家庄|shijiazhuang|sjz",
   "id": "118088"
 },
 {
@@ -107,7 +107,7 @@ var cities = [{
   "id": "118348"
 },
 {
-  "name": "无锡|wuxi",
+  "name": "无锡|wuxi|wx",
   "id": "118160"
 },
 {
