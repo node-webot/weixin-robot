@@ -1,137 +1,137 @@
 var cities = [{
-  "name": "北京",
+  "name": "北京|peking|beijing|帝都|和你一样|跟你一样|燕京",
   "id": "108288"
 },
 {
-  "name": "上海",
+  "name": "上海|shanghai|魔都",
   "id": "108296"
 },
 {
-  "name": "广州",
+  "name": "广州|guangzhou|羊城|广",
   "id": "118281"
 },
 {
-  "name": "武汉",
+  "name": "武汉|wuhan|武昌|汉口|汉阳",
   "id": "118254"
 },
 {
-  "name": "深圳",
+  "name": "深圳|shenzhen",
   "id": "118282"
 },
 {
-  "name": "成都",
+  "name": "成都|chengdu|榕城",
   "id": "118318"
 },
 {
-  "name": "杭州",
+  "name": "杭州|hangzhou",
   "id": "118172"
 },
 {
-  "name": "南京",
+  "name": "南京|nanjing",
   "id": "118159"
 },
 {
-  "name": "西安",
+  "name": "西安|xian|长安|changan",
   "id": "118371"
 },
 {
-  "name": "重庆",
+  "name": "重庆|chongqing|红都",
   "id": "108309"
 },
 {
-  "name": "郑州",
+  "name": "郑州|zhengzhou",
   "id": "118237"
 },
 {
-  "name": "长沙",
+  "name": "长沙|changsha",
   "id": "118267"
 },
 {
-  "name": "天津",
+  "name": "天津|tianjing",
   "id": "108289"
 },
 {
-  "name": "福州",
+  "name": "福州|fuzhou",
   "id": "118200"
 },
 {
-  "name": "苏州",
+  "name": "苏州|suzhou",
   "id": "118163"
 },
 {
-  "name": "沈阳",
+  "name": "沈阳|shenyang",
   "id": "118123"
 },
 {
-  "name": "温州",
+  "name": "温州|wenzhou",
   "id": "118174"
 },
 {
-  "name": "哈尔滨",
+  "name": "哈尔滨|harbin",
   "id": "118146"
 },
 {
-  "name": "青岛",
+  "name": "青岛|tsingtao|qingdao",
   "id": "118221"
 },
 {
-  "name": "济南",
+  "name": "济南|jinan",
   "id": "118220"
 },
 {
-  "name": "大连",
+  "name": "大连|dalian",
   "id": "118124"
 },
 {
-  "name": "厦门",
+  "name": "厦门|xiamen",
   "id": "118201"
 },
 {
-  "name": "长春",
+  "name": "长春|changchun",
   "id": "118137"
 },
 {
-  "name": "宁波",
+  "name": "宁波|ningbo",
   "id": "118173"
 },
 {
-  "name": "合肥",
+  "name": "合肥|hefei",
   "id": "118183"
 },
 {
-  "name": "石家庄",
+  "name": "石家庄|shijiazhuang",
   "id": "118088"
 },
 {
-  "name": "昆明",
+  "name": "昆明|kunming",
   "id": "118348"
 },
 {
-  "name": "无锡",
+  "name": "无锡|wuxi",
   "id": "118160"
 },
 {
-  "name": "南昌",
+  "name": "南昌|nanchang",
   "id": "118209"
 },
 {
-  "name": "泉州",
+  "name": "泉州|quanzhou",
   "id": "118204"
 },
 {
-  "name": "东莞",
+  "name": "东莞|dongguan",
   "id": "118297"
 },
 {
-  "name": "南宁",
+  "name": "南宁|nanning",
   "id": "118302"
 },
 {
-  "name": "太原",
+  "name": "太原|taiyuan",
   "id": "118099"
 },
 {
-  "name": "佛山",
+  "name": "佛山|fushan",
   "id": "118286"
 },
 {
@@ -402,8 +402,12 @@ cities.name2id = {};
 cities.id2name = {};
 
 cities.forEach(function(item) {
-  cities.name2id[item['name']] = item['id'];
-  cities.id2name[item['id']] = item['name'];
+  var tmp = item['name'].split('|');
+  var _id = item['id'];
+  tmp.forEach(function(n) {
+    cities.name2id[n] = _id;
+  });
+  cities.id2name[_id] = item['name'].split('|')[0];
 });
 
 module.exports = cities;
