@@ -1,17 +1,18 @@
-# 豆瓣同城微信帐号自动回复系统
+# 微信公共帐号机器人
+
+基于 nodejs 的实现的，开源微信公共帐号自动回复系统
+
+## 功能：
+
+1. 支持用正则做一些自动回复，详见 `rules/dialogs/`
+2. 支持等待后续操作模式，如可以提示用户“需要我执行xxx操作吗？”
+3. 清晰独立的 router ，轻松实现文本匹配流程控制
 
 添加微信帐号 douban-event ，试试效果
 
-使用 nodejs 构建，欢迎 fork
-
-支持用正则做一些自动回复，大家可以编辑 `data/responses.js`
+![豆瓣同城微信帐号二维码：douban-event](http://mp.weixin.qq.com/cgi-bin/getqrcode?fakeid=2394057060&style=1&action=download)
 
 ## TODO:
 
-1. 用 memcache 存储用户上一次指定的城市
-2. 时间和城区支持
-3. 错误指令的提示
-4. 更完备的 log
-5. 完善 test case
-6. 更新同城 nearby API ，既然已知 latlng ，`loc` 就应该是非必要参数
-
+1. 豆瓣同城相关代码解耦
+2. 设计基本的用户默认选项指令
