@@ -14,6 +14,11 @@ var messages = data.messages;
 
 var WX_TOKEN = conf.weixin;
 
+process.on('uncaughtException', function(err) {
+  error(err);
+  if (err.stack) error(err.stack);
+});
+
 var app = express();
 app.enable('trust proxy');
 
@@ -36,9 +41,7 @@ app.post('/', check_sig, parse_body, function(req, res, next) {
     if (err || !ret) {
       //res.statusCode = (typeof err === 'number' ? err : 500);
       info.reply = ret || messages[String(err)] || messages['503'];
-      return end();
-    }
-    if (ret instanceof Array) {
+    } else if (ret instanceof Array) {
       info.items = ret;
     } else if (typeof ret == 'string') {
       info.reply = ret;
