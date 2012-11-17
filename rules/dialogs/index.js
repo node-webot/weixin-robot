@@ -28,7 +28,7 @@ loads.forEach(function(item, i) {
   var f = __dirname + '/' + item + '.txt';
   var cont = fs.readFileSync(f, 'utf-8');
   var d = txt2dialog(cont);
-  dialogs.concat(d);
+  dialogs.push.apply(dialogs, d);
 });
 dialogs.push([
   /^(现在时刻|时间|现在几点|time)$/,
