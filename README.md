@@ -11,7 +11,7 @@
 
 添加微信帐号 douban-event ，试试效果
 
-![豆瓣同城微信帐号二维码：douban-event](http://mp.weixin.qq.com/cgi-bin/getqrcode?fakeid=2394057060&style=1&action=download)
+![豆瓣同城微信帐号二维码：douban-event](http://i.imgur.com/ijE19.jpg)
 
 ## 使用方法：
 
