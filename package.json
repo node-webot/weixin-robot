@@ -1,6 +1,6 @@
 {
   "name": "weixin-event",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "http:/www.douban.com/location/",
   "description": "豆瓣同城微信接口",
   "private": true,
@@ -10,7 +10,7 @@
   "dependencies": {
     "debug": "*",
     "express": ">= 3.0.0beta2",
-    "connect-memcached": ">= 0.0.3",
+    "memcached": ">= 0.1.4",
     "xml2json": ">= 0.3.2"
   },
   "devDependencies": {
