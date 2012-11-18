@@ -5,7 +5,10 @@ var cities = require('../data/cities');
 var waiter = require('../lib/waiter')();
 
 waiter.set('who_create', {
-  pattern: /(你是(谁(制造|生出来|制作|设计|创造)(的|了)))|\2你/,
+  pattern: function(info) {
+    var reg = /(什么人|谁|哪位.*)(设置|配置|制造|制作|设计|创造|生产?)(出来)?(的|了)?/;
+    return reg.test(info.text) && info.text.replace(reg, '').indexOf('你') === 0;
+  },
   tip: '一个很猥琐的程序员，要我把他的微信号告诉你吗？',
   'replies': {
     'Y': '好的，他的微信帐号是：YjgxNTQ5ZmQzYTA0OWNjNTQ3NzliNGMyNzRmYjdhMTUK',
@@ -15,7 +18,6 @@ waiter.set('who_create', {
 
 waiter.set('search', {
   'pattern': function(info) {
-    console.log(info);
     var text = info.param && info.param['q'] || info.text;
     return text.length > 1 && text.length < 8;
   },
