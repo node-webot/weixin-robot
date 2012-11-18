@@ -98,16 +98,5 @@ router.set('list', {
     }
   }
 });
-// 最后提示是否搜索
-router.set('short_text', {
-  'pattern': function(info) {
-    var text = info.param && info.param['q'] || info.text;
-    return text.length > 1 && text.length < 8;
-  },
-  'handler': function(info, next) {
-    var tip = this.waiter.reserve(info.from, 'search', info);
-    next(null, tip);
-  }
-});
 
 module.exports = router;

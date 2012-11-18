@@ -2,10 +2,23 @@ var douban = require('../lib/douban');
 
 var user = require('../lib/user');
 var cities = require('../data/cities');
+var waiter = require('../lib/waiter')();
 
-var rules = {};
+waiter.set('who_create', {
+  pattern: /(你是(谁(制造|生出来|制作|设计|创造)(的|了)))|\2你/,
+  tip: '一个很猥琐的程序员，要我把他的微信号告诉你吗？',
+  'replies': {
+    'Y': '好的，他的微信帐号是：YjgxNTQ5ZmQzYTA0OWNjNTQ3NzliNGMyNzRmYjdhMTUK',
+    'N': '可惜了啊，其实他还长得蛮帅的' 
+  }
+});
 
-rules['search'] = {
+waiter.set('search', {
+  'pattern': function(info) {
+    console.log(info);
+    var text = info.param && info.param['q'] || info.text;
+    return text.length > 1 && text.length < 8;
+  },
   'tip': function(uid, info) {
     var q = info.param && info.param['q'] || info.text;
     var loc_id = info.param && info.param['loc'];
@@ -28,6 +41,6 @@ rules['search'] = {
     },
     'N': '好的，你说不要就不要' 
   }
-};
+});
 
-module.exports = require('../lib/waiter')(rules);
+module.exports = waiter;
