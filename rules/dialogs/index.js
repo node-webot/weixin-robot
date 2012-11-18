@@ -22,7 +22,7 @@ function pad(n) {
   return n;
 }
 
-var loads = module.exports.order = ['basic', 'gags', 'emoji'];
+var loads = module.exports.order = ['basic', 'gags', 'emoji', 'flirt'];
 var dialogs = [];
 loads.forEach(function(item, i) {
   var f = __dirname + '/' + item + '.txt';
