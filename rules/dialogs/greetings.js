@@ -1,4 +1,5 @@
 function pad(n) {
+  if (n === 0) return 24;
   if (n < 10) n = '0' + n;
   return n;
 }
@@ -52,7 +53,16 @@ greetings.push([
   /^((现在|当前)时刻|时间|现在几点了?|time)$/,
   function(info) {
     var d = new Date();
-    return '现在是北京时间' + pad(d.getHours()) + '点' + pad(d.getMinutes()) + '分';
+    var h = d.getHours();
+    var t = '现在是北京时间' + pad(h) + '点' + pad(d.getMinutes()) + '分';
+    if (h < 4 || h > 22) return t + '，夜深了，早点睡吧 [月亮];
+    if (h < 6) return t + '，您还是再多睡会儿吧';
+    if (h < 9) return t + '，又是一个美好的清晨呢，今天准备去哪里玩呢？';
+    if (h < 12) return t + '，一日之计在于晨，今天要做的事情安排好了吗？';
+    if (h < 15) return t + '，午后的冬日是否特别动人？';
+    if (h < 19) return t + '，又是一个充满活力的下午！今天你的任务完成了吗？';
+    if (h <= 22) return t + '，这样一个美好的夜晚，有没有去看什么演出？';
+    return t;
   }
 ]);
 module.exports = greetings;
