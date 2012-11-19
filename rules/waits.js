@@ -19,7 +19,7 @@ waiter.set('who_create', {
 waiter.set('search', {
   'pattern': function(info) {
     var text = info.param && info.param['q'] || info.text;
-    return text.length > 1 && text.length < 8;
+    return text.length > 1 && text.length < 15;
   },
   'tip': function(uid, info) {
     var q = info.param && info.param['q'] || info.text;
