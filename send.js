@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+var prettyjson = require('prettyjson');
 var color = require('color');
 // Send test text message
 var readline = require('readline');
@@ -21,12 +22,13 @@ function run() {
   rl.question('The text: ', function(text) {
     var text = text || '北京本周展览活动';
     var req = request.build('POST /', makeQ(), function(err, ret) {
+      var xml;
       try {
-        var xml = JSON.parse(xml2json.toJson(ret)).xml;
+        xml = JSON.parse(xml2json.toJson(ret)).xml;
       } catch (e) {
         console.log(err, ret);
       }
-      console.log(xml);
+      console.log(prettyjson.render(xml));
       console.log('\n');
       run();
     });
