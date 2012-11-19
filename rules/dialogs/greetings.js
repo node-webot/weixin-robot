@@ -55,7 +55,7 @@ greetings.push([
     var d = new Date();
     var h = d.getHours();
     var t = '现在是北京时间' + pad(h) + '点' + pad(d.getMinutes()) + '分';
-    if (h < 4 || h > 22) return t + '，夜深了，早点睡吧 [月亮];
+    if (h < 4 || h > 22) return t + '，夜深了，早点睡吧 [月亮]';
     if (h < 6) return t + '，您还是再多睡会儿吧';
     if (h < 9) return t + '，又是一个美好的清晨呢，今天准备去哪里玩呢？';
     if (h < 12) return t + '，一日之计在于晨，今天要做的事情安排好了吗？';
