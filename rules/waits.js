@@ -6,7 +6,7 @@ var waiter = require('../lib/waiter')();
 
 waiter.set('who_create', {
   pattern: function(info) {
-    var reg = /(什么人|谁|哪位.*)(设置|配置|制造|制作|设计|创造|生产?)(出来)?(的|了)?/;
+    var reg = /(什么人|谁|哪位.*)(给|为|帮)?你?(设置|做|配置|制造|制作|设计|创造|生产?)/;
     return reg.test(info.text) && info.text.replace(reg, '').indexOf('你') === 0;
   },
   tip: '一个很猥琐的程序员，要我把他的微信号告诉你吗？',
