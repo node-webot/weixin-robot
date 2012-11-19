@@ -14,6 +14,7 @@
     "xml2json": ">= 0.3.2"
   },
   "devDependencies": {
+    "prettyjson": "*",
     "mocha": "*",
     "should": "*",
     "color": "*",
