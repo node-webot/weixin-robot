@@ -50,7 +50,7 @@ greetings.push([
   }
 ]);
 greetings.push([
-  /^((现在|当前)时刻|时间|现在几点了?|time)$/,
+  /^((现在|当前)时刻|报时|时间|现在几点了?|time)$/,
   function(info) {
     var d = new Date();
     var h = d.getHours();
