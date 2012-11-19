@@ -17,7 +17,7 @@ function txt2dialog(txt) {
   return dialogs;
 }
 
-var loads = module.exports.order = ['basic', 'gags', 'emoji', 'flirt'];
+var loads = module.exports.order = ['basic', 'gags', 'bad', 'flirt', 'emoji'];
 var dialogs = [];
 loads.forEach(function(item, i) {
   var f = __dirname + '/' + item + '.txt';
