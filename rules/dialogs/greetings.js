@@ -10,7 +10,7 @@ greetings.push([
     if (h < 9) return 'Morning, sir! 新的一天又开始了！您今天心情怎么样？';
     if (h < 12) return '这都几点了，还早啊...';
     if (h < 14) return '人家中午饭都吃过了，还早呐？';
-    if (h < 18) return '如此美好的下午，是很适合出门逛逛的';
+    if (h < 17) return '如此美好的下午，是很适合出门逛逛的';
     if (h < 21) return '早，什么早？找碴的找？';
     if (h >= 21) return '您还是早点睡吧...';
   }
