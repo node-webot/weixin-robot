@@ -17,11 +17,6 @@ function txt2dialog(txt) {
   return dialogs;
 }
 
-function pad(n) {
-  if (n < 10) n = '0' + n;
-  return n;
-}
-
 var loads = module.exports.order = ['basic', 'gags', 'emoji', 'flirt'];
 var dialogs = [];
 loads.forEach(function(item, i) {

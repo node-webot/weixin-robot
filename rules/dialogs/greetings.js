@@ -1,3 +1,8 @@
+function pad(n) {
+  if (n < 10) n = '0' + n;
+  return n;
+}
+
 var greetings = [];
 greetings.push([
   /^(早上?好?|(good )?moring)[啊\!！\.。]*$/i,
@@ -43,9 +48,8 @@ greetings.push([
     return '您也好！要不今晚上去看点戏吧？';
   }
 ]);
-
 greetings.push([
-  /^(现在时刻|时间|现在几点|time)$/,
+  /^((现在|当前)时刻|时间|现在几点了?|time)$/,
   function(info) {
     var d = new Date();
     return '现在是北京时间' + pad(d.getHours()) + '点' + pad(d.getMinutes()) + '分';
