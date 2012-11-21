@@ -9,6 +9,7 @@ module.exports = {
   },
   amap: 'fbc5912fdde546936f84e5935cb3110744fb390a',
   mixpanel: 'keyboardcat',
+  routers: ['location', 'dialogs'],
   weixin: 'keyboarddog'
 };
 var environ = process.env.NODE_ENV || 'development';

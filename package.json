@@ -1,20 +1,19 @@
 {
-  "name": "weixin-event",
-  "version": "0.1.2",
-  "homepage": "http:/www.douban.com/location/",
-  "description": "豆瓣同城微信接口",
-  "private": true,
+  "name": "weixin-robot",
+  "version": "0.0.1",
+  "homepage": "http://ktmud.github.com/weixin-robot/",
+  "repository": "git://github.com/ktmud/weixin-robot.git",
+  "description": "微信公众平台开放消息接口机器人",
   "contributors": [
     "ktmud <jyyjcc@gmail.com> (http://ktmud.com)"
   ],
   "dependencies": {
     "debug": "*",
-    "express": ">= 3.0.0beta2",
-    "memcached": ">= 0.1.4",
     "xml2json": ">= 0.3.2"
   },
   "devDependencies": {
     "prettyjson": "*",
+    "express": "*",
     "mocha": "*",
     "should": "*",
     "color": "*",
@@ -24,10 +23,12 @@
     "node" : ">=0.6.0",
     "npm" : ">=1.1.6"
   },
-  "subdomain": "wechat_event",
+  "bin": {
+    "wx-geo": "./bin/wx-geo",
+    "wx-text": "./bin/wx-text"
+  },
   "scripts": {
-    "prepublish" : "npm prune",
-    "test": "make test",
-    "start": "node app.js"
+    "start": "supervisor --debug examples/app.js",
+    "test": "./node_modules/mocha/bin/mocha"
   }
 }

@@ -1,7 +1,6 @@
 var crypto = require('crypto');
 
-var conf = require('../conf');
-var WX_TOKEN = conf.weixin;
+var WX_TOKEN = 'keyboardcat123';
 
 function sha1(s) {
   var shasum = crypto.createHash('sha1');
@@ -18,7 +17,6 @@ function makeQ() {
 }
 
 module.exports = {
-  conf: conf,
   xml2json: require('xml2json'),
   should: require('should'),
   request: require('../lib/request'),
