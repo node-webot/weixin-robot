@@ -1,13 +1,3 @@
-conf/vps.js
 node_modules
 npm*
-cache
-stable_cache
-*.css
-*.bak
 .DS_Store
-var/*.log
-static/*.html
-static/*.txt
-static/.file_etags
-*.min.*
