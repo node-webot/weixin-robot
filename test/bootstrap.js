@@ -13,7 +13,7 @@ function makeQ(token) {
     timestamp: (+new Date()),
     nonce: parseInt((Math.random() * 10e10), 10)
   }
-  q.signature = sha1([WX_TOKEN, q.timestamp, q.nonce].sort().join(''));
+  q.signature = sha1([token, q.timestamp, q.nonce].sort().join(''));
   return q;
 }
 
