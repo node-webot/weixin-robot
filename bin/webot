@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+
+/*
+* Send test text message
+*/
+var prettyjson = require('prettyjson');
+var color = require('color');
+var readline = require('readline');
+var fs = require('fs');
+
+var bootstrap = require('../test/bootstrap');
+var makeQ = bootstrap.makeAuthQuery;
+var request = bootstrap.request;
+var xml2json = bootstrap.xml2json;
+
+
+var program = require('commander');
+
+program.version('0.0.1')
+  .usage('[options]')
+  .option('-t, --token', 'Provide weixin token')
+  .option('-l, --location', 'Entering <location> mode')
+  .parse(process.argv);
+
+var t = program.location ? 'geo' : 'text';
+var xml = fs.readFileSync(__dirname + '/../test/wx_' + t + '.xml', 'utf-8');
+var token = program.token || 'keyboardcat123';
+var run = program.location ? run_geo : run_text;
+
+function run_text(){
+  program.prompt('the text: ', function(text) {
+    var text = text || '你好';
+    var req = request.build('POST http://127.0.0.1:3000/', makeQ(token), function(err, ret) {
+      var xml;
+      try {
+        xml = JSON.parse(xml2json.toJson(ret)).xml;
+      } catch (e) {
+        console.log(err, ret);
+      }
+      console.log(prettyjson.render(xml));
+      console.log('\n');
+      run();
+    });
+    req.write(xml.replace('{text}', text));
+    req.end();
+  });
+}
+
+function run_geo(){
+  program.prompt('x: ', function(text) {
+    text = text || '23.08';
+    var t = xml.replace('{x}', text);
+    console.log('使用经度' + text);
+    program.prompt('y:', function(text) {
+      text = text || '113.24';
+      console.log('使用纬度' + text);
+      var req = request.build('POST http://127.0.0.1:3000/', makeQ(token), function(err, ret) {
+        var xml;
+        try {
+          xml = JSON.parse(xml2json.toJson(ret)).xml;
+        } catch (e) {
+          console.log(err, ret);
+        }
+        var xml = JSON.parse(xml2json.toJson(ret)).xml;
+        console.log(prettyjson.render(xml));
+        console.log('\n');
+        run();
+      });
+      req.write(t.replace('{y}', text));
+      req.end();
+    });
+  });
+}
+
+run();
