@@ -22,7 +22,7 @@ var text_msg = fs.readFileSync(__dirname + '/../test/wx_text.xml', 'utf-8');
 
 function run() {
   rl.question('The text: ', function(text) {
-    var text = text || '北京本周展览活动';
+    var text = text || '你好';
     var req = request.build('POST http://127.0.0.1:3000/', makeQ(), function(err, ret) {
       var xml;
       try {

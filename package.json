@@ -12,6 +12,7 @@
     "xml2json": ">= 0.3.2"
   },
   "devDependencies": {
+    "commander": "*",
     "prettyjson": "*",
     "express": "*",
     "mocha": "*",

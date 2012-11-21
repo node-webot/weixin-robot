@@ -7,7 +7,8 @@ function sha1(s) {
   shasum.update(s);
   return shasum.digest('hex');
 }
-function makeQ() {
+function makeQ(token) {
+  var token = token || WX_TOKEN;
   var q = {
     timestamp: (+new Date()),
     nonce: parseInt((Math.random() * 10e10), 10)
