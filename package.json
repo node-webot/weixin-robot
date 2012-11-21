@@ -1,6 +1,6 @@
 {
   "name": "weixin-robot",
-  "version": "0.0.2",
+  "version": "0.0.2-1",
   "homepage": "http://ktmud.github.com/weixin-robot/",
   "repository": "git://github.com/ktmud/weixin-robot.git",
   "description": "微信公众平台开放消息接口机器人",
@@ -8,7 +8,7 @@
     "ktmud <jyyjcc@gmail.com> (http://ktmud.com)"
   ],
   "dependencies": {
-    "debug": "*",
+    "debug": ">= 0.0.1",
     "xml2json": ">= 0.3.2"
   },
   "devDependencies": {
@@ -25,8 +25,7 @@
     "npm" : ">=1.1.6"
   },
   "bin": {
-    "wx-geo": "./bin/wx-geo",
-    "wx-text": "./bin/wx-text"
+    "wx-geo": "./bin/webot'
   },
   "scripts": {
     "start": "supervisor --debug examples/app.js",
