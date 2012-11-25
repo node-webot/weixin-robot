@@ -4,7 +4,7 @@ var router = weixin.router();
 var geo2loc = weixin.geo2loc;
 var dialogs = weixin.dialogs({
   dir: __dirname + '/' + 'dialogs',
-  files: ['greetings.js', 'gags']
+  files: ['basic', 'greetings.js', 'gags']
 });
 
 router.dialog(dialogs);
