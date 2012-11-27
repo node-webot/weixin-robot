@@ -25,3 +25,7 @@ npm install weixin-robot
 提供可执行文件 `webot` 用于发送测试消息。
 
 Have fun with weixin, enjoy being a robot!
+
+## LICENSE
+
+(the DON'T CARE WHAT YOU DO WITH IT license)
