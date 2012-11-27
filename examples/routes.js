@@ -6,11 +6,11 @@ var dialogs = weixin.dialogs({
   dir: __dirname + '/' + 'dialogs',
   files: ['basic', 'greetings.js', 'gags']
 });
-// dialogs 就是一个Array
+// 生成的dialogs 就是一个Array
 // 类似于：
 // [
 //   ['你好', '你也好'],
-//   ['我叫(.*)', '你好，\1']
+//   [/我叫(.*)/, '你好，\1']
 // ]
 router.dialog(dialogs);
 
