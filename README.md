@@ -19,7 +19,6 @@
 ```
 npm install weixin-robot
 ```
-
 具体使用方法参见 `exapmles/app.js` 。
 
 提供可执行文件 `webot` 用于发送测试消息。
