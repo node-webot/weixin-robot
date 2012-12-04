@@ -23,6 +23,20 @@ npm install weixin-robot
 
 提供可执行文件 `webot` 用于发送测试消息。
 
+```
+  Usage: webot [options]
+
+  Options:
+
+    -h, --help                 output usage information
+    -V, --version              output the version number
+    -l, --location             Send a <location> (geo, latlng)
+    -t, --token [value]        Provide weixin token
+    -n, --host [value]         Set request hostname, defaults to 127.0.0.1
+    -p, --port <n>             The port your service is listening to, defaults to 3000
+    -d, --destination [value]  The request destination url, will override "host" and "port"
+```
+
 Have fun with weixin, enjoy being a robot!
 
 ## LICENSE
