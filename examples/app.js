@@ -45,24 +45,29 @@ app.post('/', checkSig, webot.bodyParser(), function(req, res, next) {
 
   function end() {
     // 返回消息
-    // 如果 info.items 为一个数组，则发送图文消息
-    // 否则按 info.reply 发送文字消息
     res.send(webot.makeMessage(info));
   }
 
   if (!info) {
-    info.reply = messages['400'];
+    info = {
+      reply: messages['400'];
+    };
     return end();
   }
 
   // 机器人根据请求提供回复
+  // 具体如何回复由 router 和 waiter 提供
   robot.reply(info, function(err, ret) {
     if (err || !ret) {
-      // 出错信息
+      // 出错之后，提示一下
       //res.statusCode = (typeof err === 'number' ? err : 500);
       info.reply = ret || messages[String(err)] || messages['503'];
+      // 如果标记 flag == true ，可以在微信后台的星标消息里面看到
+      //info.flag = true;
     } else if (ret instanceof Array) {
       // 在 app 层决定如何处理 robot 返回的内容
+      // 如果 info.items 为一个数组，则发送图文消息
+      // 否则按 info.reply 发送文字消息
       info.items = ret;
     } else if (typeof ret == 'string') {
       info.reply = ret;
@@ -74,7 +79,7 @@ app.post('/', checkSig, webot.bodyParser(), function(req, res, next) {
 });
 
 // 图文列表的属性对应关系
-// 有时候你返回给 webot.makeMessage 的 items 列表，
+// 有时候你返回给 webot.makeMessage 的 info.items 列表，
 // 里面的对象并不使用标准键值，然后又不想自己用 map 处理
 webot.set('article props', {
   'pic': 'image',
@@ -85,6 +90,8 @@ webot.set('article props', {
 
 var port = process.env.PORT || 3000;
 var hostname = '127.0.0.1';
+
+// 微信后台只允许 80 端口，你可能需要自己做一层 proxy
 app.listen(port, hostname, function() {
   log('listening on ', hostname, port);
 });

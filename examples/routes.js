@@ -2,6 +2,10 @@ var weixin = require('../lib/weixin');
 var router = weixin.router();
 var geo2loc = weixin.geo2loc;
 
+// 扫描指定目录内的指定对话配置文件
+// 对于 js 文件，请直接返回对话 Array
+// 对于文本文件，用空行分隔多个对话回复
+// 具体写法参考相应 `./dialogs/` 目录下的 .txt 文件
 var dialogs = weixin.dialogs({
   dir: __dirname + '/' + 'dialogs',
   files: ['basic', 'greetings.js', 'gags']
@@ -12,6 +16,8 @@ var dialogs = weixin.dialogs({
 //   ['你好', '你也好'],
 //   [/我叫(.*)/, '你好，\1']
 // ]
+
+
 router.dialog(dialogs);
 
 // 'location' 是保留字，用作用户发送位置的情况
@@ -26,6 +32,7 @@ router.set('location', function(info, next) {
 // 为每个route命名，暂时只是为了好看
 router.set('say_hi', {
   'pattern': /^Hi/i,
+  // 指定如何回复
   'handler': function(info, next) {
     // 如果给传入的 request info 标记 ended，
     // 则不会进去下一个route（如果有的话）
@@ -36,7 +43,11 @@ router.set('say_hi', {
 
 var reg_search_cmd = /^(搜索|search)\s*(.+)/i
 router.set('search', {
-  'pattern': reg_search_cmd,
+  // 匹配消息的方法，可以是正则，也可以是 function
+  'pattern': function(info) {
+    return reg_search_cmd.test(info.text);
+  },
+  // 如何分析文本参数
   'parser': function(info) {
     // 匹配到的关键词
     info.q = info.text.match(reg_search_cmd)[2];
@@ -54,10 +65,7 @@ router.set('search', {
   //},
   'handler': function(info, next) {
     // 从某个地方搜索到数据...
-    do_search({ q: info.q }, function(err, items) {
-      // 给 reques info 里面添加图文列表所需内容
-      next(null, items);
-    });
+    do_search({ q: info.q }, next);
   }
 });
 
@@ -70,6 +78,8 @@ function do_search(param, next) {
     title: '这个搜索结果是这样的'
     desc: '哈哈哈哈哈....'
   }];
+  // ret 会直接作为
+  // robot.reply() 的返回值
   next(null, ret);
 }
 
