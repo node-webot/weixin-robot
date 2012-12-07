@@ -66,6 +66,18 @@ router.set('search', {
   'handler': function(info, next) {
     // 从某个地方搜索到数据...
     do_search({ q: info.q }, next);
+
+    // handler 内部的 this 关键字即此 router
+    //
+    // 可以使用 router.waiter 获取到对应的 waiter ，
+    // 并通过 waiter.reserve 方法
+    // 实现 router 与 waiter 的联动
+    //
+    //   var tip = this.waiter.reserve(info.from, 'some-wait-action');
+    //   return next(null, tip);
+    // 
+    // 当然，如果 wait action 指定了 pattern ，
+    // 可以不用在 router 里手动 reserve
   }
 });
 
