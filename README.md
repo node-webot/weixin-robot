@@ -17,13 +17,7 @@
 - [Usage](https://github.com/ktmud/weixin-robot/wiki/Usage)
 - [API](https://github.com/ktmud/weixin-robot/wiki/API)
 
-可通过 npm 安装：
-
-```
-npm install weixin-robot
-```
-
-具体使用方法参见 `exapmles/app.js` 。
+可以参照 `exapmles/app.js` 。
 
 提供可执行文件 `webot` 用于发送测试消息。
 
