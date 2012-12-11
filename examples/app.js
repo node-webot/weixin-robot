@@ -50,7 +50,7 @@ app.post('/', checkSig, webot.bodyParser(), function(req, res, next) {
 
   if (!info) {
     info = {
-      reply: messages['400'];
+      reply: messages['400']
     };
     return end();
   }

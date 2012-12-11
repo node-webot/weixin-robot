@@ -87,7 +87,7 @@ function do_search(param, next) {
   var ret = [{
     pic: 'http://img.xxx....',
     url: 'http://....',
-    title: '这个搜索结果是这样的'
+    title: '这个搜索结果是这样的',
     desc: '哈哈哈哈哈....'
   }];
   // ret 会直接作为

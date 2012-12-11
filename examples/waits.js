@@ -1,5 +1,5 @@
 var waiter = require('../lib/waiter')({
-  yep: '要|好的|ok'
+  yep: '要|好的|ok',
   nope: /^(不要|不)$/
 });
 
