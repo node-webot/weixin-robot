@@ -88,10 +88,10 @@ router.set('search', {
   }
 });
 
-function do_search(info, next) {
+function do_search(param, next) {
   // webot 自带一个简单的网络请求方法
   webot.request('http://www.baidu.com/s', {
-    wd: info.param.q
+    wd: param.q
   }, function(err, res) {
     if (err || !res) return next(null, '现在暂时无法搜索，待会儿再来好吗？');
 
@@ -119,8 +119,6 @@ function do_search(info, next) {
       ret = ret.replace(/<em>(.*?)<\/em>/gi,  '$1');
       ret = ret.replace(/<font.*?>(.*?)<\/font>/gi,  '$1');
       ret = ret.replace(/<span.*?>(.*?)<\/span>/gi,  '$1');
-      console.log(ret);
-      console.log(ret.length);
     } else {
       ret = '搜不到任何结果呢';
     }
