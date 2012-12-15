@@ -42,7 +42,11 @@ router.set('say_hi', {
   }
 });
 
-var reg_search_cmd = /^(搜索|search)\s*(.+)/i;
+var thesaurus = {
+   '500': '伍佰'
+};
+
+var reg_search_cmd = /^(搜索?|search|s\b)\s*(.+)/i;
 var do_search = require('./support/search');
 router.set('search', {
   // 匹配消息的方法，可以是正则，也可以是 function
@@ -71,9 +75,6 @@ router.set('search', {
   //  });
   //},
   'handler': function(info, next) {
-    // 从某个地方搜索到数据...
-    do_search({ q: info.q }, next);
-
     // handler 内部的 this 关键字即此 router
     //
     // 可以使用 router.waiter 获取到对应的 waiter ，
@@ -86,6 +87,17 @@ router.set('search', {
     // 当然，如果 wait action 指定了 pattern ，
     // 可以不用在 router 里手动 reserve
     // 所有routes跑完之后，会继续尝试匹配waites
+    var q = info.q;
+
+    if (q in thesaurus) {
+      // 第三个参数可以是任意数据，也可以为空
+      // 你可以在 tip 的 function 里自行决定对其如何处理
+      var tip = this.waiter.reserve(info.from, 'confirm_synonym',  { q: q, wd: thesaurus[q] });
+      return next(null, tip);
+    }
+
+    // 从某个地方搜索到数据...
+    do_search({ q: q }, next);
   }
 });
 
