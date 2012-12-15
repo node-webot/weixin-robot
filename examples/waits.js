@@ -1,9 +1,10 @@
 
 var weibot = require('../lib/weixin');
 
-// 默认的  yep & nope 不止这些
+// 默认的 yep & nope 不止这些
+// 具体都有哪些可以看 lib/waiter.js
 var waiter =  weibot.waiter({
-  yep: '要|好的|ok',
+  yep: /^(要|好的|ok)$/,
   nope: /^(不要|不)$/
 });
 
@@ -20,6 +21,18 @@ waiter.set('who_create', {
   replies: {
     'Y': '好的，他的微信帐号是：YjgxNTQ5ZmQzYTA0OWNjNTQ3NzliNGMyNzRmYjdhMTUK',
     'N': '可惜了啊，其实他还长得蛮帅的' 
+  }
+});
+
+var reg_search_cmd = /^(搜索?|search|s)$/;
+var do_search = require('./support/search');
+
+waiter.set('search_cmd', {
+  pattern: reg_search_cmd,
+  'tip': '你想搜什么？',
+  'replies': function(uid, info, cb) {
+    var q = info.text.replace(/^(搜索?|search\b|s\s+)/);
+    return do_search({ q: q }, cb);
   }
 });
 
