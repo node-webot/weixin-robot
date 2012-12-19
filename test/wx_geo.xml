@@ -1,6 +1,6 @@
 <xml>
- <ToUserName><![CDATA[douban-event]]></ToUserName>
- <FromUserName><![CDATA[askchaos]]></FromUserName>
+ <ToUserName><![CDATA[momomomo]]></ToUserName>
+ <FromUserName><![CDATA[hahaha]]></FromUserName>
  <CreateTime>1351776360</CreateTime>
  <MsgType><![CDATA[location]]></MsgType>
  <Location_X>{x}</Location_X>

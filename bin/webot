@@ -19,16 +19,24 @@ var program = require('commander');
 program.version('0.0.1')
   .usage('[options]')
   .option('-l, --location', 'Send a <location> (geo, latlng)')
+  .option('-i, --image', 'Send a <image>, provide image url')
   .option('-t, --token [value]', 'Provide weixin token')
   .option('-n, --host [value]', 'Set request hostname, defaults to 127.0.0.1', '127.0.0.1')
   .option('-p, --port <n>', 'The port your service is listening to, defaults to 3000', 3000)
   .option('-d, --destination [value]', 'The request destination url, will override "host" and "port"')
   .parse(process.argv);
 
-var t = program.location ? 'geo' : 'text';
+var t = 'text';
+var run = run_text;
+if (program.location) {
+  t = 'geo';
+  run = run_geo;
+} else if (program.image) {
+  t = 'image';
+  run = run_image;
+}
 var xml = fs.readFileSync(__dirname + '/../test/wx_' + t + '.xml', 'utf-8');
 var token = program.token || 'keyboardcat123';
-var run = program.location ? run_geo : run_text;
 var server = program.url || 'http://' + program.host + ':' + program.port + '/';
 
 function run_text(){
@@ -76,4 +84,22 @@ function run_geo(){
   });
 }
 
+function run_image(){
+  program.prompt('picUrl: ', function(picUrl) {
+    var picUrl = picUrl || 'http://www.baidu.com/img/baidu_sylogo1.gif';
+    var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
+      var res;
+      try {
+        res = JSON.parse(xml2json.toJson(ret)).xml;
+      } catch (e) {
+        console.log(err, ret);
+      }
+      console.log(prettyjson.render(res));
+      console.log('\n');
+      run();
+    });
+    req.write(xml.replace('{picUrl}', picUrl));
+    req.end();
+  });
+}
 run();
