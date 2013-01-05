@@ -88,13 +88,13 @@ function run_image(){
   program.prompt('picUrl: ', function(picUrl) {
     var picUrl = picUrl || 'http://www.baidu.com/img/baidu_sylogo1.gif';
     var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-      var res;
+      var xml;
       try {
-        res = JSON.parse(xml2json.toJson(ret)).xml;
+        xml = JSON.parse(xml2json.toJson(ret)).xml;
       } catch (e) {
         console.log(err, ret);
       }
-      console.log(prettyjson.render(res));
+      console.log(prettyjson.render(xml));
       console.log('\n');
       run();
     });
