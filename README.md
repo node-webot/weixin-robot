@@ -19,6 +19,8 @@
 
 可以参照 `exapmles/app.js` 。
 
+如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/ktmud/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
+
 提供可执行文件 `webot` 用于发送测试消息。
 
 ```
