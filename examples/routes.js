@@ -1,5 +1,5 @@
-// 在真实环境中使用时请使用 require('weixin-robot');
-var webot = require('../lib/weixin');
+//在真实环境中使用时请使用 var webot = require('weixin-robot');
+var webot = require('../');
 var router = webot.router();
 var geo2loc = webot.geo2loc;
 
@@ -41,6 +41,22 @@ router.set('say_hi', {
     next(null, '你也好哈');
   }
 });
+
+router.set('search_async_parse', {
+  'pattern': /s2\s*(.+)/i,
+  'parser': function(info, next) {
+    setTimeout(function(){
+      console.log('async parse')
+      info.q = info.text.match(/s2\s*(.+)/i)[1];
+      info.ended = true;
+      return next(null, info)
+    },3000) 
+    console.log('wait 5s to parser')
+  },
+  'handler': function(info, next) {
+    do_search({ q: info.q }, next);
+  }
+})
 
 var thesaurus = {
    '500': '伍佰'

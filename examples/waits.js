@@ -1,9 +1,10 @@
 
-var weibot = require('../lib/weixin');
+//在真实环境中使用时请使用 var weibot = require('weixin-robot');
+var webot = require('../');
 
 // 默认的 yep & nope 不止这些
 // 具体都有哪些可以看 lib/waiter.js
-var waiter =  weibot.waiter({
+var waiter =  webot.waiter({
   yep: /^(要|好的?|ok)$/,
   nope: /^(不要|不)$/
 });

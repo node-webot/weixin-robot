@@ -1,5 +1,8 @@
+//在真实环境中使用时请使用 var webot = require('weixin-robot');
+var webot = require('../../');
+
 // webot 自带一个简单的网络请求方法
-var request = require('../../lib/weixin').request;
+var request = webot.request;
 
 function do_search(param, next) {
   request('http://www.baidu.com/s', {
