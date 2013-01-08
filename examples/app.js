@@ -4,16 +4,9 @@ var express = require('express');
 var debug = require('debug');
 var log = debug('wx');
 
-var robot = require('../lib/robot')(require('./routes'), require('./waits'));
-var webot = require('../lib/weixin');
-
-// 不建议在正式环境中这样用
-// 请安装 npm package `weixin-robot`，
-// 然后：
-//  var webot = require('weixin-robot');
-//  var router = webot.router();
-//  var waiter = webot.waiter();
-//  var robot = webot.robot(router, waiter);
+//在真实环境中使用时请使用 var webot = require('weixin-robot');
+var webot = require('../');
+var robot = webot.robot(require('./routes'), require('./waits'));
 
 var messages = {
   '400': '听不懂你在说什么哦',
@@ -39,6 +32,8 @@ app.get('/', checkSig);
 // }
 app.post('/', checkSig, webot.bodyParser(), function(req, res, next) {
   var info = req.wx_data;
+  
+  console.log('收到消息:', info);
 
   // 返回给微信的，必须是一个 xml
   res.type('xml');

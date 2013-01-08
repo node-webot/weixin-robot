@@ -23,6 +23,7 @@ program.version('0.0.1')
   .option('-t, --token [value]', 'Provide weixin token')
   .option('-n, --host [value]', 'Set request hostname, defaults to 127.0.0.1', '127.0.0.1')
   .option('-p, --port <n>', 'The port your service is listening to, defaults to 3000', 3000)
+  .option('-r, --route <n>', 'The route path, defaults to root path', '')
   .option('-d, --destination [value]', 'The request destination url, will override "host" and "port"')
   .parse(process.argv);
 
@@ -37,7 +38,8 @@ if (program.location) {
 }
 var xml = fs.readFileSync(__dirname + '/../test/wx_' + t + '.xml', 'utf-8');
 var token = program.token || 'keyboardcat123';
-var server = program.url || 'http://' + program.host + ':' + program.port + '/';
+var server = program.destination || 'http://' + program.host + ':' + program.port + '/' + program.route;
+console.log('Target: %s',server)
 
 function run_text(){
   program.prompt('the text: ', function(text) {
