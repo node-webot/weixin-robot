@@ -18,7 +18,7 @@ function makeQ(token) {
 }
 
 module.exports = {
-  xml2json: require('xml2json'),
+  parser: require('../lib/parser'),
   should: require('should'),
   request: require('../lib/request'),
   makeAuthQuery: makeQ
