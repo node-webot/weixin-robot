@@ -61,7 +61,17 @@ robot.route({
     'boy': function(info, action, next){
       return next(null, '猜对了')
     },
-    'both': '对你无语...'
+    'both': '对你无语...',
+    //重试机制
+    '/.*/': function(info, action){
+      var count = _.isNumber(action.retryCount) ? action.retryCount : 3
+      if(count>1){
+        action.retryCount = count - 1;
+        robot.wait(info.from, action);
+        return '还有' + action.retryCount + '次机会,再猜.'
+      }
+      return "有够笨的";
+    }
   }
   
   //也可以是直接的函数,同action: function(info, action, [cb]) 
@@ -82,10 +92,10 @@ robot.route({
   // }]
 });
 
-//与waiter联动,等待下一次回复,试着发送 key nde 然后再回复Y或其他
+//与已有action联动,试着发送 key nde 然后再回复Y或其他
 robot.route({
   name: 'suggest_keyword',
-  description: '与waiter联动,等待下一次回复,试着发送「key nde」  然后再回复Y或其他',
+  description: '与已有action联动,试着发送「key nde」  然后再回复Y或其他',
   pattern: /^(key)\s*(.+)/i,
   handler: function(info, action, next){
     //pattern的解析结果将放在query里
@@ -94,16 +104,20 @@ robot.route({
       robot.wait(info.from,{
         name: 'try_waiter_suggest',
         data: q,
-        handler: function(next_info, current_action, next_handler){
+        handler: function(next_info, next_action, next_handler){
           if(next_info.text.match(/y/i)){
-            next_handler(null, '输入变更为: node');
+            //next_handler(null, '输入变更为: node');
+            info.text = 'nodejs'
+            //调用已有的handler
+            Robot.exec(info, robot.get('search'), next_handler);
           }else{
-            next_handler(null, '仍然输入:'+ current_action.data);
+            //next_handler(null, '仍然输入:'+ next_action.data);
+            Robot.exec(info, robot.get('search'), next_handler);
           }
         }
       });
       //返回下一步动作提示
-      var tip = '你输入了:' + q + '，似乎拼写错误。要我帮你更改为「node」吗?';
+      var tip = '你输入了:' + q + '，似乎拼写错误。要我帮你更改为「nodejs」并搜索吗?';
       return next(null, tip)
     }
   }
@@ -144,7 +158,7 @@ robot.route({
         },
         //function也支持为纯文字,直接返回
         'quit': 'ok, quit'
-      })
+      }, 'search')
       //返回下一步动作提示
       //TODO:改为调用handler
       var tip = '你尝试搜索' + q + '，但其实搜「伍佰」得到的信息会更有用一点。要我帮你搜索「伍佰」吗?';
@@ -204,7 +218,6 @@ app.post('/', checkSig, webot.bodyParser(), function(req, res, next) {
         // 否则按 info.reply 发送文字消息
         info.items = ret;
       } else if (typeof ret == 'string') {
-        log('xx',ret)
         info.reply = ret;
       }
     }else{
