@@ -9,10 +9,11 @@
   ],
   "dependencies": {
     "debug": ">= 0.0.1",
-    "xml2js": ">= 0.2.2"
+    "xml2js": ">= 0.2.2",
+    "underscore": ">=1.4",
+    "wind": ">= 0.7"
   },
   "devDependencies": {
-    "xml2json": ">= 0.3.2",
     "commander": "*",
     "prettyjson": "*",
     "express": "*",
