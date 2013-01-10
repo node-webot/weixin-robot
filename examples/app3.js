@@ -114,7 +114,7 @@ robot.route({
 robot.route({
   name: 'search', 
   pattern: /^(搜索?|search|s\b)\s*(.+)/i,
-  handler: function(info, next){
+  handler: function(info, action, next){
     //pattern的解析结果将放在query里
     var q = info.query[2];
     var do_search = require('./support/search');
@@ -125,40 +125,51 @@ robot.route({
     };
     if (q in thesaurus) {
       robot.wait(info.from,{
-        name: 'try_another_waiter',
-        replies: {
-          //key支持正则式
-          '/^y$/i': function(next_info, next_handler){
-            log('search: %s', thesaurus[q])
-            do_search({ q: thesaurus[q] }, function(err, reply){
-              return next_handler(null, reply);
-            });
-          },
-          '/^n$/i': function(next_info, next_handler){
-            log('search: %s', q)
-            do_search({ q: q }, function(err, reply){
-              return next_handler(null, reply);
-            });
-          },
-          //key也支持纯文字,handler也可以没有callback,直接返回.
-          'bye': function(next_info){
-            return 'see you'
-          },
-          //function也支持为纯文字,直接返回
-          'quit': 'ok, quit'
-        }
+        //key支持正则式
+        '/^y$/i': function(next_info, next_action, next_handler){
+          log('search: %s', thesaurus[q])
+          do_search({ q: thesaurus[q] }, function(err, reply){
+            return next_handler(null, reply);
+          });
+        },
+        '/^n$/i': function(next_info, next_action, next_handler){
+          log('search: %s', q)
+          do_search({ q: q }, function(err, reply){
+            return next_handler(null, reply);
+          });
+        },
+        //key也支持纯文字,handler也可以没有callback,直接返回.
+        'bye': function(next_info){
+          return 'see you'
+        },
+        //function也支持为纯文字,直接返回
+        'quit': 'ok, quit'
       })
       //返回下一步动作提示
+      //TODO:改为调用handler
       var tip = '你尝试搜索' + q + '，但其实搜「伍佰」得到的信息会更有用一点。要我帮你搜索「伍佰」吗?';
       return next(null, tip)
     }else{
-      log('seraching: ',q)
+      log('searching: ',q)
       // 从某个地方搜索到数据...
       return do_search({ q: q }, next);
     }
   }
 });
 
+//支持location消息,已经提供了geo转地址的工具，使用的是高德地图的API
+//http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
+robot.route({
+  name: 'check_location', 
+  pattern: function(info){
+    return info.type == 'location'
+  },
+  handler: function(info, action, next){
+    webot.geo2loc(info.param, function(loc_info) {
+      next(null, loc_info ? '你正在' + loc_info['city'] : '我不知道你在什么地方。');
+    });
+  }
+});
 
 // 你在微信公众平台填写的 token
 var WX_TOKEN = 'keyboardcat123';
