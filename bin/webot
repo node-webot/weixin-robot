@@ -11,7 +11,7 @@ var fs = require('fs');
 var bootstrap = require('../test/bootstrap');
 var makeQ = bootstrap.makeAuthQuery;
 var request = bootstrap.request;
-var xml2json = bootstrap.xml2json;
+var parser = bootstrap.parser;
 
 
 var program = require('commander');
@@ -45,15 +45,14 @@ function run_text(){
   program.prompt('the text: ', function(text) {
     var text = text || '你好';
     var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-      var xml;
-      try {
-        xml = JSON.parse(xml2json.toJson(ret)).xml;
-      } catch (e) {
-        console.log(err, ret);
-      }
-      console.log(prettyjson.render(xml));
-      console.log('\n');
-      run();
+      parser(ret, null, function(err, ret){
+        if(err){
+          console.log(err, ret);
+        }
+        console.log(prettyjson.render(ret));
+        console.log('\n');
+        run();
+      });
     });
     req.write(xml.replace('{text}', text));
     req.end();
@@ -69,16 +68,14 @@ function run_geo(){
       text = text || '113.24';
       console.log('使用纬度' + text);
       var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-        var xml;
-        try {
-          xml = JSON.parse(xml2json.toJson(ret)).xml;
-        } catch (e) {
-          console.log(err, ret);
-        }
-        var xml = JSON.parse(xml2json.toJson(ret)).xml;
-        console.log(prettyjson.render(xml));
-        console.log('\n');
-        run();
+        parser(ret, null, function(err, ret){
+          if(err){
+            console.log(err, ret);
+          }
+          console.log(prettyjson.render(ret));
+          console.log('\n');
+          run();
+        });
       });
       req.write(t.replace('{y}', text));
       req.end();
@@ -90,15 +87,14 @@ function run_image(){
   program.prompt('picUrl: ', function(picUrl) {
     var picUrl = picUrl || 'http://www.baidu.com/img/baidu_sylogo1.gif';
     var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-      var xml;
-      try {
-        xml = JSON.parse(xml2json.toJson(ret)).xml;
-      } catch (e) {
-        console.log(err, ret);
-      }
-      console.log(prettyjson.render(xml));
-      console.log('\n');
-      run();
+      parser(ret, null, function(err, ret){
+        if(err){
+          console.log(err, ret);
+        }
+        console.log(prettyjson.render(ret));
+        console.log('\n');
+        run();
+      });
     });
     req.write(xml.replace('{picUrl}', picUrl));
     req.end();
