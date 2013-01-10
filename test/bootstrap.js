@@ -21,5 +21,6 @@ module.exports = {
   parser: require('../lib/parser'),
   should: require('should'),
   request: require('../lib/request'),
+  root: 'http://0.0.0.0:3000/',
   makeAuthQuery: makeQ
 };
