@@ -8,8 +8,8 @@ var _ = require('underscore')._
 
 //在真实环境中使用时请使用 var webot = require('weixin-robot');
 var webot = require('../');
-var Robot = require('../lib/robot3').Robot;
-robot = new Robot()
+var Robot = require('../lib/robot3');
+robot = new Robot();
 
 //用文本匹配
 robot.route({
@@ -62,12 +62,15 @@ robot.route({
       return next(null, '猜对了')
     },
     'both': '对你无语...',
-    //重试机制
-    '/.*/': function(info, action){
+    //特殊的匹配,所有匹配不成功后使用它
+    '*': function(info, action){
       var count = _.isNumber(action.retryCount) ? action.retryCount : 3
       if(count>1){
+        //重试机制
         action.retryCount = count - 1;
-        robot.wait(info.from, action);
+        //TODO: 有BUG，这个action只是单个回复，而不是整个replies, 考虑加一个afterreplies回调
+        // robot.wait(info.from, action);
+        robot.wait(info.from, robot.last_wait_rules);
         return '还有' + action.retryCount + '次机会,再猜.'
       }
       return "有够笨的";
@@ -101,9 +104,9 @@ robot.route({
     //pattern的解析结果将放在query里
     var q = info.query[2];
     if(q == 'nde'){
+      //另一种replies的方式
       robot.wait(info.from,{
         name: 'try_waiter_suggest',
-        data: q,
         handler: function(next_info, next_action, next_handler){
           if(next_info.text.match(/y/i)){
             //next_handler(null, '输入变更为: node');
@@ -120,6 +123,7 @@ robot.route({
       var tip = '你输入了:' + q + '，似乎拼写错误。要我帮你更改为「nodejs」并搜索吗?';
       return next(null, tip)
     }
+    return next(null, '你输入了:' + q)
   }
 });
 
@@ -127,6 +131,7 @@ robot.route({
 //试着发送 s 500 然后再回复Y或n或bye或quit
 robot.route({
   name: 'search', 
+  description: '试着发送「s 500」然后Y或N, 或者发送「s 任何关键词」',
   pattern: /^(搜索?|search|s\b)\s*(.+)/i,
   handler: function(info, action, next){
     //pattern的解析结果将放在query里
@@ -175,6 +180,7 @@ robot.route({
 //http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
 robot.route({
   name: 'check_location', 
+  description: '根据经纬度查询你的位置',
   pattern: function(info){
     return info.type == 'location'
   },
