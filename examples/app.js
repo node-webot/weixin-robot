@@ -1,22 +1,23 @@
 var express = require('express');
 var debug = require('debug');
-var log = debug('weixin:example:log');
+var log = debug('webot:example');
 
 var _ = require('underscore')._
 
-//在真实环境中使用时请使用 var webot = require('weixin-robot');
-var webot = require('../');
-var robot = new webot.Robot();
+//在真实环境中使用时请使用 
+//var WeBot = require('weixin-robot');
+var WeBot = require('../');
+var Robot = new WeBot.Robot();
 
 //用文本匹配
-robot.route({
+Robot.set({
   name: 'help', 
   description: 'pattern可以用字符串匹配,试着发送「help」',
   pattern: 'help',
   //指定如何回复
   handler: function(info, action, next) {
     var i = 1;
-    var reply = _.chain(robot.get()).map(function(action){
+    var reply = _.chain(Robot.get()).map(function(action){
       return (i++) + ') ' + (action.description||action.name)
     }).join('\n').value()
     next(null, '可用的指令:\n'+ reply);
@@ -24,7 +25,7 @@ robot.route({
 });
 
 //用正则式匹配
-robot.route({
+Robot.set({
   name: 'say_hi', 
   description: 'pattern可以用正则表达式匹配,试着发送「hi」',
   pattern: /^Hi/i,
@@ -35,7 +36,7 @@ robot.route({
 });
 
 //可以用函数匹配
-robot.route({
+Robot.set({
   name: 'pattern_fn',
   description: 'pattern可以用函数匹配,试着发送「who」',
   pattern: function(info){
@@ -47,7 +48,7 @@ robot.route({
 });
 
 //与waiter联动,等待下一次回复,试着发送 「 sex? 」 然后再回复girl或boy或both或其他
-robot.route({
+Robot.set({
   name: 'ask_sex',
   description: '与waiter联动,等待下一次回复,试着发送 「 sex? 」 然后再回复girl或boy或both或其他',
   pattern: 'sex?',
@@ -66,8 +67,8 @@ robot.route({
         //重试机制
         action.retryCount = count - 1;
         //TODO: 有BUG，这个action只是单个回复，而不是整个replies, 考虑加一个afterreplies回调
-        // robot.wait(info.from, action);
-        robot.wait(info.from, robot.last_wait_rules);
+        // Robot.wait(info.from, action);
+        Robot.wait(info.from, Robot.last_wait_rules);
         return '还有' + action.retryCount + '次机会,再猜.'
       }
       return "有够笨的";
@@ -93,7 +94,7 @@ robot.route({
 });
 
 //与已有action联动,试着发送 key nde 然后再回复Y或其他
-robot.route({
+Robot.set({
   name: 'suggest_keyword',
   description: '与已有action联动,试着发送「key nde」  然后再回复Y或其他',
   pattern: /^(key)\s*(.+)/i,
@@ -102,17 +103,17 @@ robot.route({
     var q = info.query[2];
     if(q == 'nde'){
       //另一种replies的方式
-      robot.wait(info.from,{
+      Robot.wait(info.from,{
         name: 'try_waiter_suggest',
         handler: function(next_info, next_action, next_handler){
           if(next_info.text.match(/y/i)){
             //next_handler(null, '输入变更为: node');
             info.text = 'nodejs'
             //调用已有的handler
-            Robot.exec(info, robot.get('search'), next_handler);
+            Robot.exec(info, Robot.get('search'), next_handler);
           }else{
             //next_handler(null, '仍然输入:'+ next_action.data);
-            Robot.exec(info, robot.get('search'), next_handler);
+            Robot.exec(info, Robot.get('search'), next_handler);
           }
         }
       });
@@ -126,7 +127,7 @@ robot.route({
 
 //另一种与waiter联动的方式
 //试着发送 s 500 然后再回复Y或n或bye或quit
-robot.route({
+Robot.set({
   name: 'search', 
   description: '试着发送「s 500」然后Y或N, 或者发送「s 任何关键词」',
   pattern: /^(搜索?|search|s\b)\s*(.+)/i,
@@ -140,7 +141,7 @@ robot.route({
        '500': '伍佰'
     };
     if (q in thesaurus) {
-      robot.wait(info.from,{
+      Robot.wait(info.from,{
         //key支持正则式
         '/^y$/i': function(next_info, next_action, next_handler){
           log('search: %s', thesaurus[q])
@@ -175,21 +176,21 @@ robot.route({
 
 //支持location消息,已经提供了geo转地址的工具，使用的是高德地图的API
 //http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
-robot.route({
+Robot.set({
   name: 'check_location', 
   description: '根据经纬度查询你的位置',
   pattern: function(info){
     return info.isLocation();
   },
   handler: function(info, action, next){
-    webot.geo2loc(info, function(loc_info) {
+    WeBot.geo2loc(info, function(loc_info) {
       next(null, loc_info ? '你正在' + loc_info['city'] : '我不知道你在什么地方。');
     });
   }
 });
 
 //图片
-robot.route({
+Robot.set({
   name: 'check_image', 
   description: '获取用户发送的图片',
   pattern: function(info){
@@ -201,6 +202,8 @@ robot.route({
 });
 
 // 你在微信公众平台填写的 token
+// 测试用的微信帐号: weixin_bot
+// 测试地址: webot.cloudfoundry.com
 var WX_TOKEN = 'keyboardcat123';
 
 // 启动服务
@@ -208,7 +211,7 @@ var app = express();
 app.enable('trust proxy');
 
 // 检查请求权限的 middleware
-var checkSig = webot.checkSig(WX_TOKEN);
+var checkSig = WeBot.checkSig(WX_TOKEN);
 
 app.get('/', checkSig);
 
@@ -217,27 +220,19 @@ app.get('/', checkSig);
 // {
 //   'keepBlank': false // 是否保留消息头尾的空白字符，默认为 undefined
 // }
-app.post('/', checkSig, webot.bodyParser(), function(req, res, next) {
+app.post('/', checkSig, WeBot.bodyParser(), function(req, res, next) {
   var info = req.wx_data;
   
-  log('got req msg:', info);
+  log('got req msg: %j', info);
 
   //机器人根据请求提供回复
-  //具体回复规则由 robot.route() 和 robot.wait() 定义
-  robot.reply(info, function(err, ret) {
-    log('got reply msg: %s, %s', err, ret);
-    if(ret){
-      info.reply = ret;
-      // if (ret instanceof Array) {
-      //   // 在 app 层决定如何处理 robot 返回的内容
-      //   // 如果 info.items 为一个数组，则发送图文消息
-      //   // 否则按 info.reply 发送文字消息
-      //   info.items = ret;
-      // } else if (typeof ret == 'string') {
-      //   info.reply = ret;
-      // }
+  //具体回复规则由 Robot.set() 和 Robot.wait() 定义
+  Robot.reply(info, function(err, result) {
+    log('got reply msg: %s, %s', err, result);
+    if(err){
+      info.reply = WeBot.STATUS_MSG[String(err)] || WeBot.STATUS_MSG['500']
     }else{
-      info.reply = err;
+      info.reply = result || WeBot.STATUS_MSG['404'] ;
     }
     //返回消息,必须是XML
     res.type('xml');
@@ -246,9 +241,9 @@ app.post('/', checkSig, webot.bodyParser(), function(req, res, next) {
 });
 
 // 图文列表的属性对应关系
-// 有时候你返回给 webot.makeMessage 的 info.items 列表，
+// 有时候你返回给 WeBot.makeMessage 的 info.items 列表，
 // 里面的对象并不使用标准键值，然后又不想自己用 map 处理
-webot.set('article props', {
+WeBot.set('article props', {
   'pic': 'image',
   'url': 'uri',
   'desc': 'description',

@@ -1,6 +1,6 @@
 {
   "name": "weixin-robot",
-  "version": "0.0.6",
+  "version": "0.1.1",
   "homepage": "http://ktmud.github.com/weixin-robot/",
   "repository": "git://github.com/ktmud/weixin-robot.git",
   "description": "微信公众平台开放消息接口机器人",
