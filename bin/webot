@@ -44,8 +44,11 @@ console.log('Target: %s',server)
 function run_text(){
   program.prompt('the text: ', function(text) {
     var text = text || '你好';
-    var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-      parser(ret, null, function(err, ret){
+    var req = request.post({
+      url: server,
+      qs: makeQ(token)
+    }, function(err, res, body) {
+      parser(body, null, function(err, ret){
         if(err){
           console.log(err, ret);
         }
@@ -67,8 +70,11 @@ function run_geo(){
     program.prompt('y:', function(text) {
       text = text || '113.24';
       console.log('使用纬度' + text);
-      var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-        parser(ret, null, function(err, ret){
+      var req = request.post({
+        url: server,
+        qs: makeQ(token)
+      }, function(err, res, body) {
+        parser(body, null, function(err, ret){
           if(err){
             console.log(err, ret);
           }
@@ -86,8 +92,11 @@ function run_geo(){
 function run_image(){
   program.prompt('picUrl: ', function(picUrl) {
     var picUrl = picUrl || 'http://www.baidu.com/img/baidu_sylogo1.gif';
-    var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-      parser(ret, null, function(err, ret){
+    var req = request.post({
+      url: server,
+      qs: makeQ(token)
+    }, function(err, res, body) {
+      parser(body, null, function(err, ret){
         if(err){
           console.log(err, ret);
         }

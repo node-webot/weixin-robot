@@ -11,26 +11,34 @@ describe('Authorize', function() {
     var q = makeQ();
     q.echostr = 'abc';
     it('should pass good', function(done) {
-      request(url, q, function(err, ret) {
+      request.get({
+        url: url, 
+        qs: q
+      }, function(err, res, body) {
         should.not.exist(err);
-        should.exist(ret) && ret.should.equal(q.echostr);
+        should.exist(body) && body.should.equal(q.echostr);
         done();
       });
     });
     it('should block bad', function(done) {
       q.timestamp = '';
-      request(url, q, function(err, ret) {
-        should.exist(err) && err.should.be(403);
-        should.not.exist(ret);
+      request.get({
+        url: url, 
+        qs: q
+      },function(err, res, body){
+        should.equal(res.statusCode, 403);
         done();
       });
     });
   });
   describe('POST', function(){
     it('should block bad', function(done) {
-      request(url , function(err, ret) {
-        should.exist(err) && err.should.be(403);
-        should.not.exist(ret);
+      request.get({
+        url: url
+      }, function(err, res, body) {
+        should.equal(res.statusCode, 403);
+        //should.exist(err) && err.should.be(403);
+        //should.not.exist(body);
         done();
       });
     });
