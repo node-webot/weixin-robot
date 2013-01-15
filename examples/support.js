@@ -49,12 +49,14 @@ exports.geo2loc = function geo2loc(info, cb){
 
 /**
  * 搜索百度
+ * 
  * @param  {String}   keyword 关键词
  * @param  {Function} cb            回调函数
  * @param  {Error}    cb.err        错误信息
  * @param  {String}   cb.result     查询结果
  */
 exports.search = function(keyword, cb){
+  log('searching: ' + keyword)
   var options = {
     url: 'http://www.baidu.com/s',
     qs: {
@@ -103,4 +105,16 @@ exports.search = function(keyword, cb){
     // 则会生成图文列表
     return cb(null, result)
   })
+}
+
+/**
+ * 下载图片
+ * 
+ * 注意:只是简陋的实现,不负责检测下载是否正确,实际应用还需要检查statusCode.
+ * @param  {String} url  目标网址
+ * @param  {String} path 保存路径
+ */
+exports.download = function(url, path){
+  log('downloading %s to path', url, path)
+  request(url).pipe(require('fs').createWriteStream(path));
 }

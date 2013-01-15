@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 
-/*
-* Send test text message
-*/
 var prettyjson = require('prettyjson');
 var color = require('color');
 var readline = require('readline');
 var fs = require('fs');
 
+var _ = require('underscore')._
+
 var bootstrap = require('../test/bootstrap');
 var makeQ = bootstrap.makeAuthQuery;
 var request = bootstrap.request;
 var parser = bootstrap.parser;
-
 
 var program = require('commander');
 
@@ -36,29 +34,54 @@ if (program.location) {
   t = 'image';
   run = run_image;
 }
+
 var xml = fs.readFileSync(__dirname + '/../test/wx_' + t + '.xml', 'utf-8');
 var token = program.token || 'keyboardcat123';
 var server = program.destination || 'http://' + program.host + ':' + program.port + '/' + program.route;
-console.log('Target: %s',server)
+console.log('>Target: %s',server)
+
+/**
+ * 组装querystring
+ */
+var makeAuthQuery = function(token){
+  token = token || 'keyboardcat123';
+  var q = {
+    timestamp: new Date().getTime(),
+    nonce: parseInt((Math.random() * 10e10), 10)
+  }
+  var s = [token, q.timestamp, q.nonce].sort().join('');
+  q.signature = require('crypto').createHash('sha1').update(s).digest('hex');
+  return q;
+}
+
+/**
+ * 发送请求
+ * @param  {String} content post的内容
+ */
+var sendRequest = function(content){
+  request.post({
+    url: server,
+    qs: makeAuthQuery(token),
+    body: content
+  }, function(err, res, body){
+    var xml2js = require('xml2js');
+    var xmlParser = new xml2js.Parser();
+    xmlParser.parseString(body, function(err, result){
+      if (err || !result || !result.xml){
+        console.log(err, result);
+      }else{
+        console.log(prettyjson.render(result.xml));
+        console.log('\n');
+      }
+      run();
+    })
+  });
+}
 
 function run_text(){
-  program.prompt('the text: ', function(text) {
-    var text = text || '你好';
-    var req = request.post({
-      url: server,
-      qs: makeQ(token)
-    }, function(err, res, body) {
-      parser(body, null, function(err, ret){
-        if(err){
-          console.log(err, ret);
-        }
-        console.log(prettyjson.render(ret));
-        console.log('\n');
-        run();
-      });
-    });
-    req.write(xml.replace('{text}', text));
-    req.end();
+  program.prompt('the text: ', function(text){
+    var text = text || 'help';
+    sendRequest(xml.replace('{text}', text))
   });
 }
 
@@ -66,25 +89,11 @@ function run_geo(){
   program.prompt('x: ', function(text) {
     text = text || '23.08';
     var t = xml.replace('{x}', text);
-    console.log('使用经度' + text);
+    console.log('使用经度: ' + text);
     program.prompt('y:', function(text) {
       text = text || '113.24';
-      console.log('使用纬度' + text);
-      var req = request.post({
-        url: server,
-        qs: makeQ(token)
-      }, function(err, res, body) {
-        parser(body, null, function(err, ret){
-          if(err){
-            console.log(err, ret);
-          }
-          console.log(prettyjson.render(ret));
-          console.log('\n');
-          run();
-        });
-      });
-      req.write(t.replace('{y}', text));
-      req.end();
+      console.log('使用纬度: ' + text);
+      sendRequest(t.replace('{y}', text));
     });
   });
 }
@@ -92,21 +101,8 @@ function run_geo(){
 function run_image(){
   program.prompt('picUrl: ', function(picUrl) {
     var picUrl = picUrl || 'http://www.baidu.com/img/baidu_sylogo1.gif';
-    var req = request.post({
-      url: server,
-      qs: makeQ(token)
-    }, function(err, res, body) {
-      parser(body, null, function(err, ret){
-        if(err){
-          console.log(err, ret);
-        }
-        console.log(prettyjson.render(ret));
-        console.log('\n');
-        run();
-      });
-    });
-    req.write(xml.replace('{picUrl}', picUrl));
-    req.end();
+    console.log('发送图片: ' + picUrl);
+    sendRequest(xml.replace('{picUrl}', picUrl));
   });
 }
 run();

@@ -4,75 +4,108 @@ var log = debug('webot:example');
 var _ = require('underscore')._
 var search = require('./support').search
 var geo2loc = require('./support').geo2loc
+var download = require('./support').download
 
 /**
  * 初始化路由规则
  */
-module.exports = exports = function(robot){
-  //用文本匹配
-  robot.set({
-    name: 'help', 
-    description: 'pattern可以用字符串匹配,试着发送「help」',
-    pattern: 'help',
-    //指定如何回复
-    handler: function(info, action, next) {
-      var i = 1;
-      var reply = _.chain(robot.get()).map(function(action){
-        return (i++) + ') ' + (action.description||action.name)
-      }).join('\n').value()
-      next(null, '可用的指令:\n'+ reply);
-    }
-  });
+module.exports = exports = function(webot){
 
-  //用正则式匹配
-  robot.set({
-    name: 'say_hi', 
-    description: 'pattern可以用正则表达式匹配,试着发送「hi」',
-    pattern: /^Hi/i,
+  //设置一条规则
+  webot.set(/^(help|帮助|\?)$/i, function(info, action){
+    action.description = 'help'
+
+    var reply = _.chain(webot.get()).filter(function(action){
+      return action.description
+    }).map(function(action){
+      return '> ' + action.description
+    }).join('\n').value()
+    
+    return '可用的指令:\n'+ reply;
+  })
+
+  //可以通过回调处理,如果返回null则执行下一个action
+  webot.set(/.*/i, function(info, action, next){
+    log('can load sth from db, then go next action')
+    //info.text = 'who'
+    return next(null);
+    //或 return null;
+  })
+
+  //也接受object参数
+  webot.set({
+    name: 'who_are_you',
+    description: 'who?',
+    //pattern可以是regexp或字符串(模糊匹配)
+    pattern: /who|你是谁?\??/i,
+    //回复handler也可以直接是字符串
+    handler: '我是神马机器人'
+  })
+
+  //正则匹配后的匹配组存在info.query中
+  webot.set({
+    name: 'your_name',
+    description: 'i am [enter_your_name]',
+    pattern: /^(my name is|i am|我(的名字)?(是|叫)?)\s*(.*)$/i,
+    handler: function(info, action){
+      return '你好,' + info.query[2]
+    }
+  })
+
+  //一次性加多个吧
+  webot.set([{
+    name: 'morning',
+    description: 'good morning',
+    pattern: /^(早上?好?|(good )?moring)[啊\!！\.。]*$/i,
+    //handler也可以是异步的
+    handler: function(info, action){
+      var d = new Date();
+      var h = d.getHours();
+      if (h < 3) return '[嘘] 我这边还是深夜呢，别吵着大家了';
+      if (h < 5) return '这才几点钟啊，您就醒了？';
+      if (h < 7) return '早啊官人！您可起得真早呐~ 给你请安了！\n 今天想参加点什么活动呢？';
+      if (h < 9) return 'Morning, sir! 新的一天又开始了！您今天心情怎么样？';
+      if (h < 12) return '这都几点了，还早啊...';
+      if (h < 14) return '人家中午饭都吃过了，还早呐？';
+      if (h < 17) return '如此美好的下午，是很适合出门逛逛的';
+      if (h < 21) return '早，什么早？找碴的找？';
+      if (h >= 21) return '您还是早点睡吧...';
+    }
+  },{
+    name: 'time',
+    description: 'time',
+    pattern: /(几点了|time)\??/,
     handler: function(info) {
-      //回复的另一种方式
-      return '你也好哈';
+      var d = new Date();
+      var h = d.getHours();
+      var t = '现在是北京时间' + h + '点' + d.getMinutes() + '分';
+      if (h < 4 || h > 22) return t + '，夜深了，早点睡吧 [月亮]';
+      if (h < 6) return t + '，您还是再多睡会儿吧';
+      if (h < 9) return t + '，又是一个美好的清晨呢，今天准备去哪里玩呢？';
+      if (h < 12) return t + '，一日之计在于晨，今天要做的事情安排好了吗？';
+      if (h < 15) return t + '，午后的冬日是否特别动人？';
+      if (h < 19) return t + '，又是一个充满活力的下午！今天你的任务完成了吗？';
+      if (h <= 22) return t + '，这样一个美好的夜晚，有没有去看什么演出？';
+      return t;
     }
-  });
+  }]);
 
-  //可以用函数匹配
-  robot.set({
-    name: 'pattern_fn',
-    description: 'pattern可以用函数匹配,试着发送「who」',
-    pattern: function(info){
-      return info.text == 'who'
-    },
-    handler: function(info, action, next){
-      next(null, '我是猪...');
-    }
-  });
-
-  //与waiter联动,等待下一次回复,试着发送 「 sex? 」 然后再回复girl或boy或both或其他
-  var replies={
-    '/^g(irl)?\\??$/i': '猜错',
-    'boy': function(info, action, next){
-      return next(null, '猜对了')
-    },
-    'both': '对你无语...',
-    //特殊的匹配,所有匹配不成功后使用它
-    '*': function(info, action){
-      var count = _.isNumber(action.retryCount) ? action.retryCount : 3
-      if(count>1){
-        //重试机制
-        action.retryCount = count - 1;
-        robot.rewait(info.from);
-        return '还有' + action.retryCount + '次机会,再猜.'
-      }
-      return "有够笨的";
-    }
-  }
-  robot.set({
+  //等待下一次回复
+  webot.set({
     name: 'ask_sex',
-    description: '与waiter联动,等待下一次回复,试着发送 「 sex? 」 然后再回复girl或boy或both或其他',
-    pattern: 'sex?',
-    handler: 'you guess',
-    //下次回复动作,object格式,key为pattern,value为handler
-    replies: replies
+    description: '发送: sex? ,然后再回复girl或boy或both或其他',
+    pattern: /^sex\??$/i,
+    handler: '你猜猜看',
+    //下次回复动作,replies,可以是任何能转换为action数组的对象,如Object,Array,String,Function等
+    //object格式,key为pattern,value为handler, 注意object是没有顺序的
+    replies: {
+      //正则作为key的时候,注意要转义
+      '/^g(irl)?\\??$/i': '猜错',
+      'boy': function(info, action, next){
+        return next(null, '猜对了')
+      },
+      'both': '对你无语...'
+    }
     
     //也可以是直接的函数,同action: function(info, action, [cb]) 
     // replies: function(info, action){
@@ -91,92 +124,88 @@ module.exports = exports = function(robot){
     //   handler: '对你无语...'
     // }]
   });
+  
+  //也可以这样wait,并且rewait
+  webot.set({
+    name: 'guest_game',
+    description: 'game',
+    pattern: 'game',
+    handler: function(info, action){
+      //等待下一次回复
+      var retryCount = 3
+      var num = _.random(1,9);
+      log('answer is: ' + num);
+      webot.wait(info.user, function(next_info, next_action){
+        var text = Number(next_info.text);
+        if(text){
+          if(text == num){
+            return '你真聪明!'
+          }else if(retryCount > 1){
+            retryCount--;
+            //重试
+            webot.rewait(info.user);
+            return (text > num ? '大了': '小了') +',还有' + retryCount + '次机会,再猜.'
+          }else{
+            return '好吧,你的IQ有点抓急'
+          }
+        }else{
+          //不是文本消息,跳过,交给下一个action
+          return null
+        }
+      })
+      return '玩玩猜数字的游戏吧, 1~9,选一个'
+    }
+  })
 
-  //与已有action联动,试着发送 key nde 然后再回复Y或其他
-  robot.set({
+  webot.set({
     name: 'suggest_keyword',
-    description: '与已有action联动,试着发送「key nde」  然后再回复Y或其他',
-    pattern: /^(key)\s*(.+)/i,
-    handler: function(info, action, next){
-      //pattern的解析结果将放在query里
+    description: '发送: s nde ,然后再回复Y或其他',
+    pattern: /^(搜索?|search|s\b)\s*(.+)/i,
+    handler: function(info, action){
       var q = info.query[2];
       if(q == 'nde'){
-        //另一种replies的方式
-        robot.wait(info.from,{
+        webot.wait(info.user,{
           name: 'try_waiter_suggest',
           handler: function(next_info, next_action, next_handler){
             if(next_info.text.match(/y/i)){
               //next_handler(null, '输入变更为: node');
-              info.text = 'nodejs'
+              //注意,这里用的是上一次的info,而不是next_info
+              next_info.text = 'nodejs'
+              next_info.query = ['' ,'' ,'nodejs']
               //调用已有的handler
-              robot.exec(info, robot.get('search'), next_handler);
+              webot.exec(next_info, webot.get('search'), next_handler);
             }else{
+              next_info.text = 'nde'
+              next_info.query = ['' ,'' ,'nde']
               //next_handler(null, '仍然输入:'+ next_action.data);
-              robot.exec(info, robot.get('search'), next_handler);
+              webot.exec(next_info, webot.get('search'), next_handler);
             }
           }
         });
-        //返回下一步动作提示
-        var tip = '你输入了:' + q + '，似乎拼写错误。要我帮你更改为「nodejs」并搜索吗?';
-        return next(null, tip)
+        return '你输入了:' + q + '，似乎拼写错误。要我帮你更改为「nodejs」并搜索吗?';
       }
-      return next(null, '你输入了:' + q)
     }
-  });
+  })
 
-  //另一种与waiter联动的方式
-  //试着发送 s 500 然后再回复Y或n或bye或quit
-  robot.set({
-    name: 'search', 
-    description: '试着发送「s 500」然后Y或N, 或者发送「s 任何关键词」',
+  //可以通过回调返回结果
+  webot.set({
+    name: 'search',
+    description: '发送 「 s 关键词 」',
     pattern: /^(搜索?|search|s\b)\s*(.+)/i,
     handler: function(info, action, next){
       //pattern的解析结果将放在query里
       var q = info.query[2];
-
-      //与waiter联动,等待下一次回复,试着发送 s 500 然后再回复Y
-      var thesaurus = {
-         '500': '伍佰'
-      };
-      if (q in thesaurus) {
-        robot.wait(info.from,{
-          //key支持正则式
-          '/^y$/i': function(next_info, next_action, next_handler){
-            log('search: %s', thesaurus[q])
-            search(thesaurus[q], function(err, reply){
-              return next_handler(null, reply);
-            });
-          },
-          '/^n$/i': function(next_info, next_action, next_handler){
-            log('search: %s', q)
-            search(q, function(err, reply){
-              return next_handler(null, reply);
-            });
-          },
-          //key也支持纯文字,handler也可以没有callback,直接返回.
-          'bye': function(next_info){
-            return 'see you'
-          },
-          //function也支持为纯文字,直接返回
-          'quit': 'ok, quit'
-        }, 'search')
-        //返回下一步动作提示
-        //TODO:改为调用handler
-        var tip = '你尝试搜索' + q + '，但其实搜「伍佰」得到的信息会更有用一点。要我帮你搜索「伍佰」吗?';
-        return next(null, tip)
-      }else{
-        log('searching: ',q)
-        // 从某个地方搜索到数据...
-        return search(q , next);
-      }
+      log('searching: ', q)
+      //从某个地方搜索到数据...
+      return search(q , next);
     }
-  });
+  })
 
   //支持location消息,已经提供了geo转地址的工具，使用的是高德地图的API
   //http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
-  robot.set({
+  webot.set({
     name: 'check_location', 
-    description: '根据经纬度查询你的位置',
+    description: '发送你的经纬度,我会查询你的位置',
     pattern: function(info){
       return info.isLocation();
     },
@@ -188,14 +217,16 @@ module.exports = exports = function(robot){
   });
 
   //图片
-  robot.set({
+  webot.set({
     name: 'check_image', 
-    description: '获取用户发送的图片',
+    description: '发送图片,我将下载它',
     pattern: function(info){
       return info.isImage()
     },
-    handler: function(info, action, next){
-      log('image url: %s', info.picUrl)
+    handler: function(info, action){
+      log('image url: %s', info.pic)
+      download(info.pic, 'image_' + new Date().getTime() + '.png')
+      return '你的图片已经保存'
     }
   });
 }
