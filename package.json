@@ -1,11 +1,12 @@
 {
   "name": "weixin-robot",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "homepage": "http://ktmud.github.com/weixin-robot/",
   "repository": "git://github.com/ktmud/weixin-robot.git",
   "description": "微信公众平台开放消息接口机器人",
   "contributors": [
-    "ktmud <jyyjcc@gmail.com> (http://ktmud.com)"
+    "ktmud <jyyjcc@gmail.com> (http://ktmud.com)",
+    "TZ <atian25@qq.com> (http://atian25.iteye.com/)"
   ],
   "dependencies": {
     "debug": ">= 0.0.1",
@@ -20,7 +21,8 @@
     "mocha": "*",
     "should": "*",
     "color": "*",
-    "chai": "*"
+    "chai": "*",
+    "request": "*"
   },
   "engines": {
     "node" : ">=0.6.0",

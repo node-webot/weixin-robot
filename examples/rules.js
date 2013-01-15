@@ -35,27 +35,30 @@ module.exports = exports = function(webot){
   //也接受object参数
   webot.set({
     name: 'who_are_you',
-    description: 'who?',
+    description: '想知道我是谁吗? 发送: who?',
     //pattern可以是regexp或字符串(模糊匹配)
     pattern: /who|你是谁?\??/i,
-    //回复handler也可以直接是字符串
-    handler: '我是神马机器人'
+    //回复handler也可以直接是字符串或数组,如果是数组则随机返回一个子元素
+    handler: ['我是神马机器人','微信机器人']
   })
 
   //正则匹配后的匹配组存在info.query中
   webot.set({
     name: 'your_name',
-    description: 'i am [enter_your_name]',
+    description: '自我介绍下吧, 发送: I am [enter_your_name]',
     pattern: /^(my name is|i am|我(的名字)?(是|叫)?)\s*(.*)$/i,
     handler: function(info, action){
       return '你好,' + info.query[2]
     }
   })
 
+  //读取dialog文件
+  webot.dialog(__dirname + '/dialog.yaml')
+
   //一次性加多个吧
   webot.set([{
     name: 'morning',
-    description: 'good morning',
+    description: '打个招呼吧, 发送: good morning',
     pattern: /^(早上?好?|(good )?moring)[啊\!！\.。]*$/i,
     //handler也可以是异步的
     handler: function(info, action){
@@ -73,7 +76,7 @@ module.exports = exports = function(webot){
     }
   },{
     name: 'time',
-    description: 'time',
+    description: '想知道几点吗? 发送: time',
     pattern: /^(几点了|time)\??$/i,
     handler: function(info) {
       var d = new Date();
@@ -128,7 +131,7 @@ module.exports = exports = function(webot){
   //也可以这样wait,并且rewait
   webot.set({
     name: 'guest_game',
-    description: 'game',
+    description: '发送: game , 玩玩猜数字的游戏吧',
     pattern: 'game',
     handler: function(info, action){
       //等待下一次回复
@@ -190,7 +193,7 @@ module.exports = exports = function(webot){
   //可以通过回调返回结果
   webot.set({
     name: 'search',
-    description: '发送 「 s 关键词 」',
+    description: '发送: s 关键词 ',
     pattern: /^(搜索?|search|s\b)\s*(.+)/i,
     handler: function(info, action, next){
       //pattern的解析结果将放在query里
@@ -251,6 +254,6 @@ module.exports = exports = function(webot){
 
   //容错
   webot.set(/.*/i, function(info, action){
-    return '你发送了「' + info.text + '」,可惜我太笨了,听不懂.'
+    return '你发送了「' + info.text + '」,可惜我太笨了,听不懂. 发送: help 查看可用的指令'
   })
 }

@@ -6,7 +6,7 @@
     "express": ">= 3.0",
     "debug": "*",
     "underscore": ">=1.4",
-    "weixin-robot": ">=0.1.1"
+    "weixin-robot": ">=0.2.1"
   },
   "repository": "",
   "author": "",
