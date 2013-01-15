@@ -74,7 +74,7 @@ module.exports = exports = function(webot){
   },{
     name: 'time',
     description: 'time',
-    pattern: /(几点了|time)\??/,
+    pattern: /^(几点了|time)\??$/i,
     handler: function(info) {
       var d = new Date();
       var h = d.getHours();
@@ -201,6 +201,25 @@ module.exports = exports = function(webot){
     }
   })
 
+
+  //超时处理
+  webot.set({
+    name: 'timeout',
+    description: '输入timeout,等待5秒后回复,会提示超时',
+    pattern: 'timeout',
+    handler: function(info, action){
+      var now = new Date().getTime()
+      webot.wait(info.user, function(next_info, next_action){
+        if(new Date().getTime() - now > 5000){
+          return '你的操作超时了,请重新输入'
+        }else{
+          return '你在规定时限里面输入了: ' + next_info.text
+        }
+      })
+      return '请等待5秒后回复'
+    }
+  })
+
   //支持location消息,已经提供了geo转地址的工具，使用的是高德地图的API
   //http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
   webot.set({
@@ -229,4 +248,9 @@ module.exports = exports = function(webot){
       return '你的图片已经保存'
     }
   });
+
+  //容错
+  webot.set(/.*/i, function(info, action){
+    return '你发送了「' + info.text + '」,可惜我太笨了,听不懂.'
+  })
 }
