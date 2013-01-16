@@ -25,10 +25,16 @@ try{
 
 log(webot)
 //启动机器人,你在微信公众平台填写的token
-webot.monitor('keyboardcat123', '/', app)
+webot.monitor('keyboardcat123', '/weixin', app)
 
 //载入路由规则
 require('./rules.js')(webot);
+
+//设置文档的路径
+app.use('/doc',express.static(__dirname+'/doc'));
+app.get('/', function(req, res, next){
+  res.redirect('/docs/index.html')
+})
 
 //微信后台只允许 80 端口，你可能需要自己做一层 proxy
 app.listen(3000, '127.0.0.1', function() {

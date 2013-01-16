@@ -17,7 +17,10 @@
 ## Install:
     npm install weixin-robot
 
+  或者访问官网: [https://github.com/ktmud/weixin-robot](https://github.com/ktmud/weixin-robot)
+
 ## QuickStart
+
 WeBot的设计目标就是让你傻瓜化的接入微信公众平台
 
     //启动服务
@@ -37,11 +40,16 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
       console.log("WeBot Start... God bless love...");
     });
 
-## 示例代码
+## 文档 && 示例代码
 
-更详细的使用可以参照:
-- [exapmles/app.js](https://github.com/ktmud/weixin-robot/blob/master/examples/app.js)
-- [exapmles/rules.js](https://github.com/ktmud/weixin-robot/blob/master/examples/rules.js) 。
+- 简单的在底部
+- 更建议看extjs格式的文档: [http://webot.cloudfoundry.com/doc/index.html#!/api/WeBot](http://webot.cloudfoundry.com/doc/index.html#!/api/WeBot)
+- 使用方式可以参照示例:
+
+  - [examples/app.js](https://github.com/ktmud/weixin-robot/blob/master/examples/app.js)
+  - [examples/rules.js](https://github.com/ktmud/weixin-robot/blob/master/examples/rules.js) 。
+
+**代码和示例里面的注释已经详细的不能再详细了!!!**
 
 
 如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/ktmud/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
