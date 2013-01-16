@@ -6,7 +6,7 @@ var makeAuthQuery = bootstrap.makeAuthQuery;
 
 var url = 'http://localhost:3000/';
 
-
+//测试鉴权
 describe('Authorize', function(){
   var q = makeAuthQuery();
   q.echostr = 'abc';

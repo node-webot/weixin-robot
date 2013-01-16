@@ -4,7 +4,9 @@ var _ = require('underscore')._
 var request = require('request')
 
 /**
- * @class Helper
+ * @class Helper 
+ *
+ * 测试辅助
  */
 
 /**

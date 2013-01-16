@@ -39,6 +39,15 @@ describe('Rule', function(){
       })
     });    
 
+    //检测fn指令
+    it('should return fn msg', function(done){
+      info.text = 'fn'
+      sendRequest(info, function(err, json){
+        detect(info, err, json, /pattern支持函数/)
+        done();
+      })
+    });
+
     //检测who指令
     it('should return who msg', function(done){
       info.text = 'who'

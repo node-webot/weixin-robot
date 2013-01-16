@@ -55,6 +55,16 @@ module.exports = exports = function(webot){
     handler: '你好,{1}'
   })
 
+  //pattern支持函数
+  webot.set({
+    name: 'pattern_fn',
+    description: 'pattern支持函数,发送: fn',
+    pattern: function(info){
+      return info.isText() && info.text=='fn'
+    },
+    handler: 'pattern支持函数'
+  })
+
   //读取dialog文件
   webot.dialog(__dirname + '/dialog.yaml')
 
