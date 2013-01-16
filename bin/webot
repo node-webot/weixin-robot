@@ -1,18 +1,11 @@
 #!/usr/bin/env node
 
-/*
-* Send test text message
-*/
 var prettyjson = require('prettyjson');
-var color = require('color');
-var readline = require('readline');
-var fs = require('fs');
+
+var _ = require('underscore')._
 
 var bootstrap = require('../test/bootstrap');
-var makeQ = bootstrap.makeAuthQuery;
-var request = bootstrap.request;
-var parser = bootstrap.parser;
-
+var makeRequest = bootstrap.makeRequest;
 
 var program = require('commander');
 
@@ -20,84 +13,62 @@ program.version('0.0.1')
   .usage('[options]')
   .option('-l, --location', 'Send a <location> (geo, latlng)')
   .option('-i, --image', 'Send a <image>, provide image url')
-  .option('-t, --token [value]', 'Provide weixin token')
+  .option('-t, --token [value]', 'Provide weixin token','keyboardcat123')
   .option('-n, --host [value]', 'Set request hostname, defaults to 127.0.0.1', '127.0.0.1')
   .option('-p, --port <n>', 'The port your service is listening to, defaults to 3000', 3000)
   .option('-r, --route <n>', 'The route path, defaults to root path', '')
   .option('-d, --destination [value]', 'The request destination url, will override "host" and "port"')
+  .option('-s, --sp [value]', 'The SP ID', 'webot')
+  .option('-u, --user [value]', 'The User ID', 'client')
   .parse(process.argv);
 
-var t = 'text';
-var run = run_text;
-if (program.location) {
-  t = 'geo';
-  run = run_geo;
-} else if (program.image) {
-  t = 'image';
-  run = run_image;
-}
-var xml = fs.readFileSync(__dirname + '/../test/wx_' + t + '.xml', 'utf-8');
-var token = program.token || 'keyboardcat123';
+//获取参数
 var server = program.destination || 'http://' + program.host + ':' + program.port + '/' + program.route;
-console.log('Target: %s',server)
+var info = {
+  sp: program.sp,
+  user: program.user,
+  type: program.location ? 'location' : (program.image ? 'image' : 'text'),
+  text: 'help'
+}
+var sendRequest = makeRequest(server, program.token);
 
-function run_text(){
-  program.prompt('the text: ', function(text) {
-    var text = text || '你好';
-    var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-      parser(ret, null, function(err, ret){
-        if(err){
-          console.log(err, ret);
-        }
-        console.log(prettyjson.render(ret));
-        console.log('\n');
-        run();
+//发送消息
+function run(){
+  if(info.type=='text'){
+    program.prompt('the text: ', function(text){
+      console.log('发送文字: %s', text);
+      console.log(sendRequest(text || 'help', cb));
+    });
+  }else if(info.type=='image'){
+    program.prompt('the pic url: ', function(pic){
+      info.pic = pic;
+      console.log('发送图片: %s', info.pic);
+      console.log(sendRequest(info, cb));
+    });
+  }else if(info.type=='location'){
+    program.prompt('x: ', function(xPos) {
+      info.xPos = xPos
+      program.prompt('y:', function(yPos) {
+        info.yPos = yPos
+        console.log('发送经度: %s, 纬度: %s', info.xPos, info.yPos);
+        console.log(sendRequest(info, cb));
       });
     });
-    req.write(xml.replace('{text}', text));
-    req.end();
-  });
+  }
 }
 
-function run_geo(){
-  program.prompt('x: ', function(text) {
-    text = text || '23.08';
-    var t = xml.replace('{x}', text);
-    console.log('使用经度' + text);
-    program.prompt('y:', function(text) {
-      text = text || '113.24';
-      console.log('使用纬度' + text);
-      var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-        parser(ret, null, function(err, ret){
-          if(err){
-            console.log(err, ret);
-          }
-          console.log(prettyjson.render(ret));
-          console.log('\n');
-          run();
-        });
-      });
-      req.write(t.replace('{y}', text));
-      req.end();
-    });
-  });
+//显示结果
+function cb(err, json){
+  if (err){
+    console.log(err, json);
+  }else{
+    console.log('回复结果:');
+    console.log(prettyjson.render(json));
+    console.log('\n');
+  }
+  run();
 }
 
-function run_image(){
-  program.prompt('picUrl: ', function(picUrl) {
-    var picUrl = picUrl || 'http://www.baidu.com/img/baidu_sylogo1.gif';
-    var req = request.build('POST ' + server, makeQ(token), function(err, ret) {
-      parser(ret, null, function(err, ret){
-        if(err){
-          console.log(err, ret);
-        }
-        console.log(prettyjson.render(ret));
-        console.log('\n');
-        run();
-      });
-    });
-    req.write(xml.replace('{picUrl}', picUrl));
-    req.end();
-  });
-}
-run();
+console.log('>Target: %s',server)
+run()
+

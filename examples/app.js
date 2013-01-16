@@ -1,92 +1,42 @@
-var url = require('url');
+/**
+ * @class WeBot 微信公众机器人的测试程序
+ * 
+ * - 公众号名称: webot
+ * - 微信号: weixin_bot
+ * - 接口地址: [http://webot.cloudfoundry.com](http://webot.cloudfoundry.com)
+ */
 
 var express = require('express');
-var debug = require('debug');
-var log = debug('wx');
+var log = require('debug')('webot.example.log')
 
-//在真实环境中使用时请使用 var webot = require('weixin-robot');
-var webot = require('../');
-var robot = webot.robot(require('./routes'), require('./waits'));
-
-var messages = {
-  '400': '听不懂你在说什么哦',
-  '503': '服务器临时出了一点问题，您稍后再来好吗'
-};
-
-// 你在微信公众平台填写的 token
-var WX_TOKEN = 'keyboardcat123';
-
-// 启动服务
+//启动服务
 var app = express();
 app.enable('trust proxy');
 
-// 检查请求权限的 middleware
-var checkSig = webot.checkSig(WX_TOKEN);
+//在真实环境中使用时请使用 
+//var webot = require('weixin-robot');
+var webot;
 
-app.get('/', checkSig);
+try{
+  webot = require('../');
+}catch(e){
+  webot = require('weixin-robot');
+}
 
-// 必须为 POST 请求添加 bodyParser
-// parser 目前可以指定的选项有：
-// {
-//   'keepBlank': false // 是否保留消息头尾的空白字符，默认为 undefined
-// }
-app.post('/', checkSig, webot.bodyParser(), function(req, res, next) {
-  var info = req.wx_data;
-  
-  console.log('收到消息:', info);
+log(webot)
+//启动机器人,你在微信公众平台填写的token
+webot.monitor('keyboardcat123', '/weixin', app)
 
-  // 返回给微信的，必须是一个 xml
-  res.type('xml');
+//载入路由规则
+require('./rules.js')(webot);
 
-  function end() {
-    // 返回消息
-    res.send(webot.makeMessage(info));
-  }
+//设置文档的路径
+app.use('/doc',express.static(__dirname+'/doc'));
+app.get('/', function(req, res, next){
+  res.redirect('/docs/index.html')
+})
 
-  if (!info) {
-    info = {
-      reply: messages['400']
-    };
-    return end();
-  }
-
-  // 机器人根据请求提供回复
-  // 具体如何回复由 router 和 waiter 提供
-  robot.reply(info, function(err, ret) {
-    if (err || !ret) {
-      // 出错之后，提示一下
-      //res.statusCode = (typeof err === 'number' ? err : 500);
-      info.reply = ret || messages[String(err)] || messages['503'];
-      // 如果标记 flag == true ，可以在微信后台的星标消息里面看到
-      //info.flag = true;
-    } else if (ret instanceof Array) {
-      // 在 app 层决定如何处理 robot 返回的内容
-      // 如果 info.items 为一个数组，则发送图文消息
-      // 否则按 info.reply 发送文字消息
-      info.items = ret;
-    } else if (typeof ret == 'string') {
-      info.reply = ret;
-    } else {
-      info.reply = messages['400'];
-    }
-    end();
-  });
-});
-
-// 图文列表的属性对应关系
-// 有时候你返回给 webot.makeMessage 的 info.items 列表，
-// 里面的对象并不使用标准键值，然后又不想自己用 map 处理
-webot.set('article props', {
-  'pic': 'image',
-  'url': 'uri',
-  'desc': 'description',
-});
-
-
-var port = process.env.PORT || 3000;
-var hostname = '127.0.0.1';
-
-// 微信后台只允许 80 端口，你可能需要自己做一层 proxy
-app.listen(port, hostname, function() {
-  log('listening on ', hostname, port);
+//微信后台只允许 80 端口，你可能需要自己做一层 proxy
+app.listen(3000, '127.0.0.1', function() {
+  log("WeBot Start... God bless love...");
 });
