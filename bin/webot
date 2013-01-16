@@ -1,16 +1,11 @@
 #!/usr/bin/env node
 
 var prettyjson = require('prettyjson');
-var color = require('color');
-var readline = require('readline');
-var fs = require('fs');
 
 var _ = require('underscore')._
 
 var bootstrap = require('../test/bootstrap');
-var makeQ = bootstrap.makeAuthQuery;
-var request = bootstrap.request;
-var parser = bootstrap.parser;
+var makeRequest = bootstrap.makeRequest;
 
 var program = require('commander');
 
@@ -18,91 +13,64 @@ program.version('0.0.1')
   .usage('[options]')
   .option('-l, --location', 'Send a <location> (geo, latlng)')
   .option('-i, --image', 'Send a <image>, provide image url')
-  .option('-t, --token [value]', 'Provide weixin token')
+  .option('-t, --token [value]', 'Provide weixin token','keyboardcat123')
   .option('-n, --host [value]', 'Set request hostname, defaults to 127.0.0.1', '127.0.0.1')
   .option('-p, --port <n>', 'The port your service is listening to, defaults to 3000', 3000)
   .option('-r, --route <n>', 'The route path, defaults to root path', '')
   .option('-d, --destination [value]', 'The request destination url, will override "host" and "port"')
+  .option('-s, --sp [value]', 'The SP ID', 'webot')
+  .option('-u, --user [value]', 'The User ID', 'client')
   .parse(process.argv);
 
-var t = 'text';
-var run = run_text;
-if (program.location) {
-  t = 'geo';
-  run = run_geo;
-} else if (program.image) {
-  t = 'image';
-  run = run_image;
-}
-
-var xml = fs.readFileSync(__dirname + '/../test/wx_' + t + '.xml', 'utf-8');
-var token = program.token || 'keyboardcat123';
+//获取参数
 var server = program.destination || 'http://' + program.host + ':' + program.port + '/' + program.route;
-console.log('>Target: %s',server)
-
-/**
- * 组装querystring
- */
-var makeAuthQuery = function(token){
-  token = token || 'keyboardcat123';
-  var q = {
-    timestamp: new Date().getTime(),
-    nonce: parseInt((Math.random() * 10e10), 10)
-  }
-  var s = [token, q.timestamp, q.nonce].sort().join('');
-  q.signature = require('crypto').createHash('sha1').update(s).digest('hex');
-  return q;
+var info = {
+  sp: program.sp,
+  user: program.user,
+  type: program.location ? 'location' : (program.image ? 'image' : 'text'),
+  text: 'help'
 }
+var sendRequest = makeRequest(server, program.token);
 
-/**
- * 发送请求
- * @param  {String} content post的内容
- */
-var sendRequest = function(content){
-  request.post({
-    url: server,
-    qs: makeAuthQuery(token),
-    body: content
-  }, function(err, res, body){
-    var xml2js = require('xml2js');
-    var xmlParser = new xml2js.Parser();
-    xmlParser.parseString(body, function(err, result){
-      if (err || !result || !result.xml){
-        console.log(err, result);
-      }else{
-        console.log(prettyjson.render(result.xml));
-        console.log('\n');
-      }
-      run();
-    })
-  });
-}
-
-function run_text(){
-  program.prompt('the text: ', function(text){
-    var text = text || 'help';
-    sendRequest(xml.replace('{text}', text))
-  });
-}
-
-function run_geo(){
-  program.prompt('x: ', function(text) {
-    text = text || '23.08';
-    var t = xml.replace('{x}', text);
-    console.log('使用经度: ' + text);
-    program.prompt('y:', function(text) {
-      text = text || '113.24';
-      console.log('使用纬度: ' + text);
-      sendRequest(t.replace('{y}', text));
+//发送消息
+function run(){
+  if(info.type=='text'){
+    program.prompt('the text: ', function(text){
+      console.log('发送文字: %s', text || 'help');
+      sendRequest(text || 'help', cb)
     });
-  });
+  }else if(info.type=='image'){
+    program.prompt('the pic url: ', function(pic){
+      info.pic = pic || 'http://www.baidu.com/img/baidu_sylogo1.gif';
+      console.log('发送图片: %s', info.pic);
+      sendRequest(info, cb);
+    });
+  }else if(info.type=='location'){
+    program.prompt('x: ', function(xPos) {
+      info.xPos = xPos || '23.08';
+      program.prompt('y:', function(yPos) {
+        info.yPos = yPos || '113.24';
+        info.scale = '1'
+        info.label = 'this is a location'
+        console.log('发送经度: %s, 纬度: %s', info.xPos, info.yPos);
+        sendRequest(info, cb);
+      });
+    });
+  }
 }
 
-function run_image(){
-  program.prompt('picUrl: ', function(picUrl) {
-    var picUrl = picUrl || 'http://www.baidu.com/img/baidu_sylogo1.gif';
-    console.log('发送图片: ' + picUrl);
-    sendRequest(xml.replace('{picUrl}', picUrl));
-  });
+//显示结果
+function cb(err, json){
+  if (err){
+    console.log(err, json);
+  }else{
+    console.log('回复结果:');
+    console.log(prettyjson.render(json));
+    console.log('\n');
+  }
+  run();
 }
-run();
+
+console.log('>Target: %s',server)
+run()
+
