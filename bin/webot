@@ -16,21 +16,22 @@ program.version('0.0.1')
   .option('-t, --token [value]', 'Provide weixin token','keyboardcat123')
   .option('-n, --host [value]', 'Set request hostname, defaults to 127.0.0.1', '127.0.0.1')
   .option('-p, --port <n>', 'The port your service is listening to, defaults to 3000', 3000)
-  .option('-r, --route <n>', 'The route path, defaults to root path', '')
+  .option('-r, --route <n>', 'The route path, defaults to root path', 'weixin')
   .option('-d, --destination [value]', 'The request destination url, will override "host" and "port"')
   .option('-s, --sp [value]', 'The SP ID', 'webot')
   .option('-u, --user [value]', 'The User ID', 'client')
   .parse(process.argv);
 
 //获取参数
-var server = program.destination || 'http://' + program.host + ':' + program.port + '/' + program.route;
+var url = program.destination || 'http://' + program.host + ':' + program.port + '/' + program.route;
 var info = {
   sp: program.sp,
   user: program.user,
   type: program.location ? 'location' : (program.image ? 'image' : 'text'),
   text: 'help'
 }
-var sendRequest = makeRequest(server, program.token);
+console.log('>Target: %s',url)
+var sendRequest = makeRequest(url, program.token);
 
 //发送消息
 function run(){
@@ -69,6 +70,5 @@ function cb(err, json){
   run();
 }
 
-console.log('>Target: %s',server)
 run()
 

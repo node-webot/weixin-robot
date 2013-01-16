@@ -4,7 +4,7 @@ var request = require('request');
 var bootstrap = require('./bootstrap');
 var makeAuthQuery = bootstrap.makeAuthQuery;
 
-var url = 'http://localhost:3000/';
+var url = bootstrap.default_url;
 
 //测试鉴权
 describe('Authorize', function(){

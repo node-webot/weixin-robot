@@ -7,3 +7,5 @@ applications:
   instances: 1
   url: webot.${target-base}
   path: .
+env:
+  DEBUG: webot.*
