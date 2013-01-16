@@ -12,7 +12,7 @@
 添加微信帐号,试试效果
 
 ![豆瓣同城微信帐号二维码：douban-event](http://i.imgur.com/ijE19.jpg)
-![微信机器人测试帐号：webot](https://raw.github.com/ktmud/weixin-robot/develop/examples/qrcode.jpg)
+![微信机器人测试帐号：webot](https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg)
 
 ## Install:
     npm install weixin-robot
