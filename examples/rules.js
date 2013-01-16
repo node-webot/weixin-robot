@@ -250,8 +250,12 @@ module.exports = exports = function(webot){
     },
     handler: function(info, action){
       log('image url: %s', info.pic)
-      download(info.pic, 'image_' + new Date().getTime() + '.png')
-      return '你的图片已经保存'
+      try{
+        download(info.pic, __dirname + '\\image_' + new Date().getTime() + '.png')
+        return '你的图片已经保存'
+      }catch(e){
+        return '下载失败: ' + e
+      }
     }
   });
 
