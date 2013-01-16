@@ -24,6 +24,11 @@ module.exports = exports = function(webot){
     return '可用的指令:\n'+ reply;
   })
 
+  //首次关注时,会收到Hello2BizUser
+  webot.set('Hello2BizUser', function(info, action){
+    return '感谢你收听webot机器人,\n回复help可以查看支持的指令.\n我们的github地址是: <a href="https://github.com/ktmud/weixin-robot">https://github.com/ktmud/weixin-robot</a>'
+  })
+
   //可以通过回调处理,如果返回null则执行下一个action
   webot.set(/.*/i, function(info, action, next){
     log('can load sth from db, then go next action')

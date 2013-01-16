@@ -2,7 +2,7 @@ var should = require('should');
 
 var bootstrap = require('./bootstrap');
 var makeRequest = bootstrap.makeRequest;
-var sendRequest = makeRequest('http://localhost:3000/', 'keyboardcat123');
+var sendRequest = makeRequest();
 
 //公用检测指令
 var detect = function(info, err, json, content){
@@ -30,6 +30,15 @@ describe('Rule', function(){
 
   //测试文本消息
   describe('text', function(){
+    //检测首次收听指令
+    it('should return first msg', function(done){
+      info.text = 'Hello2BizUser'
+      sendRequest(info, function(err, json){
+        detect(info, err, json, /感谢你收听/ )
+        done();
+      })
+    }); 
+
     //检测help指令
     it('should return help msg', function(done){
       info.text = 'help'

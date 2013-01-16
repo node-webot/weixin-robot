@@ -3,6 +3,9 @@ var xmlParser = new xml2js.Parser();
 var _ = require('underscore')._
 var request = require('request')
 
+var default_url = 'http://localhost:3000/weixin' 
+var default_token = 'keyboardcat123' 
+
 /**
  * @class Helper 
  *
@@ -14,7 +17,7 @@ var request = require('request')
  * @param {String} token 微信token
  */
 var makeAuthQuery = function(token){
-  token = token || 'keyboardcat123';
+  token = token || default_token;
   var q = {
     timestamp: new Date().getTime(),
     nonce: parseInt((Math.random() * 10e10), 10)
@@ -27,8 +30,8 @@ var makeAuthQuery = function(token){
 /**
  * @method makeRequest 获取发送请求的函数
  * 
- * @param  {String}   url   服务地址
- * @param  {Object}   token 微信token
+ * @param  {String}   url   服务地址,默认值为http://localhost:3000/weixin
+ * @param  {Object}   token 微信token,默认值为keyboardcat123
  * @return {Function} 发送请求的回调函数,签名为function(info, cb(err, result))
  * 
  * - info {Object} 要发送的内容:
@@ -67,11 +70,11 @@ var makeRequest = function(url, token){
     })
 
     var content = _.template(tpl)(info);
-
+    
     //发送请求
     request.post({
-      url: url,
-      qs: makeAuthQuery(token),
+      url: url || default_url,
+      qs: makeAuthQuery(token||default_token),
       body: content
     }, function(err, res, body){
       xmlParser.parseString(body, function(err, result){
@@ -118,5 +121,7 @@ var tpl= [
 
 module.exports = exports = {
   makeRequest: makeRequest,
-  makeAuthQuery: makeAuthQuery
+  makeAuthQuery: makeAuthQuery,
+  default_url: default_url,
+  default_token: default_token
 };
