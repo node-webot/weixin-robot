@@ -2,6 +2,7 @@
 *.log
 logs/
 tmp/
+temp/
 
 # nodejs #
 node_modules/
@@ -21,3 +22,4 @@ grails-*.zip
 *.swp
 .DS_Store
 /data/db
+jsduck.exe
