@@ -135,11 +135,11 @@ module.exports = exports = function(webot){
   webot.set({
     name: 'guest_game',
     description: '发送: game , 玩玩猜数字的游戏吧',
-    pattern: 'game',
+    pattern: /game (\d*)/,
     handler: function(info, action){
       //等待下一次回复
       var retryCount = 3
-      var num = _.random(1,9);
+      var num = Number(info.query[1]) || _.random(1,9);
       log('answer is: ' + num);
       webot.wait(info.user, function(next_info, next_action){
         var text = Number(next_info.text);
@@ -152,7 +152,7 @@ module.exports = exports = function(webot){
             webot.rewait(info.user);
             return (text > num ? '大了': '小了') +',还有' + retryCount + '次机会,再猜.'
           }else{
-            return '好吧,你的IQ有点抓急'
+            return '好吧,你的IQ有点抓急,谜底是: ' + num
           }
         }else{
           //不是文本消息,跳过,交给下一个action
@@ -251,10 +251,11 @@ module.exports = exports = function(webot){
     handler: function(info, action){
       log('image url: %s', info.pic)
       try{
-        download(info.pic, __dirname + '\\image_' + new Date().getTime() + '.png')
-        return '你的图片已经保存'
+        var path = __dirname + '\\image_' + new Date().getTime() + '.png'
+        download(info.pic, path)
+        return '你的图片已经保存到:' + path
       }catch(e){
-        return '下载失败: ' + e
+        return '图片下载失败: ' + e
       }
     }
   });

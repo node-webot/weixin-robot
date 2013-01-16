@@ -80,7 +80,7 @@ exports.search = function(keyword, cb){
 
     var result;
     if (links.length) {
-      result = '在百度搜索到以下结果：\n' + links.join('\n');
+      result = '在百度搜索:' + keyword +',得到以下结果：\n' + links.join('\n');
       result = result.replace(/\s*data-click=".*?"/gi,  '');
       result = result.replace(/\s*onclick=".*?"/gi,  '');
       result = result.replace(/\s*target=".*?"/gi,  '');

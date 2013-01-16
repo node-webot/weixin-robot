@@ -36,24 +36,22 @@ var sendRequest = makeRequest(server, program.token);
 function run(){
   if(info.type=='text'){
     program.prompt('the text: ', function(text){
-      console.log('发送文字: %s', text || 'help');
-      sendRequest(text || 'help', cb)
+      console.log('发送文字: %s', text);
+      console.log(sendRequest(text || 'help', cb));
     });
   }else if(info.type=='image'){
     program.prompt('the pic url: ', function(pic){
-      info.pic = pic || 'http://www.baidu.com/img/baidu_sylogo1.gif';
+      info.pic = pic;
       console.log('发送图片: %s', info.pic);
-      sendRequest(info, cb);
+      console.log(sendRequest(info, cb));
     });
   }else if(info.type=='location'){
     program.prompt('x: ', function(xPos) {
-      info.xPos = xPos || '23.08';
+      info.xPos = xPos
       program.prompt('y:', function(yPos) {
-        info.yPos = yPos || '113.24';
-        info.scale = '1'
-        info.label = 'this is a location'
+        info.yPos = yPos
         console.log('发送经度: %s, 纬度: %s', info.xPos, info.yPos);
-        sendRequest(info, cb);
+        console.log(sendRequest(info, cb));
       });
     });
   }

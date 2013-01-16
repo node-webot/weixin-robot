@@ -45,6 +45,8 @@ var makeAuthQuery = function(token){
  * 
  *     - err {Error} 错误消息
  *     - result {Object} 服务器回传的结果,JSON
+ *
+ * - return content {String} 返回发送的XML
  */
 var makeRequest = function(url, token){
   return function(info, cb){
@@ -54,11 +56,15 @@ var makeRequest = function(url, token){
       sp: 'webot',
       user: 'client',
       type: 'text',
-      text: 'help'
+      text: 'help',
+      pic: 'http://www.baidu.com/img/baidu_sylogo1.gif',
+      xPos: '23.08',
+      xPos: '113.24',
+      scale: '20',
+      label: 'this is a location'
     })
 
     var content = _.template(tpl)(info);
-    console.log('发送XML: %s', content)
 
     //发送请求
     request.post({
@@ -81,7 +87,7 @@ var makeRequest = function(url, token){
         }
       })
     });
-    return this;
+    return content;
   }
 }
 
