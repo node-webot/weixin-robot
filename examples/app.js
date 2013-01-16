@@ -23,9 +23,8 @@ try{
   webot = require('weixin-robot');
 }
 
-log(webot)
 //启动机器人,你在微信公众平台填写的token
-webot.monitor('keyboardcat123', '/weixin', app)
+webot.monitor('keyboardcat123', '/', app)
 
 //载入路由规则
 require('./rules.js')(webot);
