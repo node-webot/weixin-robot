@@ -14,7 +14,7 @@ var app = express();
 app.enable('trust proxy');
 
 //在真实环境中使用时请使用 
-//var weBot = require('weixin-robot');
+//var webot = require('weixin-robot');
 var webot;
 
 try{
@@ -23,6 +23,7 @@ try{
   webot = require('weixin-robot');
 }
 
+log(webot)
 //启动机器人,你在微信公众平台填写的token
 webot.monitor('keyboardcat123', '/', app)
 

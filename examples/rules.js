@@ -46,10 +46,13 @@ module.exports = exports = function(webot){
   webot.set({
     name: 'your_name',
     description: '自我介绍下吧, 发送: I am [enter_your_name]',
-    pattern: /^(my name is|i am|我(的名字)?(是|叫)?)\s*(.*)$/i,
-    handler: function(info, action){
-      return '你好,' + info.query[2]
-    }
+    pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
+    // handler: function(info, action){
+    //   return '你好,' + info.query[1]
+    // }
+    
+    //或者更简单一点
+    handler: '你好,{1}'
   })
 
   //读取dialog文件
