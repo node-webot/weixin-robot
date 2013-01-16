@@ -7,7 +7,7 @@
     "debug": "*",
     "underscore": ">=1.4",
     "request": ">=2.0",
-    "weixin-robot": ">=0.2.2"
+    "weixin-robot": "0.2.x"
   },
   "repository": "",
   "author": "",
