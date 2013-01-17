@@ -276,6 +276,21 @@ module.exports = exports = function(webot){
     }
   });
 
+  //回复图文消息
+  webot.set({
+    name: 'reply_news', 
+    description: '发送news,我将回复图文消息你',
+    pattern: /^news$/,
+    handler: function(info, action){
+      var reply = [
+        {title: '微信机器人', description: '微信机器人测试帐号：webot', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'https://github.com/atian25'},
+        {title: '豆瓣同城微信帐号', description: '豆瓣同城微信帐号二维码：douban-event', pic: 'http://i.imgur.com/ijE19.jpg', url: 'https://github.com/ktmud/weixin-robot'},
+        {title: '图文消息3', description: '图文消息描述3', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'http://www.baidu.com'}
+      ]
+      return reply
+    }
+  });
+
   //容错
   webot.set(/.*/i, function(info, action){
     return '你发送了「' + info.text + '」,可惜我太笨了,听不懂. 发送: help 查看可用的指令'

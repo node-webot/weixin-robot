@@ -19,8 +19,10 @@ var webot;
 
 try{
   webot = require('../');
+  log('using ../')
 }catch(e){
   webot = require('weixin-robot');
+  log('using node-module')
 }
 
 //启动机器人,你在微信公众平台填写的token

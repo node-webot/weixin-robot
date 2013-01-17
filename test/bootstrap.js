@@ -88,6 +88,10 @@ var makeRequest = function(url, token){
           json.FuncFlag = json.FuncFlag && Number(json.FuncFlag)
           json.MsgType = json.MsgType && String(json.MsgType)
           json.Content = json.Content && String(json.Content)
+          if(json.MsgType=='news'){
+            json.ArticleCount = json.ArticleCount && Number(json.ArticleCount)
+            json.Articles = json.Articles && json.Articles.length>=1 && json.Articles[0]
+          }
           cb(err, json);
         }
       })
