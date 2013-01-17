@@ -178,6 +178,7 @@ module.exports = exports = function(webot){
     }
   })
 
+  //调用已有的action
   webot.set({
     name: 'suggest_keyword',
     description: '发送: s nde ,然后再回复Y或其他',
