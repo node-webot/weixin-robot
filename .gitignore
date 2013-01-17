@@ -22,4 +22,6 @@ grails-*.zip
 *.swp
 .DS_Store
 /data/db
+/examples/doc/
+/doc/README.html
 jsduck.exe

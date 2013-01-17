@@ -288,4 +288,19 @@ describe('Rule', function(){
       })
     });
   });
+
+  //测试图文消息
+  describe('news', function(){
+    //检测image指令
+    it('should return news msg', function(done){
+      info.text = 'news'
+      sendRequest(info, function(err, json){
+        detect(info, err, json)
+        json.should.have.property('MsgType', 'news')
+        json.Articles.item.should.have.length(json.ArticleCount);
+        json.Articles.item[0].Title[0].should.eql('微信机器人')
+        done();
+      })
+    });
+  })
 });

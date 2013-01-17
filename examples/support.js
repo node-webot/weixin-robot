@@ -99,7 +99,7 @@ exports.search = function(keyword, cb){
     //   pic: 'http://img.xxx....',
     //   url: 'http://....',
     //   title: '这个搜索结果是这样的',
-    //   desc: '哈哈哈哈哈....'
+    //   description: '哈哈哈哈哈....'
     // }];
     //
     // 则会生成图文列表

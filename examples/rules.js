@@ -178,6 +178,7 @@ module.exports = exports = function(webot){
     }
   })
 
+  //调用已有的action
   webot.set({
     name: 'suggest_keyword',
     description: '发送: s nde ,然后再回复Y或其他',
@@ -272,6 +273,21 @@ module.exports = exports = function(webot){
       }catch(e){
         return '图片下载失败: ' + e
       }
+    }
+  });
+
+  //回复图文消息
+  webot.set({
+    name: 'reply_news', 
+    description: '发送news,我将回复图文消息你',
+    pattern: /^news$/,
+    handler: function(info, action){
+      var reply = [
+        {title: '微信机器人', description: '微信机器人测试帐号：webot', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'https://github.com/atian25'},
+        {title: '豆瓣同城微信帐号', description: '豆瓣同城微信帐号二维码：douban-event', pic: 'http://i.imgur.com/ijE19.jpg', url: 'https://github.com/ktmud/weixin-robot'},
+        {title: '图文消息3', description: '图文消息描述3', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'http://www.baidu.com'}
+      ]
+      return reply
     }
   });
 

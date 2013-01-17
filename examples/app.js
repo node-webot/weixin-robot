@@ -19,8 +19,10 @@ var webot;
 
 try{
   webot = require('../');
+  log('using ../')
 }catch(e){
   webot = require('weixin-robot');
+  log('using node-module')
 }
 
 //启动机器人,你在微信公众平台填写的token
@@ -40,4 +42,6 @@ app.listen(3000, '127.0.0.1', function() {
   log("WeBot Start... God bless love...");
 });
 
-console.log("use `SET DEBUG=weixin.*` to got debug info. current env is: %s ", process.env.DEBUG)
+if(!process.env.DEBUG){
+  console.log("use `SET DEBUG=weixin.*` to got debug info. current env is: %s ", process.env.DEBUG)
+}
