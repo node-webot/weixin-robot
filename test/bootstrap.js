@@ -77,24 +77,28 @@ var makeRequest = function(url, token){
       qs: makeAuthQuery(token||default_token),
       body: content
     }, function(err, res, body){
-      xmlParser.parseString(body, function(err, result){
-        if (err || !result || !result.xml){
-          cb(err || 'result format incorrect', result);
-        }else{
-          var json = result.xml
-          json.ToUserName = json.ToUserName && String(json.ToUserName)
-          json.FromUserName = json.FromUserName && String(json.FromUserName)
-          json.CreateTime = json.CreateTime && Number(json.CreateTime)
-          json.FuncFlag = json.FuncFlag && Number(json.FuncFlag)
-          json.MsgType = json.MsgType && String(json.MsgType)
-          json.Content = json.Content && String(json.Content)
-          if(json.MsgType=='news'){
-            json.ArticleCount = json.ArticleCount && Number(json.ArticleCount)
-            json.Articles = json.Articles && json.Articles.length>=1 && json.Articles[0]
+      if(err || res.statusCode=='403' || !body){
+        cb(err || res.statusCode, body)
+      }else{
+        xmlParser.parseString(body, function(err, result){
+          if (err || !result || !result.xml){
+            cb(err || 'result format incorrect', result);
+          }else{
+            var json = result.xml
+            json.ToUserName = json.ToUserName && String(json.ToUserName)
+            json.FromUserName = json.FromUserName && String(json.FromUserName)
+            json.CreateTime = json.CreateTime && Number(json.CreateTime)
+            json.FuncFlag = json.FuncFlag && Number(json.FuncFlag)
+            json.MsgType = json.MsgType && String(json.MsgType)
+            json.Content = json.Content && String(json.Content)
+            if(json.MsgType=='news'){
+              json.ArticleCount = json.ArticleCount && Number(json.ArticleCount)
+              json.Articles = json.Articles && json.Articles.length>=1 && json.Articles[0]
+            }
+            cb(err, json);
           }
-          cb(err, json);
-        }
-      })
+        })
+      }
     });
     return content;
   }
