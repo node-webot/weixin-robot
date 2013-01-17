@@ -64,7 +64,7 @@ var makeRequest = function(url, token){
       text: 'help',
       pic: 'http://www.baidu.com/img/baidu_sylogo1.gif',
       xPos: '23.08',
-      xPos: '113.24',
+      yPos: '113.24',
       scale: '20',
       label: 'this is a location'
     })
