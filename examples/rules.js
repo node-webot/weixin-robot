@@ -278,7 +278,7 @@ module.exports = exports = function(webot){
 
   //图文的映射关系, 可以是object或function
   webot.config.mapping = function(item, index, info){
-    item.title = index + '> ' + item.title
+    item.title = (index+1) + '> ' + item.title
     return item
   }
 
@@ -286,14 +286,14 @@ module.exports = exports = function(webot){
   webot.set({
     name: 'reply_news', 
     description: '发送news,我将回复图文消息你',
-    pattern: /^news$/,
+    pattern: /^news\s*(\d*)$/,
     handler: function(info, action){
       var reply = [
         {title: '微信机器人', description: '微信机器人测试帐号：webot', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'https://github.com/atian25'},
         {title: '豆瓣同城微信帐号', description: '豆瓣同城微信帐号二维码：douban-event', pic: 'http://i.imgur.com/ijE19.jpg', url: 'https://github.com/ktmud/weixin-robot'},
         {title: '图文消息3', description: '图文消息描述3', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'http://www.baidu.com'}
       ]
-      return reply
+      return Number(info.query[1])== 1 ? [reply[0]] : reply
     }
   });
 
