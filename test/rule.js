@@ -298,7 +298,7 @@ describe('Rule', function(){
         detect(info, err, json)
         json.should.have.property('MsgType', 'news')
         json.Articles.item.should.have.length(json.ArticleCount);
-        json.Articles.item[0].Title[0].should.eql('微信机器人')
+        json.Articles.item[0].Title[0].toString().should.match(/微信机器人/)
         done();
       })
     });

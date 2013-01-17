@@ -276,6 +276,12 @@ module.exports = exports = function(webot){
     }
   });
 
+  //图文的映射关系, 可以是object或function
+  webot.config.mapping = function(item, index, info){
+    item.title = index + '> ' + item.title
+    return item
+  }
+
   //回复图文消息
   webot.set({
     name: 'reply_news', 
