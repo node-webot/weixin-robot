@@ -43,5 +43,5 @@ app.listen(3000, '127.0.0.1', function() {
 });
 
 if(!process.env.DEBUG){
-  console.log("use `SET DEBUG=weixin.*` to got debug info. current env is: %s ", process.env.DEBUG)
+  console.log("use `SET DEBUG=webot.*` to got debug info. current env is: %s ", process.env.DEBUG)
 }
