@@ -9,6 +9,9 @@
     "request": ">=2.0",
     "weixin-robot": ">=0.2"
   },
+  "devDependencies": {
+    "should": "*"
+  },
   "repository": "",
   "author": "",
   "license": "MIT"

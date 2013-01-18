@@ -20,20 +20,20 @@ WeBotShell.makeAuthQuery = function(token, timestamp, nonce){
     timestamp: timestamp || new Date().getTime().toString(),
     nonce: nonce || parseInt((Math.random() * 10e10), 10).toString(),
     echostr: 'echostr_' + parseInt((Math.random() * 10e10), 10).toString()
-  }
+  };
 
   var s = [obj.token, obj.timestamp, obj.nonce].sort().join('');
   obj.signature = crypto.createHash('sha1').update(s).digest('hex');
-  return obj
+  return obj;
 };
 
 /**
  * @method makeRequest 获取发送请求的函数
- * 
+ *
  * @param  {String}   url   服务地址
  * @param  {Object}   token 微信token
  * @return {Function} 发送请求的回调函数,签名为function(info, cb(err, result))
- * 
+ *
  * - info {Object} 要发送的内容:
  *
  *     - sp    {String} 微信公众平台ID
@@ -45,9 +45,9 @@ WeBotShell.makeAuthQuery = function(token, timestamp, nonce){
  *     - scale {Number} 地图缩放大小
  *     - label {String} 地理位置信息
  *     - pic   {String} 图片链接
- * 
+ *
  * - cb {Function} 回调函数
- * 
+ *
  *     - err {Error} 错误消息
  *     - result {Object} 服务器回传的结果,JSON
  *
@@ -68,7 +68,7 @@ WeBotShell.makeRequest = function(url, token){
       yPos: '113.24',
       scale: '20',
       label: 'this is a location'
-    })
+    });
 
     var content = _.template(WeBotShell.TEMPLATE)(info);
     
@@ -79,31 +79,31 @@ WeBotShell.makeRequest = function(url, token){
       body: content
     }, function(err, res, body){
       if(err || res.statusCode=='403' || !body){
-        cb(err || res.statusCode, body)
+        cb(err || res.statusCode, body);
       }else{
         xmlParser.parseString(body, function(err, result){
           if (err || !result || !result.xml){
             cb(err || 'result format incorrect', result);
           }else{
-            var json = result.xml
-            json.ToUserName = json.ToUserName && String(json.ToUserName)
-            json.FromUserName = json.FromUserName && String(json.FromUserName)
-            json.CreateTime = json.CreateTime && Number(json.CreateTime)
-            json.FuncFlag = json.FuncFlag && Number(json.FuncFlag)
-            json.MsgType = json.MsgType && String(json.MsgType)
-            json.Content = json.Content && String(json.Content)
+            var json = result.xml;
+            json.ToUserName = json.ToUserName && String(json.ToUserName);
+            json.FromUserName = json.FromUserName && String(json.FromUserName);
+            json.CreateTime = json.CreateTime && Number(json.CreateTime);
+            json.FuncFlag = json.FuncFlag && Number(json.FuncFlag);
+            json.MsgType = json.MsgType && String(json.MsgType);
+            json.Content = json.Content && String(json.Content);
             if(json.MsgType=='news'){
-              json.ArticleCount = json.ArticleCount && Number(json.ArticleCount)
-              json.Articles = json.Articles && json.Articles.length>=1 && json.Articles[0]
+              json.ArticleCount = json.ArticleCount && Number(json.ArticleCount);
+              json.Articles = json.Articles && json.Articles.length>=1 && json.Articles[0];
             }
             cb(err, json);
           }
-        })
+        });
       }
     });
     return content;
-  }
-}
+  };
+};
 
 /**
  * @property {String} tpl XML模版
@@ -128,4 +128,4 @@ WeBotShell.TEMPLATE= [
 ].join('');
 
 
-module.exports = exports = WeBotShell
+module.exports = exports = WeBotShell;

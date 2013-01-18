@@ -1,41 +1,40 @@
 var debug = require('debug');
 var log = debug('webot:example');
 
-var _ = require('underscore')._
-var search = require('./support').search
-var geo2loc = require('./support').geo2loc
-var download = require('./support').download
+var _ = require('underscore')._;
+var search = require('./support').search;
+var geo2loc = require('./support').geo2loc;
+var download = require('./support').download;
 
 /**
  * 初始化路由规则
  */
 module.exports = exports = function(webot){
-
   //设置一条规则
   webot.set(/^(help|帮助|\?)$/i, function(info, action){
-    action.description = 'help'
+    action.description = 'help';
 
     var reply = _.chain(webot.get()).filter(function(action){
-      return action.description
+      return action.description;
     }).map(function(action){
-      return '> ' + action.description
-    }).join('\n').value()
+      return '> ' + action.description;
+    }).join('\n').value();
     
     return '可用的指令:\n'+ reply;
-  })
+  });
 
   //首次关注时,会收到Hello2BizUser
   webot.set('Hello2BizUser', function(info, action){
-    return '感谢你收听webot机器人,\n回复help可以查看支持的指令.\n我们的github地址是: <a href="https://github.com/ktmud/weixin-robot">https://github.com/ktmud/weixin-robot</a>'
-  })
+    return '感谢你收听webot机器人,\n回复help可以查看支持的指令.\n我们的github地址是: <a href="https://github.com/ktmud/weixin-robot">https://github.com/ktmud/weixin-robot</a>';
+  });
 
   //可以通过回调处理,如果返回null则执行下一个action
   webot.set(/.*/i, function(info, action, next){
-    log('can load sth from db, then go next action')
+    log('can load sth from db, then go next action');
     //info.text = 'who'
     return next(null);
     //或 return null;
-  })
+  });
 
   //也接受object参数
   webot.set({
@@ -45,7 +44,7 @@ module.exports = exports = function(webot){
     pattern: /who|你是谁?\??/i,
     //回复handler也可以直接是字符串或数组,如果是数组则随机返回一个子元素
     handler: ['我是神马机器人','微信机器人']
-  })
+  });
 
   //正则匹配后的匹配组存在info.query中
   webot.set({
@@ -58,20 +57,20 @@ module.exports = exports = function(webot){
     
     //或者更简单一点
     handler: '你好,{1}'
-  })
+  });
 
   //pattern支持函数
   webot.set({
     name: 'pattern_fn',
     description: 'pattern支持函数,发送: fn',
     pattern: function(info){
-      return info.isText() && info.text=='fn'
+      return info.isText() && info.text=='fn';
     },
     handler: 'pattern支持函数'
-  })
+  });
 
   //读取dialog文件
-  webot.dialog(__dirname + '/dialog.yaml')
+  webot.dialog(__dirname + '/dialog.yaml');
 
   //一次性加多个吧
   webot.set([{
@@ -123,12 +122,12 @@ module.exports = exports = function(webot){
       //正则作为key的时候,注意要转义
       '/^g(irl)?\\??$/i': '猜错',
       'boy': function(info, action, next){
-        return next(null, '猜对了')
+        return next(null, '猜对了');
       },
       'both': '对你无语...'
     }
     
-    //也可以是直接的函数,同action: function(info, action, [cb]) 
+    //也可以是直接的函数,同action: function(info, action, [cb])
     // replies: function(info, action){
     //   return 'haha, I wont tell you'
     // }
@@ -153,30 +152,30 @@ module.exports = exports = function(webot){
     pattern: /game (\d*)/,
     handler: function(info, action){
       //等待下一次回复
-      var retryCount = 3
+      var retryCount = 3;
       var num = Number(info.query[1]) || _.random(1,9);
       log('answer is: ' + num);
       webot.wait(info.user, function(next_info, next_action){
         var text = Number(next_info.text);
         if(text){
           if(text == num){
-            return '你真聪明!'
+            return '你真聪明!';
           }else if(retryCount > 1){
             retryCount--;
             //重试
             webot.rewait(info.user);
-            return (text > num ? '大了': '小了') +',还有' + retryCount + '次机会,再猜.'
+            return (text > num ? '大了': '小了') +',还有' + retryCount + '次机会,再猜.';
           }else{
-            return '好吧,你的IQ有点抓急,谜底是: ' + num
+            return '好吧,你的IQ有点抓急,谜底是: ' + num;
           }
         }else{
           //不是文本消息,跳过,交给下一个action
-          return null
+          return null;
         }
-      })
-      return '玩玩猜数字的游戏吧, 1~9,选一个'
+      });
+      return '玩玩猜数字的游戏吧, 1~9,选一个';
     }
-  })
+  });
 
   //调用已有的action
   webot.set({
@@ -192,13 +191,13 @@ module.exports = exports = function(webot){
             if(next_info.text.match(/y/i)){
               //next_handler(null, '输入变更为: node');
               //注意,这里用的是上一次的info,而不是next_info
-              next_info.text = 'nodejs'
-              next_info.query = ['' ,'' ,'nodejs']
+              next_info.text = 'nodejs';
+              next_info.query = ['' ,'' ,'nodejs'];
               //调用已有的handler
               webot.exec(next_info, webot.get('search'), next_handler);
             }else{
-              next_info.text = 'nde'
-              next_info.query = ['' ,'' ,'nde']
+              next_info.text = 'nde';
+              next_info.query = ['' ,'' ,'nde'];
               //next_handler(null, '仍然输入:'+ next_action.data);
               webot.exec(next_info, webot.get('search'), next_handler);
             }
@@ -207,7 +206,7 @@ module.exports = exports = function(webot){
         return '你输入了:' + q + '，似乎拼写错误。要我帮你更改为「nodejs」并搜索吗?';
       }
     }
-  })
+  });
 
   //可以通过回调返回结果
   webot.set({
@@ -217,11 +216,11 @@ module.exports = exports = function(webot){
     handler: function(info, action, next){
       //pattern的解析结果将放在query里
       var q = info.query[2];
-      log('searching: ', q)
+      log('searching: ', q);
       //从某个地方搜索到数据...
       return search(q , next);
     }
-  })
+  });
 
 
   //超时处理
@@ -230,22 +229,22 @@ module.exports = exports = function(webot){
     description: '输入timeout,等待5秒后回复,会提示超时',
     pattern: 'timeout',
     handler: function(info, action){
-      var now = new Date().getTime()
+      var now = new Date().getTime();
       webot.wait(info.user, function(next_info, next_action){
         if(new Date().getTime() - now > 5000){
-          return '你的操作超时了,请重新输入'
+          return '你的操作超时了,请重新输入';
         }else{
-          return '你在规定时限里面输入了: ' + next_info.text
+          return '你在规定时限里面输入了: ' + next_info.text;
         }
-      })
-      return '请等待5秒后回复'
+      });
+      return '请等待5秒后回复';
     }
-  })
+  });
 
   //支持location消息,已经提供了geo转地址的工具，使用的是高德地图的API
   //http://restapi.amap.com/rgeocode/simple?resType=json&encode=utf-8&range=3000&roadnum=0&crossnum=0&poinum=0&retvalue=1&sid=7001&region=113.24%2C23.08
   webot.set({
-    name: 'check_location', 
+    name: 'check_location',
     description: '发送你的经纬度,我会查询你的位置',
     pattern: function(info){
       return info.isLocation();
@@ -259,34 +258,34 @@ module.exports = exports = function(webot){
 
   //图片
   webot.set({
-    name: 'check_image', 
+    name: 'check_image',
     description: '发送图片,我将下载它',
     pattern: function(info){
-      return info.isImage()
+      return info.isImage();
     },
     handler: function(info, action){
-      log('image url: %s', info.pic)
+      log('image url: %s', info.pic);
       try{
         var path = __dirname + '\\image' 
           //+ new Date().getTime() 
-          + '.png'
-        download(info.pic, path)
-        return '你的图片已经保存到:' + path
+          + '.png';
+        download(info.pic, path);
+        return '你的图片已经保存到:' + path;
       }catch(e){
-        return '图片下载失败: ' + e
+        return '图片下载失败: ' + e;
       }
     }
   });
 
   //图文的映射关系, 可以是object或function
   webot.config.mapping = function(item, index, info){
-    item.title = (index+1) + '> ' + item.title
-    return item
-  }
+    item.title = (index+1) + '> ' + item.title;
+    return item;
+  };
 
   //回复图文消息
   webot.set({
-    name: 'reply_news', 
+    name: 'reply_news',
     description: '发送news,我将回复图文消息你',
     pattern: /^news\s*(\d*)$/,
     handler: function(info, action){
@@ -294,13 +293,13 @@ module.exports = exports = function(webot){
         {title: '微信机器人', description: '微信机器人测试帐号：webot', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'https://github.com/atian25'},
         {title: '豆瓣同城微信帐号', description: '豆瓣同城微信帐号二维码：douban-event', pic: 'http://i.imgur.com/ijE19.jpg', url: 'https://github.com/ktmud/weixin-robot'},
         {title: '图文消息3', description: '图文消息描述3', pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg', url: 'http://www.baidu.com'}
-      ]
-      return Number(info.query[1])== 1 ? [reply[0]] : reply
+      ];
+      return Number(info.query[1])== 1 ? [reply[0]] : reply;
     }
   });
 
   //容错
   webot.set(/.*/i, function(info, action){
-    return '你发送了「' + info.text + '」,可惜我太笨了,听不懂. 发送: help 查看可用的指令'
-  })
-}
+    return '你发送了「' + info.text + '」,可惜我太笨了,听不懂. 发送: help 查看可用的指令';
+  });
+};

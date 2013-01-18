@@ -1,7 +1,7 @@
 var debug = require('debug');
 var log = debug('webot:example');
 
-var _ = require('underscore')._
+var _ = require('underscore')._;
 var request = require('request');
 
 /**
@@ -35,34 +35,34 @@ exports.geo2loc = function geo2loc(info, cb){
       error('geo2loc failed', err);
       return cb(err);
     }
-    var data = JSON.parse(body)
+    var data = JSON.parse(body);
     if(data.list && data.list.length>=1){
-      data = data.list[0]
+      data = data.list[0];
       var location = data.city.name || data.province.name;
-      log('location is %s, %j', location, data)
+      log('location is %s, %j', location, data);
       return cb(null, location, data);
     }
-    log('geo2loc found nth.')
-    return cb('geo2loc found nth.')
+    log('geo2loc found nth.');
+    return cb('geo2loc found nth.');
   });
 };
 
 /**
  * 搜索百度
- * 
+ *
  * @param  {String}   keyword 关键词
  * @param  {Function} cb            回调函数
  * @param  {Error}    cb.err        错误信息
  * @param  {String}   cb.result     查询结果
  */
 exports.search = function(keyword, cb){
-  log('searching: ' + keyword)
+  log('searching: ' + keyword);
   var options = {
     url: 'http://www.baidu.com/s',
     qs: {
       wd: keyword
     }
-  }
+  };
   request.get(options, function(err, res, body){
     if (err || !body){
       return cb(null, '现在暂时无法搜索，待会儿再来好吗？');
@@ -103,9 +103,9 @@ exports.search = function(keyword, cb){
     // }];
     //
     // 则会生成图文列表
-    return cb(null, result)
-  })
-}
+    return cb(null, result);
+  });
+};
 
 /**
  * 下载图片
@@ -115,6 +115,6 @@ exports.search = function(keyword, cb){
  * @param  {String} path 保存路径
  */
 exports.download = function(url, path){
-  log('downloading %s to path', url, path)
+  log('downloading %s to path', url, path);
   request(url).pipe(require('fs').createWriteStream(path));
-}
+};

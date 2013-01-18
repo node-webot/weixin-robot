@@ -2,7 +2,7 @@
 
 var prettyjson = require('prettyjson');
 
-var _ = require('underscore')._
+var _ = require('underscore')._;
 
 var bootstrap = require('./bootstrap');
 var makeRequest = bootstrap.makeRequest;
@@ -29,8 +29,8 @@ var info = {
   user: program.user,
   type: program.location ? 'location' : (program.image ? 'image' : 'text'),
   text: 'help'
-}
-console.log('>Target: %s',url)
+};
+console.log('>Target: %s',url);
 var sendRequest = makeRequest(url, program.token);
 
 //发送消息
@@ -48,9 +48,9 @@ function run(){
     });
   }else if(info.type=='location'){
     program.prompt('x: ', function(xPos) {
-      info.xPos = xPos || '23.08'
+      info.xPos = xPos || '23.08';
       program.prompt('y:', function(yPos) {
-        info.yPos = yPos || '113.24'
+        info.yPos = yPos || '113.24';
         console.log('发送经度: %s, 纬度: %s', info.xPos, info.yPos);
         console.log('XML: %s', sendRequest(info, cb));
       });
@@ -70,5 +70,5 @@ function cb(err, json){
   run();
 }
 
-run()
+run();
 
