@@ -32,7 +32,7 @@ webot.monitor('keyboardcat123', '/weixin', app);
 require('./rules.js')(webot);
 
 //设置文档的路径
-app.use('/doc',express.static(__dirname+'/doc'));
+app.use('/doc', express.static(__dirname+'/doc'));
 app.get('/', function(req, res, next){
   res.redirect('/doc/index.html');
 });

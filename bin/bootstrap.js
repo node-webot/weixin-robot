@@ -1,8 +1,8 @@
 var xml2js = require('xml2js');
 var xmlParser = new xml2js.Parser();
-var _ = require('underscore')._
-var request = require('request')
-var crypto = require('crypto')
+var _ = require('underscore')._;
+var request = require('request');
+var crypto = require('crypto');
 
 /**
  * @class WeBotShell 测试辅助

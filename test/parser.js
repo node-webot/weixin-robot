@@ -4,7 +4,7 @@ var _ = require('underscore')._;
 var WeBot = require('../').WeBot;
 
 var webot = null;
-var checkSig = null;
+var bodyParser = null;
 var mockReq = null;
 var mockRes = null;
 var info = null;
@@ -43,6 +43,7 @@ var getXML = function(info){
 describe('xml2json', function(){
   beforeEach(function(){
     webot = new WeBot();
+    bodyParser = webot.bodyParser();
     mockReq = {
       setEncoding: emptyFn,
       wx_data: null,
@@ -51,7 +52,6 @@ describe('xml2json', function(){
   });
 
   it('should return correct text json', function(){
-    var bodyParser = webot.bodyParser();
     var info = {
       type: 'text',
       text: 'hi'
@@ -73,7 +73,6 @@ describe('xml2json', function(){
   });
 
   it('should return correct location json', function(){
-    var bodyParser = webot.bodyParser();
     var info = {
       type: 'location',
       xPos: '23.08',
@@ -101,7 +100,6 @@ describe('xml2json', function(){
   });
 
   it('should return correct image json', function(){
-    var bodyParser = webot.bodyParser();
     var info = {
       type: 'image',
       pic: 'http://server/pic'
@@ -123,7 +121,6 @@ describe('xml2json', function(){
   });
 
   it('should return parser error', function(){
-    var bodyParser = webot.bodyParser();
     mockReq.on = function(e, cb){
       cb();
     };

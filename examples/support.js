@@ -109,7 +109,7 @@ exports.search = function(keyword, cb){
 
 /**
  * 下载图片
- * 
+ *
  * 注意:只是简陋的实现,不负责检测下载是否正确,实际应用还需要检查statusCode.
  * @param  {String} url  目标网址
  * @param  {String} path 保存路径
