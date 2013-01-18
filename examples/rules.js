@@ -267,7 +267,9 @@ module.exports = exports = function(webot){
     handler: function(info, action){
       log('image url: %s', info.pic)
       try{
-        var path = __dirname + '\\image_' + new Date().getTime() + '.png'
+        var path = __dirname + '\\image' 
+          //+ new Date().getTime() 
+          + '.png'
         download(info.pic, path)
         return '你的图片已经保存到:' + path
       }catch(e){

@@ -2,36 +2,36 @@ var xml2js = require('xml2js');
 var xmlParser = new xml2js.Parser();
 var _ = require('underscore')._
 var request = require('request')
-
-var default_url = 'http://localhost:3000/weixin' 
-var default_token = 'keyboardcat123' 
+var crypto = require('crypto')
 
 /**
- * @class Helper 
- *
- * 测试辅助
+ * @class WeBotShell 测试辅助
  */
+function WeBotShell(){
+}
 
 /**
  * @method makeAuthQuery 组装querystring
  * @param {String} token 微信token
  */
-var makeAuthQuery = function(token){
-  token = token || default_token;
-  var q = {
-    timestamp: new Date().getTime(),
-    nonce: parseInt((Math.random() * 10e10), 10)
+WeBotShell.makeAuthQuery = function(token, timestamp, nonce){
+  var obj = {
+    token: token,
+    timestamp: timestamp || new Date().getTime().toString(),
+    nonce: nonce || parseInt((Math.random() * 10e10), 10).toString(),
+    echostr: 'echostr_' + parseInt((Math.random() * 10e10), 10).toString()
   }
-  var s = [token, q.timestamp, q.nonce].sort().join('');
-  q.signature = require('crypto').createHash('sha1').update(s).digest('hex');
-  return q;
-}
+
+  var s = [obj.token, obj.timestamp, obj.nonce].sort().join('');
+  obj.signature = crypto.createHash('sha1').update(s).digest('hex');
+  return obj
+};
 
 /**
  * @method makeRequest 获取发送请求的函数
  * 
- * @param  {String}   url   服务地址,默认值为http://localhost:3000/weixin
- * @param  {Object}   token 微信token,默认值为keyboardcat123
+ * @param  {String}   url   服务地址
+ * @param  {Object}   token 微信token
  * @return {Function} 发送请求的回调函数,签名为function(info, cb(err, result))
  * 
  * - info {Object} 要发送的内容:
@@ -53,10 +53,11 @@ var makeAuthQuery = function(token){
  *
  * - return content {String} 返回发送的XML
  */
-var makeRequest = function(url, token){
+WeBotShell.makeRequest = function(url, token){
   return function(info, cb){
     //默认值
     info = _.isString(info) ? {text: info} : info;
+    
     _.defaults(info, {
       sp: 'webot',
       user: 'client',
@@ -69,12 +70,12 @@ var makeRequest = function(url, token){
       label: 'this is a location'
     })
 
-    var content = _.template(tpl)(info);
+    var content = _.template(WeBotShell.TEMPLATE)(info);
     
     //发送请求
     request.post({
-      url: url || default_url,
-      qs: makeAuthQuery(token||default_token),
+      url: url,
+      qs: WeBotShell.makeAuthQuery(token),
       body: content
     }, function(err, res, body){
       if(err || res.statusCode=='403' || !body){
@@ -107,7 +108,7 @@ var makeRequest = function(url, token){
 /**
  * @property {String} tpl XML模版
  */
-var tpl= [
+WeBotShell.TEMPLATE= [
   '<xml>',
     '<ToUserName><![CDATA[<%=sp%>]]></ToUserName>',
     '<FromUserName><![CDATA[<%=user%>]]></FromUserName>',
@@ -118,7 +119,7 @@ var tpl= [
     '<% }else if(type=="location"){  %>',
       '<Location_X><%=xPos%></Location_X>',
       '<Location_Y><%=yPos%></Location_Y>',
-      '<Scale>{<%=scale%>}</Scale>',
+      '<Scale><%=scale%></Scale>',
       '<Label><![CDATA[<%=label%>]]></Label>',
     '<% }else if(type=="image"){  %>',
       '<PicUrl><![CDATA[<%=pic%>]]></PicUrl>',
@@ -127,9 +128,4 @@ var tpl= [
 ].join('');
 
 
-module.exports = exports = {
-  makeRequest: makeRequest,
-  makeAuthQuery: makeAuthQuery,
-  default_url: default_url,
-  default_token: default_token
-};
+module.exports = exports = WeBotShell

@@ -4,7 +4,7 @@ var prettyjson = require('prettyjson');
 
 var _ = require('underscore')._
 
-var bootstrap = require('../test/bootstrap');
+var bootstrap = require('./bootstrap');
 var makeRequest = bootstrap.makeRequest;
 
 var program = require('commander');
@@ -13,13 +13,13 @@ program.version('0.0.1')
   .usage('[options]')
   .option('-l, --location', 'Send a <location> (geo, latlng)')
   .option('-i, --image', 'Send a <image>, provide image url')
-  .option('-t, --token [value]', 'Provide weixin token','keyboardcat123')
+  .option('-t, --token [value]', 'Provide weixin token, defaults to keyboardcat123','keyboardcat123')
   .option('-n, --host [value]', 'Set request hostname, defaults to 127.0.0.1', '127.0.0.1')
   .option('-p, --port <n>', 'The port your service is listening to, defaults to 3000', 3000)
-  .option('-r, --route <n>', 'The route path, defaults to root path', 'weixin')
+  .option('-r, --route <n>', 'The route path, defaults to /weixin', 'weixin')
   .option('-d, --destination [value]', 'The request destination url, will override "host" and "port"')
-  .option('-s, --sp [value]', 'The SP ID', 'webot')
-  .option('-u, --user [value]', 'The User ID', 'client')
+  .option('-s, --sp [value]', 'The SP ID, defaults to webot', 'webot')
+  .option('-u, --user [value]', 'The User ID defaults to client', 'client')
   .parse(process.argv);
 
 //获取参数
@@ -38,21 +38,21 @@ function run(){
   if(info.type=='text'){
     program.prompt('the text: ', function(text){
       console.log('发送文字: %s', text);
-      console.log(sendRequest(text || 'help', cb));
+      console.log('XML: %s', sendRequest(text || 'help', cb));
     });
   }else if(info.type=='image'){
     program.prompt('the pic url: ', function(pic){
-      info.pic = pic;
+      info.pic = pic || 'http://www.baidu.com/img/baidu_sylogo1.gif';
       console.log('发送图片: %s', info.pic);
-      console.log(sendRequest(info, cb));
+      console.log('XML: %s', sendRequest(info, cb));
     });
   }else if(info.type=='location'){
     program.prompt('x: ', function(xPos) {
-      info.xPos = xPos
+      info.xPos = xPos || '23.08'
       program.prompt('y:', function(yPos) {
-        info.yPos = yPos
+        info.yPos = yPos || '113.24'
         console.log('发送经度: %s, 纬度: %s', info.xPos, info.yPos);
-        console.log(sendRequest(info, cb));
+        console.log('XML: %s', sendRequest(info, cb));
       });
     });
   }
