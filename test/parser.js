@@ -1,3 +1,5 @@
+/*global beforeEach:false, it:false, describe:false */
+
 var should = require('should');
 var _ = require('underscore')._;
 
@@ -65,10 +67,10 @@ describe('xml2json', function(){
     };
     bodyParser(mockReq, mockRes, function(err){
       should.exist(mockReq.wx_data);
-      should.equal(mockReq.wx_data.ToUserName, info.sp);
-      should.equal(mockReq.wx_data.FromUserName, info.user);
-      should.equal(mockReq.wx_data.MsgType, info.type);
-      should.equal(mockReq.wx_data.Content, info.text);
+      should.equal(mockReq.wx_data.ToUserName.toString(), info.sp);
+      should.equal(mockReq.wx_data.FromUserName.toString(), info.user);
+      should.equal(mockReq.wx_data.MsgType.toString(), info.type);
+      should.equal(mockReq.wx_data.Content.toString(), info.text);
     });
   });
 
@@ -89,13 +91,13 @@ describe('xml2json', function(){
     };
     bodyParser(mockReq, mockRes, function(err){
       should.exist(mockReq.wx_data);
-      should.equal(mockReq.wx_data.ToUserName, info.sp);
-      should.equal(mockReq.wx_data.FromUserName, info.user);
-      should.equal(mockReq.wx_data.MsgType, info.type);
-      should.equal(mockReq.wx_data.Location_X, info.xPos);
-      should.equal(mockReq.wx_data.Location_Y, info.yPos);
-      should.equal(mockReq.wx_data.Scale, info.scale);
-      should.equal(mockReq.wx_data.Label, info.label);
+      should.equal(mockReq.wx_data.ToUserName.toString(), info.sp);
+      should.equal(mockReq.wx_data.FromUserName.toString(), info.user);
+      should.equal(mockReq.wx_data.MsgType.toString(), info.type);
+      should.equal(mockReq.wx_data.Location_X.toString(), info.xPos);
+      should.equal(mockReq.wx_data.Location_Y.toString(), info.yPos);
+      should.equal(mockReq.wx_data.Scale.toString(), info.scale);
+      should.equal(mockReq.wx_data.Label.toString(), info.label);
     });
   });
 
@@ -113,10 +115,10 @@ describe('xml2json', function(){
     };
     bodyParser(mockReq, mockRes, function(err){
       should.exist(mockReq.wx_data);
-      should.equal(mockReq.wx_data.ToUserName, info.sp);
-      should.equal(mockReq.wx_data.FromUserName, info.user);
-      should.equal(mockReq.wx_data.MsgType, info.type);
-      should.equal(mockReq.wx_data.PicUrl, info.pic);
+      should.equal(mockReq.wx_data.ToUserName.toString(), info.sp);
+      should.equal(mockReq.wx_data.FromUserName.toString(), info.user);
+      should.equal(mockReq.wx_data.MsgType.toString(), info.type);
+      should.equal(mockReq.wx_data.PicUrl.toString(), info.pic);
     });
   });
 

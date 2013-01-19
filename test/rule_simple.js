@@ -1,3 +1,5 @@
+/*global beforeEach:false, it:false, describe:false */
+
 var should = require('should');
 var WeBot = require('../').WeBot;
 
@@ -32,6 +34,25 @@ describe('rule_simple', function(){
     webot.reply(data, function(err, info){
       err.toString().should.equal('404');
       done();
+    });
+  });
+
+  it('should return store data', function(done){
+    webot.set('set', function(info){
+      webot.data(info.user, 'key','value');
+    });
+    
+    webot.set('get', function(info){
+      return webot.data(info.user).key;
+    });
+
+    data.Content = 'set';
+    webot.reply(data, function(err, info){
+      data.Content = 'get';
+      webot.reply(data, function(err, info){
+        should.equal(info.reply,'value');
+        done();
+      });
     });
   });
 

@@ -115,6 +115,6 @@ exports.search = function(keyword, cb){
  * @param  {String} path 保存路径
  */
 exports.download = function(url, path){
-  log('downloading %s to path', url, path);
+  log('downloading %s to %s', url, path);
   request(url).pipe(require('fs').createWriteStream(path));
 };

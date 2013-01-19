@@ -20,9 +20,8 @@
     "prettyjson": "*",
     "express": "*",
     "mocha": "*",
-    "should": "*",
-    "color": "*",
     "chai": "*",
+    "should": "*",
     "request": "*"
   },
   "engines": {

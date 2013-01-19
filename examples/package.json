@@ -10,7 +10,8 @@
     "weixin-robot": ">=0.2"
   },
   "devDependencies": {
-    "should": "*"
+    "should": "*",
+    "chai": "*"
   },
   "repository": "",
   "author": "",

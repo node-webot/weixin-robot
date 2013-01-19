@@ -1,3 +1,5 @@
+/*global beforeEach:false, it:false, describe:false */
+
 var should = require('should');
 var WeBot = require('../').WeBot;
 
