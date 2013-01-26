@@ -31,18 +31,9 @@ describe('Rule', function(){
 
   //测试文本消息
   describe('text', function(){
-    //检测首次收听指令
-    it('should return first msg', function(done){
-      info.text = 'Hello2BizUser';
-      sendRequest(info, function(err, json){
-        detect(info, err, json, /感谢你收听/ );
-        done();
-      });
-    });
-
-    //检测help指令
-    it('should return help msg', function(done){
-      info.text = 'help';
+    //检测more指令
+    it('should return more msg', function(done){
+      info.text = 'more';
       sendRequest(info, function(err, json){
         detect(info, err, json, /可用的指令/ );
         done();
@@ -80,7 +71,7 @@ describe('Rule', function(){
     it('should return time msg', function(done){
       info.text = '几点了';
       sendRequest(info, function(err, json){
-        detect(info, err, json, /北京时间/);
+        detect(info, err, json, /时间/);
         done();
       });
     });
@@ -295,6 +286,18 @@ describe('Rule', function(){
 
   //测试图文消息
   describe('news', function(){
+    //检测首次收听指令
+    it('should return first msg', function(done){
+      info.text = 'Hello2BizUser';
+      sendRequest(info, function(err, json){
+        detect(info, err, json);
+        json.should.have.property('MsgType', 'news');
+        json.Articles.item.should.have.length(json.ArticleCount);
+        json.Articles.item[0].Title[0].toString().should.match(/感谢你收听/);
+        done();
+      });
+    });
+
     //检测image指令
     it('should return news msg', function(done){
       info.text = 'news';

@@ -10,22 +10,40 @@ var download = require('./support').download;
  * 初始化路由规则
  */
 module.exports = exports = function(webot){
+  //首次关注时,会收到Hello2BizUser
+  webot.set(/^(Hello2BizUser|help|帮助|\?)$/i, function(info, action){
+    //this.description = '回复help查看帮助';
+    var reply = {
+      title: '感谢你收听webot机器人',
+      pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg',
+      url: 'https://github.com/ktmud/weixin-robot',
+      description: [
+        '**欢迎你,来自开源中国的朋友**\n',
+        '建议你试试这几条指令:\n',
+          '1. game : 玩玩猜数字的游戏吧\n',
+          '2. s+空格+关键词 : 我会帮你百度搜索喔\n',
+          '3. s+空格+nde : 可以试试我的纠错能力\n',
+          '4. 发送你的经纬度\n',
+          '5. 重看本指令请回复help或问号\n',
+          '6. 更多指令请回复more\n',
+          'PS: 点击下面的「查看全文」将跳转到我的github页'
+      ].join('')
+    };
+    return [reply];
+  });
+
   //设置一条规则
-  webot.set(/^(help|帮助|\?)$/i, function(info, action){
-    action.description = 'help';
+  webot.set(/^more$/i, function(info, action){
+    //this.description = '回复more查看更多指令';
 
     var reply = _.chain(webot.get()).filter(function(action){
       return action.description;
     }).map(function(action){
+      //console.log(action.name)
       return '> ' + action.description;
     }).join('\n').value();
     
-    return '可用的指令:\n'+ reply;
-  });
-
-  //首次关注时,会收到Hello2BizUser
-  webot.set('Hello2BizUser', function(info, action){
-    return '感谢你收听webot机器人,\n回复help可以查看支持的指令.\n我们的github地址是: <a href="https://github.com/ktmud/weixin-robot">https://github.com/ktmud/weixin-robot</a>';
+    return '我的主人还没教我太多东西,你可以考虑帮我加下.\n可用的指令:\n'+ reply;
   });
 
   //可以通过回调处理,如果返回null则执行下一个action
@@ -98,7 +116,7 @@ module.exports = exports = function(webot){
     handler: function(info) {
       var d = new Date();
       var h = d.getHours();
-      var t = '现在是北京时间' + h + '点' + d.getMinutes() + '分';
+      var t = '现在是服务器时间' + h + '点' + d.getMinutes() + '分';
       if (h < 4 || h > 22) return t + '，夜深了，早点睡吧 [月亮]';
       if (h < 6) return t + '，您还是再多睡会儿吧';
       if (h < 9) return t + '，又是一个美好的清晨呢，今天准备去哪里玩呢？';
@@ -115,7 +133,7 @@ module.exports = exports = function(webot){
     name: 'ask_sex',
     description: '发送: sex? ,然后再回复girl或boy或both或其他',
     pattern: /^sex\??$/i,
-    handler: '你猜猜看',
+    handler: '你猜猜看(回复girl/boy/both)',
     //下次回复动作,replies,可以是任何能转换为action数组的对象,如Object,Array,String,Function等
     //object格式,key为pattern,value为handler, 注意object是没有顺序的
     replies: {
@@ -149,7 +167,7 @@ module.exports = exports = function(webot){
   webot.set({
     name: 'guest_game',
     description: '发送: game , 玩玩猜数字的游戏吧',
-    pattern: /game (\d*)/,
+    pattern: /(?:game|玩?游戏)\s*(\d*)/,
     handler: function(info, action){
       //等待下一次回复
       var retryCount = 3;
@@ -212,7 +230,7 @@ module.exports = exports = function(webot){
   webot.set({
     name: 'search',
     description: '发送: s 关键词 ',
-    pattern: /^(搜索?|search|s\b)\s*(.+)/i,
+    pattern: /^(搜索?|search|百度|s\b)\s*(.+)/i,
     handler: function(info, action, next){
       //pattern的解析结果将放在query里
       var q = info.query[2];
@@ -251,7 +269,7 @@ module.exports = exports = function(webot){
     },
     handler: function(info, action, next){
       geo2loc(info, function(err, location, data){
-        next(null, location ? '你正在' + location : '我不知道你在什么地方。');
+        next(null, location + ',我正考虑接入点评网帮你查询附近的优惠信息.' ? '你正在' + location : '我不知道你在什么地方。');
       });
     }
   });
@@ -279,7 +297,7 @@ module.exports = exports = function(webot){
 
   //图文的映射关系, 可以是object或function
   webot.config.mapping = function(item, index, info){
-    item.title = (index+1) + '> ' + item.title;
+    //item.title = (index+1) + '> ' + item.title;
     return item;
   };
 
