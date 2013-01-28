@@ -7,6 +7,10 @@
     "debug": "*",
     "underscore": ">=1.4",
     "request": ">=2.0",
+    "xml2js": ">= 0.2.2",
+    "underscore": ">=1.4",
+    "wind": ">= 0.7",
+    "js-yaml": ">1.0",
     "weixin-robot": ">=0.2"
   },
   "devDependencies": {
