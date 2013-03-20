@@ -87,10 +87,10 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
         - how are you
       
       # 可以是一个action配置,如果没有pattern,自动使用key
-      yaml: {
-        name: 'test_yaml_object',
+      yaml:
+        name: 'test_yaml_object'
         handler: '这是一个yaml的object配置'
-      }
+      
 
 ## Action (动作规则)
 ### pattern: 匹配规则,支持正则式和函数
