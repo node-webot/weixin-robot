@@ -10,11 +10,12 @@ var download = require('./support').download;
  * 初始化路由规则
  */
 module.exports = exports = function(webot){
+  var reg_help = /^(help|帮助|\?)$/i
   //首次关注时,会收到subscribe event
   webot.set({
-    name: 'user subscribe',
+    name: 'hello help',
     pattern: function(info){
-      return info.event === 'subscribe';
+      return info.event === 'subscribe' || reg_help.test(info.text);
     },
     handler: function(info, action){
       //this.description = '回复help查看帮助';

@@ -288,7 +288,9 @@ describe('Rule', function(){
   describe('news', function(){
     //检测首次收听指令
     it('should return first msg', function(done){
-      info.text = 'Hello2BizUser';
+      info.type = 'event';
+      info.event = 'subscribe';
+      info.eventKey = '';
       sendRequest(info, function(err, json){
         detect(info, err, json);
         json.should.have.property('MsgType', 'news');

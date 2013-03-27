@@ -1,21 +1,14 @@
 {
   "name": "weixin-robot-example",
-  "version": "0.0.4",
+  "version": "0.0.1",
   "main": "app.js",
   "dependencies": {
-    "express": ">= 3.0",
-    "debug": "*",
-    "underscore": ">=1.4",
-    "request": ">=2.0",
-    "xml2js": ">= 0.2.2",
-    "underscore": ">=1.4",
-    "wind": ">= 0.7",
-    "js-yaml": ">1.0",
-    "weixin-robot": ">=0.2"
+    "express": "~3.0",
+    "debug": "~0.7.2",
+    "weixin-robot": "~0.2.2"
   },
   "devDependencies": {
-    "should": "*",
-    "chai": "*"
+    "should": "*"
   },
   "repository": "",
   "author": "",
