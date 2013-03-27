@@ -11,7 +11,7 @@ var fs = require('fs');
 var bootstrap = require('../test/bootstrap');
 var makeQ = bootstrap.makeAuthQuery;
 var request = bootstrap.request;
-var parser = bootstrap.parser;
+var parser = require('xml2js').parseString;
 
 
 var program = require('commander');
