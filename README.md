@@ -1,5 +1,4 @@
-# 微信公共帐号机器人(Weixin Robot)
-
+# 微信公共帐号机器人(Weixin Robot) [![Build Status](https://api.travis-ci.org/ktmud/weixin-robot.png?branch=master)](https://travis-ci.org/ktmud/weixin-robot)
 
 [微信公众平台](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-index&lang=zh_CN)提供的[开放信息接口](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-callbackapi-doc&lang=zh_CN)的自动回复系统，基于`node.js` 实现。
 
@@ -40,7 +39,7 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
       console.log("WeBot Start... God bless love...");
     });
 
-## 文档 && 示例代码
+## 文档 && 示例
 
 - 简单的在底部
 - 更建议看extjs格式的文档: [http://webot.cloudfoundry.com/doc/index.html#!/api/WeBot](http://webot.cloudfoundry.com/doc/index.html#!/api/WeBot)
@@ -54,6 +53,11 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
 
 如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/ktmud/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
 
+## 贡献代码
+
+欢迎直接 fork 并提交 pull request ，提交前请确保 make test 能通过。
+
+如果要新加方法，请在注释内完善参数信息及用法。
 
 ## WeBot (机器人)
 ### set(设置路由)

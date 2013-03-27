@@ -32,6 +32,9 @@ var getXML = function(info){
         '<Location_Y><%=yPos%></Location_Y>',
         '<Scale><%=scale%></Scale>',
         '<Label><![CDATA[<%=label%>]]></Label>',
+      '<% }else if(type=="event"){  %>',
+        '<Event><![CDATA[<%=event%>]]></Event>',
+        '<EventKey><![CDATA[<%=eventKey%>]]></EventKey>',
       '<% }else if(type=="image"){  %>',
         '<PicUrl><![CDATA[<%=pic%>]]></PicUrl>',
       '<% } %>',
@@ -119,6 +122,26 @@ describe('xml2json', function(){
       should.equal(mockReq.wx_data.FromUserName.toString(), info.user);
       should.equal(mockReq.wx_data.MsgType.toString(), info.type);
       should.equal(mockReq.wx_data.PicUrl.toString(), info.pic);
+    });
+  });
+
+  it('should return correct event json', function(){
+    var info = {
+      type: 'event',
+      event: 'click',
+      eventKey: 'test_key',
+    };
+    mockReq.on = function(e, cb){
+      if(e == 'data'){
+        cb(getXML(info));
+      }else if(e == 'end'){
+        cb();
+      }
+    };
+    bodyParser(mockReq, mockRes, function(err){
+      should.exist(mockReq.wx_data);
+      should.equal(mockReq.wx_data.Event.toString(), info.event);
+      should.equal(mockReq.wx_data.EventKey.toString(), info.eventKey);
     });
   });
 

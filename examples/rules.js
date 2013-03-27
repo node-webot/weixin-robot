@@ -10,26 +10,32 @@ var download = require('./support').download;
  * 初始化路由规则
  */
 module.exports = exports = function(webot){
-  //首次关注时,会收到Hello2BizUser
-  webot.set(/^(Hello2BizUser|help|帮助|\?)$/i, function(info, action){
-    //this.description = '回复help查看帮助';
-    var reply = {
-      title: '感谢你收听webot机器人',
-      pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg',
-      url: 'https://github.com/ktmud/weixin-robot',
-      description: [
-        '**欢迎你,来自开源中国的朋友**\n',
-        '建议你试试这几条指令:\n',
-          '1. game : 玩玩猜数字的游戏吧\n',
-          '2. s+空格+关键词 : 我会帮你百度搜索喔\n',
-          '3. s+空格+nde : 可以试试我的纠错能力\n',
-          '4. 发送你的经纬度\n',
-          '5. 重看本指令请回复help或问号\n',
-          '6. 更多指令请回复more\n',
-          'PS: 点击下面的「查看全文」将跳转到我的github页'
-      ].join('')
-    };
-    return [reply];
+  //首次关注时,会收到subscribe event
+  webot.set({
+    name: 'user subscribe',
+    pattern: function(info){
+      return info.event === 'subscribe';
+    },
+    handler: function(info, action){
+      //this.description = '回复help查看帮助';
+      var reply = {
+        title: '感谢你收听webot机器人',
+        pic: 'https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg',
+        url: 'https://github.com/ktmud/weixin-robot',
+        description: [
+          '**欢迎你,来自开源中国的朋友**\n',
+          '建议你试试这几条指令:\n',
+            '1. game : 玩玩猜数字的游戏吧\n',
+            '2. s+空格+关键词 : 我会帮你百度搜索喔\n',
+            '3. s+空格+nde : 可以试试我的纠错能力\n',
+            '4. 发送你的经纬度\n',
+            '5. 重看本指令请回复help或问号\n',
+            '6. 更多指令请回复more\n',
+            'PS: 点击下面的「查看全文」将跳转到我的github页'
+        ].join('')
+      };
+      return [reply];
+    }
   });
 
   //设置一条规则
