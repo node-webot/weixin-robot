@@ -5,7 +5,7 @@
   "dependencies": {
     "express": "~3.0",
     "debug": "~0.7.2",
-    "weixin-robot": "~0.2.2"
+    "weixin-robot": "~0.2.3"
   },
   "devDependencies": {
     "should": "*"
