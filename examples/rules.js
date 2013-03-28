@@ -1,10 +1,11 @@
+var crypto = require('crypto');
+
 var debug = require('debug');
 var log = debug('webot:example');
 
 var _ = require('underscore')._;
 var search = require('./support').search;
 var geo2loc = require('./support').geo2loc;
-var download = require('./support').download;
 
 /**
  * 初始化路由规则
@@ -13,7 +14,10 @@ module.exports = exports = function(webot){
   var reg_help = /^(help|帮助|\?)$/i
   //首次关注时,会收到subscribe event
   webot.set({
+    // name 和 description 都不是必须的
     name: 'hello help',
+    description: '获取使用帮助，发送 help',
+    // 匹配消息规则
     pattern: function(info){
       return info.event === 'subscribe' || reg_help.test(info.text);
     },
@@ -35,14 +39,13 @@ module.exports = exports = function(webot){
             'PS: 点击下面的「查看全文」将跳转到我的github页'
         ].join('')
       };
+      // 返回值如果是list，则回复图文消息列表
       return [reply];
     }
   });
 
-  //设置一条规则
+  // 更简单地设置一条规则
   webot.set(/^more$/i, function(info, action){
-    //this.description = '回复more查看更多指令';
-
     var reply = _.chain(webot.get()).filter(function(action){
       return action.description;
     }).map(function(action){
@@ -53,56 +56,36 @@ module.exports = exports = function(webot){
     return '我的主人还没教我太多东西,你可以考虑帮我加下.\n可用的指令:\n'+ reply;
   });
 
-  //可以通过回调处理,如果返回null则执行下一个action
-  webot.set(/.*/i, function(info, action, next){
-    log('can load sth from db, then go next action');
-    //info.text = 'who'
-    return next(null);
-    //或 return null;
-  });
-
-  //也接受object参数
   webot.set({
     name: 'who_are_you',
     description: '想知道我是谁吗? 发送: who?',
-    //pattern可以是regexp或字符串(模糊匹配)
+    // pattern 既可以是函数，也可以是 regexp 或 字符串(模糊匹配)
     pattern: /who|你是谁?\??/i,
-    //回复handler也可以直接是字符串或数组,如果是数组则随机返回一个子元素
-    handler: ['我是神马机器人','微信机器人']
+    // 回复handler也可以直接是字符串或数组，如果是数组则随机返回一个子元素
+    handler: ['我是神马机器人', '微信机器人']
   });
 
-  //正则匹配后的匹配组存在info.query中
+  // 正则匹配后的匹配组存在 info.query 中
   webot.set({
     name: 'your_name',
     description: '自我介绍下吧, 发送: I am [enter_your_name]',
     pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
+
     // handler: function(info, action){
     //   return '你好,' + info.query[1]
     // }
-    
-    //或者更简单一点
+    // 或者更简单一点
     handler: '你好,{1}'
   });
 
-  //pattern支持函数
-  webot.set({
-    name: 'pattern_fn',
-    description: 'pattern支持函数,发送: fn',
-    pattern: function(info){
-      return info.isText() && info.text=='fn';
-    },
-    handler: 'pattern支持函数'
-  });
-
-  //读取dialog文件
+  // 简单的纯文本对话，可以用单独的 yaml 文件来定义
   webot.dialog(__dirname + '/dialog.yaml');
 
-  //一次性加多个吧
+  // 一次性加多个吧
   webot.set([{
     name: 'morning',
     description: '打个招呼吧, 发送: good morning',
     pattern: /^(早上?好?|(good )?moring)[啊\!！\.。]*$/i,
-    //handler也可以是异步的
     handler: function(info, action){
       var d = new Date();
       var h = d.getHours();
@@ -135,7 +118,7 @@ module.exports = exports = function(webot){
     }
   }]);
 
-  //等待下一次回复
+  // 等待下一次回复
   webot.set({
     name: 'ask_sex',
     description: '发送: sex? ,然后再回复girl或boy或both或其他',
@@ -170,7 +153,7 @@ module.exports = exports = function(webot){
     // }]
   });
   
-  //也可以这样wait,并且rewait
+  // 也可以这样wait,并且rewait
   webot.set({
     name: 'guest_game',
     description: '发送: game , 玩玩猜数字的游戏吧',
@@ -202,29 +185,30 @@ module.exports = exports = function(webot){
     }
   });
 
-  //调用已有的action
+  // 调用已有的action
   webot.set({
     name: 'suggest_keyword',
     description: '发送: s nde ,然后再回复Y或其他',
-    pattern: /^(搜索?|search|s\b)\s*(.+)/i,
+    pattern: /^(?:搜索?|search|s\b)\s*(.+)/i,
     handler: function(info, action){
-      var q = info.query[2];
+      var q = info.query[1];
       if(q == 'nde'){
         webot.wait(info.user,{
           name: 'try_waiter_suggest',
           handler: function(next_info, next_action, next_handler){
-            if(next_info.text.match(/y/i)){
+            if(next_info.text.match(/^(好|要|y)$/i)){
               //next_handler(null, '输入变更为: node');
               //注意,这里用的是上一次的info,而不是next_info
-              next_info.text = 'nodejs';
-              next_info.query = ['' ,'' ,'nodejs'];
-              //调用已有的handler
-              webot.exec(next_info, webot.get('search'), next_handler);
+              info.query[1] = 'nodejs';
+
+              webot.exec(info, webot.get('search'), next_handler);
+
+              // 事实上，你也可以为你的 search handler 命名，
+              // 并在此直接调用：
+              // do_search(info, next_action, next_handler);
             }else{
-              next_info.text = 'nde';
-              next_info.query = ['' ,'' ,'nde'];
               //next_handler(null, '仍然输入:'+ next_action.data);
-              webot.exec(next_info, webot.get('search'), next_handler);
+              webot.exec(info, webot.get('search'), next_handler);
             }
           }
         });
@@ -233,22 +217,25 @@ module.exports = exports = function(webot){
     }
   });
 
-  //可以通过回调返回结果
+  function do_search(info, action, next){
+    // pattern的解析结果将放在query里
+    var q = info.query[1];
+    log('searching: ', q);
+    // 从某个地方搜索到数据...
+    return search(q , next);
+  }
+
+  // 可以通过回调返回结果
   webot.set({
     name: 'search',
     description: '发送: s 关键词 ',
-    pattern: /^(搜索?|search|百度|s\b)\s*(.+)/i,
-    handler: function(info, action, next){
-      //pattern的解析结果将放在query里
-      var q = info.query[2];
-      log('searching: ', q);
-      //从某个地方搜索到数据...
-      return search(q , next);
-    }
+    pattern: /^(?:搜索?|search|百度|s\b)\s*(.+)/i,
+    //handler也可以是异步的
+    handler: do_search
   });
 
 
-  //超时处理
+  // 超时处理
   webot.set({
     name: 'timeout',
     description: '输入timeout,等待5秒后回复,会提示超时',
@@ -276,7 +263,7 @@ module.exports = exports = function(webot){
     },
     handler: function(info, action, next){
       geo2loc(info, function(err, location, data){
-        next(null, location + ',我正考虑接入点评网帮你查询附近的优惠信息.' ? '你正在' + location : '我不知道你在什么地方。');
+        next(null, location ? '你正在' + location : '我不知道你在什么地方。');
       });
     }
   });
@@ -284,20 +271,25 @@ module.exports = exports = function(webot){
   //图片
   webot.set({
     name: 'check_image',
-    description: '发送图片,我将下载它',
+    description: '发送图片,我将返回其hash值',
     pattern: function(info){
       return info.isImage();
     },
-    handler: function(info, action){
+    handler: function(info, action, next){
       log('image url: %s', info.pic);
       try{
-        var path = __dirname + '\\image' 
-          //+ new Date().getTime() 
-          + '.png';
-        download(info.pic, path);
-        return '你的图片已经保存到:' + path;
+        var shasum = crypto.createHash('md5');
+
+        var req = require('request')(info.pic);
+
+        req.on('data', function(data) {
+          shasum.update(data);
+        });
+        req.on('end', function() {
+          return next(null, '你的图片hash: ' + shasum.digest('hex'));
+        });
       }catch(e){
-        return '图片下载失败: ' + e;
+        return '生成图片hash失败: ' + e;
       }
     }
   });
@@ -323,8 +315,8 @@ module.exports = exports = function(webot){
     }
   });
 
-  //容错
-  webot.set(/.*/i, function(info, action){
+  //所有消息都无法匹配时的fallback
+  webot.set(/.*/, function(info, action){
     return '你发送了「' + info.text + '」,可惜我太笨了,听不懂. 发送: help 查看可用的指令';
   });
 };

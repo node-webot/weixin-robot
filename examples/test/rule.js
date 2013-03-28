@@ -40,15 +40,6 @@ describe('Rule', function(){
       });
     });
 
-    //检测fn指令
-    it('should return fn msg', function(done){
-      info.text = 'fn';
-      sendRequest(info, function(err, json){
-        detect(info, err, json, /pattern支持函数/);
-        done();
-      });
-    });
-
     //检测who指令
     it('should return who msg', function(done){
       info.text = 'who';
@@ -264,22 +255,9 @@ describe('Rule', function(){
       info.type = 'image';
       sendRequest(info, function(err, json){
         detect(info, err, json, /图片/);
-        var tmp = json.Content.match(/你的图片已经保存到:(.*)/);
+        var tmp = json.Content.match(/你的图片HASH: (.*)/);
         should.exist(tmp);
         done()
-        // if(tmp && tmp.length>=2){
-        //   var fs = require('fs');
-        //   var exists = fs.existsSync(tmp[1].replace(/\\\\/,'\\'));
-        //   console.log(exists, tmp[1].replace(/\\\\/,'\\'))
-        //   if(exists){
-        //     fs.unlinkSync(tmp[1]);
-        //     done();
-        //   }else{
-        //     done('download fail: ' + tmp[1]);
-        //   }
-        // }else{
-        //    done();
-        // }
       });
     });
   });

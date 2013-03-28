@@ -114,7 +114,7 @@ exports.search = function(keyword, cb){
  * @param  {String} url  目标网址
  * @param  {String} path 保存路径
  */
-exports.download = function(url, path){
-  log('downloading %s to %s', url, path);
-  request(url).pipe(require('fs').createWriteStream(path));
+exports.download = function(url, stream){
+  log('downloading %s a stream', url);
+  return request(url).pipe(stream);
 };
