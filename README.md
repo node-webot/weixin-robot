@@ -52,7 +52,7 @@ app.listen(80);
 
 ## Webot (机器人)
 
-### set(pattern, handler_[, replies]_)
+### set(pattern, handler, _[, replies]_)
 
 新增回复规则
 
@@ -71,13 +71,13 @@ webot.set({
 
 ### wait(uid, rule)
 
-等待用户回复。 `rule` 可以是一个 function ，也可以使用 set 的对象参数形式。
+等待用户回复。 `rule` 可以是一个 function ，也可以类似于 `webot.set` 参数的具体规则定义。
 
 ### rewait(uid)
 
 重试上次等待操作
 
-### dialog(file1_[, file2, ...]_)
+### dialog(file1, _[file2, ...]_)
 
 增加对话规则
 
@@ -138,116 +138,168 @@ hello:
   - '你输入的匹配关键词是:{1}'
   - '我知道了,你输入了:{1}'
 
-# 可以是一个rule配置,如果没有pattern,自动使用key
+# 也可以是一个rule定义；如果没有定义pattern，自动使用key
 yaml:
   name: 'test_yaml_object'
   handler: '这是一个yaml的object配置'
 ```
       
 
-## Rule (动作规则)
-### pattern: 匹配规则,支持正则式和函数
+## Rule(options)
+
+使用 `webot.set` 和 `webot.wait` 等方法时，会自动新建一条 rule ，
+rule 定义的具体可用参数如下：
+
+### options.name
+
+为规则命名，仅在在调试和后台查看（计划中）时有用。
+
+### options.pattern
  
- 支持的格式:
+匹配消息文本的方法。可以是正则表达式或函数。
+
+支持的格式:
  
  - {String}   直接返回字符串
- - {RegExp}   仅匹配文本消息,正则式,把匹配组赋值给info.query
+ - {RegExp}   仅匹配文本消息正则式，匹配到的捕获组会被赋值给 info.param
  - {Function} 签名为fn(info):boolean
  - {NULL}     为空则视为通过匹配
 
-        //正则匹配后的匹配组存在info.query中
-        webot.set({
-          name: 'your_name',
-          description: '自我介绍下吧, 发送: I am [enter_your_name]',
-          pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
-          // handler: function(info, rule){
-          //   return '你好,' + info.query[1]
-          // }
-          
-          //或者更简单一点
-          handler: '你好,{1}'
-        })
-      
-        //pattern支持函数
-        webot.set({
-          name: 'pattern_fn',
-          description: 'pattern支持函数,发送: fn',
-          pattern: function(info){
-            return info.isText() && info.text=='fn'
-          },
-          handler: 'pattern支持函数'
-        })
+示例：
 
-### handler: 消息的处理逻辑
-当返回非真值(null/false)时继续执行下一个动作, 否则回复给用户.
+```javascript
+webot.set({
+  name: 'your_name',
+  description: '自我介绍下吧, 发送: I am [enter_your_name]',
+  pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
+  // handler: function(info, rule){
+  //   return '你好,' + info.param[1]
+  // }
+  
+  //或者更简单一点
+  handler: '你好,{1}'
+});
+
+//pattern支持函数
+webot.set({
+  name: 'pattern_fn',
+  description: 'pattern支持函数,发送: fn',
+  pattern: function(info){
+    return info.isText() && info.text=='fn'
+  },
+  handler: 'pattern支持函数'
+});
+```
+
+### options.handler
+
+指定如何生成回复消息
+
+当返回非真值(null/false)时继续执行下一个动作，否则返回值会被回复给用户。
 
 支持的格式:
 
 - {String}    直接返回字符串
 - {Array}     直接返回数组中的随机子元素
-- {Function}  签名为fn(info, rule):String 直接执行函数并返回
-- {Function}  签名为fn(info, rule, callback(err, reply)) 通过回调函数返回
+- {Function}  签名为fn(info):String 直接执行函数并返回
+- {Function}  签名为fn(info, callback(err, reply)) 通过回调函数返回
 - {Object}    key为pattern,value为handler, 根据匹配的正则去执行对应的handler (注意: 因为是Object,所以执行顺序不一定从上到下)
 
-        webot.set({
-          name: 'your_name',
-          description: '自我介绍下吧, 发送: I am [enter_your_name]',
-          pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
-          // handler: function(info, rule){
-          //   return '你好,' + info.query[1]
-          // }
-          
-          //或者更简单一点
-          handler: '你好,{1}'
-        })
+示例：
 
+```javascript
+webot.set({
+  name: 'your_name',
+  description: '自我介绍下吧, 发送: I am [enter_your_name]',
+  pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
+
+  // handler: function(info, rule){
+  //   return '你好,' + info.query[1]
+  // }
+  handler: '你好,{1}'
+});
+
+// 异步操作
+webot.set({
+  name: 'search_database',
+  description: 'Search a keyword from database',
+  pattern: /^(?:s\s+)(.+)$/i,
+  handler: function(info, next) {
+
+    // assert(this.name == 'search_database');
+    // 函数内的 this 变量即此规则
+
+    query_from_database(info.text, function(err, ret) {
+      if (err) return next(500);
+      return next(null, ret);
+    });
+  }
+});
+```
+
+**注意**：`pattern` 并不支持异步，你可以把需要异步进行的 pattern 匹配
+视为一个 `handler` 。
+
+```javascript
+webot.set('test', function(info, next) {
+  var uid = info.user;
+  User.findOne(uid, function(err, doc) {
+    if (!doc) return next();
+    return next(null, '欢迎，' + doc.name);
+  });
+});
+```
 
 ### replies 下次回复
 
 就是一组rule,用于临时指定下次回复的内容.
 
-      //等待下一次回复
-      webot.set({
-        name: 'ask_sex',
-        description: '发送: sex? ,然后再回复girl或boy或both或其他',
-        pattern: /^sex\??$/i,
-        handler: '你猜猜看',
-        //下次回复动作,replies,可以是任何能转换为rule数组的对象,如Object,Array,String,Function等
-        //object格式,key为pattern,value为handler, 注意object是没有顺序的
-        replies: {
-          //正则作为key的时候,注意要转义
-          '/^g(irl)?\\??$/i': '猜错',
-          'boy': function(info, rule, next){
-            return next(null, '猜对了')
-          },
-          'both': '对你无语...'
-        }
-        
-        //也可以是直接的函数,同rule: function(info, rule, [cb]) 
-        // replies: function(info, rule){
-        //   return 'haha, I wont tell you'
-        // }
+```javascript
+//等待下一次回复
+webot.set({
+  name: 'ask_sex',
+  description: '发送: sex? ,然后再回复girl或boy或both或其他',
+  pattern: /^sex\??$/i,
+  handler: '你猜猜看',
+  //下次回复动作,replies,可以是任何能转换为rule数组的对象,如Object,Array,String,Function等
+  //object格式,key为pattern,value为handler, 注意object是没有顺序的
+  replies: {
+    //正则作为key的时候,注意要转义
+    '/^g(irl)?\\??$/i': '猜错',
+    'boy': function(info, next){
+      // 可以通过 this.parent 获得父级 rule 定义
+      return next(null, '猜对了')
+    },
+    'both': '对你无语...'
+  }
+  
+  //也可以是直接的函数,同rule: function(info, [cb]) 
+  // replies: function(info){
+  //   return 'haha, I wont tell you'
+  // }
 
-        //也可以是数组格式,每个元素为一个rule
-        // replies: [{
-        //   pattern: '/^g(irl)?\\??$/i',
-        //   handler: '猜错'
-        // },{
-        //   pattern: '/^b(oy)?\\??$/i',
-        //   handler: '猜对了'
-        // },{
-        //   pattern: 'both',
-        //   handler: '对你无语...'
-        // }]
-      });
+  //也可以是数组格式,每个元素为一个rule
+  // replies: [{
+  //   pattern: '/^g(irl)?\\??$/i',
+  //   handler: '猜错'
+  // },{
+  //   pattern: '/^b(oy)?\\??$/i',
+  //   handler: '猜对了'
+  // },{
+  //   pattern: 'both',
+  //   handler: '对你无语...'
+  // }]
+});
+```
 
 
-## Info (微信消息)
+## Info
 
-负责解析微信发来的消息,以及打包回复消息.
+负责解析微信发来的消息，以及打包回复消息。
 
 ###原始消息属性
 
+```javascript
     /**
      * @cfg {String} 消息类型:
      *
@@ -310,9 +362,11 @@ yaml:
      * 对应于原始字段: PicUrl
      */
     Info.prototype.pic = null;
+```
 
 ###回复消息属性
 
+```javascript
     /**
      * @property {String/Array} reply 回复消息
      * 
@@ -337,12 +391,15 @@ yaml:
      * - 不星标: 0
      */
     Info.prototype.flag = 0;
+```
 
-### toXML
-  把回复消息打包成XML
+### toXML()
+
+把回复消息打包成XML
 
 
 ## 测试辅助：
+
 提供可执行文件 `webot` 用于发送测试消息。
 
 ```
