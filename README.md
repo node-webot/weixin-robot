@@ -250,12 +250,12 @@ webot.set('test', function(info, next) {
 });
 ```
 
-### replies 下次回复
+### replies
 
-就是一组rule,用于临时指定下次回复的内容.
+指定如何回复用户的回复。
 
 ```javascript
-//等待下一次回复
+// 等待下一次回复
 webot.set({
   name: 'ask_sex',
   description: '发送: sex? ,然后再回复girl或boy或both或其他',
@@ -377,7 +377,8 @@ webot.set({
      * 
      *   - {String} title 图文消息标题
      *   - {String} description 图文消息描述
-     *   - {String} pic 图片链接,支持JPG、PNG格式,较好的效果为大图(640x320),小图(80x80),限制图片链接的域名需要与开发者填写的基本资料中的Url一致
+     *   - {String} pic 图片链接,支持JPG、PNG格式,较好的效果为大图(640x320),小图(80x80),
+     *              限制图片链接的域名需要与开发者填写的基本资料中的Url一致
      *   - {String} url 点击图文消息跳转链接
      *
      *   注: 提供了映射功能,参见 {@link #config}
