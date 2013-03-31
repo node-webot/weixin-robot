@@ -46,43 +46,103 @@ app.listen(80);
 
 欢迎直接 fork 并提交 pull request ，提交前请确保 make test 能通过。
 
-如果要新加方法，请在注释内完善参数信息及用法。
+更欢迎直接[认领 issues](https://github.com/ktmud/weixin-robot/issues?state=open)。
 
-## WeBot (机器人)
-### set(设置路由)
-  格式为:
+# API 参考
 
-  - function(pattern, handler, replies)
-  - function(rule)
+## Webot (机器人)
 
-### wait(设置下次回复) = function(uid, rule)
+### set(pattern, handler_[, replies]_)
 
-### rewait(重试下次回复) = function(uid)
+新增回复规则
 
-### dialog(简单的载入规则) = function(path)
-载入yaml格式的文件,并注册为规则
+```javascript
+webot.set(pattern, handler, replies)
 
-文件格式:
+// or 
 
-      ---
-      # 直接回复
-      hi: 'hi,I am robot'
-      
-      # 匹配组替换
-      /key (.*)/i: 
-        - '你输入的匹配关键词是:{1}'
-        - '我知道了,你输入了:{1}'
-      
-      # 随机回复一个
-      hello: 
-        - 你好
-        - fine
-        - how are you
-      
-      # 可以是一个rule配置,如果没有pattern,自动使用key
-      yaml:
-        name: 'test_yaml_object'
-        handler: '这是一个yaml的object配置'
+webot.set({
+  name: 'rule name',
+  pattern: function(info, next) { ... },
+  handler: function(info, next) {
+  }
+})
+```
+
+### wait(uid, rule)
+
+等待用户回复。 `rule` 可以是一个 function ，也可以使用 set 的对象参数形式。
+
+### rewait(uid)
+
+重试上次等待操作
+
+### dialog(file1_[, file2, ...]_)
+
+增加对话规则
+
+```javascript
+webot.dialog({
+  'hello': '哈哈哈',
+  'hi': ['好吧', '你好']
+});
+
+// or
+webot.dialog('./rules/foo.js', './rules/bar.js');
+```
+
+In `rules/foo.js`:
+
+```javascript
+module.exports = {
+  'hello': '哈哈哈',
+  'hi': ['好吧', '你好']
+};
+```
+
+你也可以在你的项目中 `require('js-yaml')` ，
+采用简洁的 yaml 语法来定义纯文本的对话规则：
+
+In `package.json`:
+```javascript
+   "dependencies": {
+       ...
+     "js-yaml": "~2.0.3"
+       ...
+   }
+```
+
+In your `app.js`:
+
+```javascript
+require('js-yaml');
+
+webot.dialog('./rules/abc.yaml');
+```
+
+In `rules/abc.yaml`:
+
+```yaml
+---
+# 直接回复
+hi: 'hi,I am robot'
+
+# 随机回复一个
+hello: 
+  - 你好
+  - fine
+  - how are you
+
+# 匹配组替换
+/key (.*)/i: 
+  - '你输入的匹配关键词是:{1}'
+  - '我知道了,你输入了:{1}'
+
+# 可以是一个rule配置,如果没有pattern,自动使用key
+yaml:
+  name: 'test_yaml_object'
+  handler: '这是一个yaml的object配置'
+```
       
 
 ## Rule (动作规则)
@@ -94,7 +154,6 @@ app.listen(80);
  - {RegExp}   仅匹配文本消息,正则式,把匹配组赋值给info.query
  - {Function} 签名为fn(info):boolean
  - {NULL}     为空则视为通过匹配
-
 
         //正则匹配后的匹配组存在info.query中
         webot.set({
@@ -304,9 +363,14 @@ app.listen(80);
     -u, --user [value]         The User ID
 ```
 
-
-Have fun with weixin, enjoy being a robot!
+Have fun with wechat, and enjoy being a robot!
 
 ## LICENSE
 
-(the DON'T CARE WHAT YOU DO WITH IT license)
+(The MIT License)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

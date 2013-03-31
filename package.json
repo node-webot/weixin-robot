@@ -12,8 +12,7 @@
     "debug": "~0.7.2",
     "xml2js": "~0.2.6",
     "underscore": "~1.4",
-    "wind": "~0.7.3",
-    "js-yaml": "~2.0.3"
+    "wind": "~0.7.3"
   },
   "devDependencies": {
     "commander": "*",
