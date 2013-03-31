@@ -11,44 +11,33 @@
 添加微信帐号,试试效果
 
 ![豆瓣同城微信帐号二维码：douban-event](http://i.imgur.com/ijE19.jpg)
-![微信机器人测试帐号：webot](https://raw.github.com/ktmud/weixin-robot/master/examples/qrcode.jpg)
+![微信机器人测试帐号：webot-test](http://i.imgur.com/6IcAJgH.jpg)
 
-## Install:
-    npm install weixin-robot
+## 快速入门
 
-  或者访问官网: [https://github.com/ktmud/weixin-robot](https://github.com/ktmud/weixin-robot)
+```javascript
+var express = require('express');
+var webot = require('weixin-robot');
 
-## QuickStart
+var app = express();
 
-WeBot的设计目标就是让你傻瓜化的接入微信公众平台
+// 指定回复消息
+webot.set('hi', '你好');
 
-    //启动服务
-    var express = require('express');
-    var app = express();
+// 接管消息请求
+webot.watch(app, 'your1weixin2token');
 
-    //启动机器人,你在微信公众平台填写的token
-    var webot = require('weixin-robot');
-    webot.monitor('keyboardcat123', '/', app)
+// 启动 Web 服务
+// 微信后台只允许 80 端口
+app.listen(80);
 
-    //载入路由规则
-    webot.set('hi','你好');
+// 如果你不想让 node 应用直接监听 80 端口
+// 可以尝试用 nginx 或 apache 自己做一层 proxy
+// app.listen(process.env.PORT);
+// app.enable('trust proxy');
+```
 
-    //微信后台只允许 80 端口，你可能需要自己做一层 proxy
-    app.enable('trust proxy');
-    app.listen(3000, '127.0.0.1', function() {
-      console.log("WeBot Start... God bless love...");
-    });
-
-## 文档 && 示例
-
-- 简单的在底部
-- 更建议看extjs格式的文档: [http://webot.cloudfoundry.com/doc/index.html#!/api/WeBot](http://webot.cloudfoundry.com/doc/index.html#!/api/WeBot)
-- 使用方式可以参照示例:
-
-  - [examples/app.js](https://github.com/ktmud/weixin-robot/blob/master/examples/app.js)
-  - [examples/rules.js](https://github.com/ktmud/weixin-robot/blob/master/examples/rules.js) 。
-
-**代码和示例里面的注释已经详细的不能再详细了!!!**
+## 示例
 
 
 如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/ktmud/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
@@ -64,9 +53,9 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
   格式为:
 
   - function(pattern, handler, replies)
-  - function(action)
+  - function(rule)
 
-### wait(设置下次回复) = function(uid, action)
+### wait(设置下次回复) = function(uid, rule)
 
 ### rewait(重试下次回复) = function(uid)
 
@@ -90,13 +79,13 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
         - fine
         - how are you
       
-      # 可以是一个action配置,如果没有pattern,自动使用key
+      # 可以是一个rule配置,如果没有pattern,自动使用key
       yaml:
         name: 'test_yaml_object'
         handler: '这是一个yaml的object配置'
       
 
-## Action (动作规则)
+## Rule (动作规则)
 ### pattern: 匹配规则,支持正则式和函数
  
  支持的格式:
@@ -112,7 +101,7 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
           name: 'your_name',
           description: '自我介绍下吧, 发送: I am [enter_your_name]',
           pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
-          // handler: function(info, action){
+          // handler: function(info, rule){
           //   return '你好,' + info.query[1]
           // }
           
@@ -137,15 +126,15 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
 
 - {String}    直接返回字符串
 - {Array}     直接返回数组中的随机子元素
-- {Function}  签名为fn(info, action):String 直接执行函数并返回
-- {Function}  签名为fn(info, action, callback(err, reply)) 通过回调函数返回
+- {Function}  签名为fn(info, rule):String 直接执行函数并返回
+- {Function}  签名为fn(info, rule, callback(err, reply)) 通过回调函数返回
 - {Object}    key为pattern,value为handler, 根据匹配的正则去执行对应的handler (注意: 因为是Object,所以执行顺序不一定从上到下)
 
         webot.set({
           name: 'your_name',
           description: '自我介绍下吧, 发送: I am [enter_your_name]',
           pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
-          // handler: function(info, action){
+          // handler: function(info, rule){
           //   return '你好,' + info.query[1]
           // }
           
@@ -156,7 +145,7 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
 
 ### replies 下次回复
 
-就是一组action,用于临时指定下次回复的内容.
+就是一组rule,用于临时指定下次回复的内容.
 
       //等待下一次回复
       webot.set({
@@ -164,23 +153,23 @@ WeBot的设计目标就是让你傻瓜化的接入微信公众平台
         description: '发送: sex? ,然后再回复girl或boy或both或其他',
         pattern: /^sex\??$/i,
         handler: '你猜猜看',
-        //下次回复动作,replies,可以是任何能转换为action数组的对象,如Object,Array,String,Function等
+        //下次回复动作,replies,可以是任何能转换为rule数组的对象,如Object,Array,String,Function等
         //object格式,key为pattern,value为handler, 注意object是没有顺序的
         replies: {
           //正则作为key的时候,注意要转义
           '/^g(irl)?\\??$/i': '猜错',
-          'boy': function(info, action, next){
+          'boy': function(info, rule, next){
             return next(null, '猜对了')
           },
           'both': '对你无语...'
         }
         
-        //也可以是直接的函数,同action: function(info, action, [cb]) 
-        // replies: function(info, action){
+        //也可以是直接的函数,同rule: function(info, rule, [cb]) 
+        // replies: function(info, rule){
         //   return 'haha, I wont tell you'
         // }
 
-        //也可以是数组格式,每个元素为一个action
+        //也可以是数组格式,每个元素为一个rule
         // replies: [{
         //   pattern: '/^g(irl)?\\??$/i',
         //   handler: '猜错'

@@ -1,7 +1,7 @@
 /*global beforeEach:false, it:false, describe:false */
 
 var should = require('should');
-var WeBot = require('../').WeBot;
+var Webot = require('../').Webot;
 
 var webot = null;
 var checkSig = null;
@@ -12,7 +12,7 @@ var mockRes = null;
 //测试鉴权
 describe('auth', function(){
   beforeEach(function(){
-    webot = new WeBot();
+    webot = new Webot();
     checkSig = webot.checkSig('keyboardcat123');
     mockReq = {
       method: 'GET',
