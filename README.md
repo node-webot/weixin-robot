@@ -39,6 +39,7 @@ app.listen(80);
 
 ## 示例
 
+请参考[weixin-robot-example](https://github.com/ktmud/weixin-robot-example)。
 
 如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/ktmud/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
 
@@ -229,6 +230,7 @@ webot.set({
     // assert(this.name == 'search_database');
     // 函数内的 this 变量即此规则
 
+    // 执行一个异步操作..
     query_from_database(info.text, function(err, ret) {
       if (err) return next(500);
       return next(null, ret);
