@@ -1,6 +1,6 @@
 {
   "name": "weixin-robot",
-  "version": "0.3.0pre",
+  "version": "0.3.0",
   "homepage": "http://ktmud.github.com/weixin-robot/",
   "repository": "git://github.com/ktmud/weixin-robot.git",
   "description": "微信公众平台开放消息接口机器人",
@@ -17,7 +17,6 @@
   "devDependencies": {
     "commander": "*",
     "prettyjson": "*",
-    "express": "*",
     "mocha": "*",
     "should": "*",
     "request": "*"
