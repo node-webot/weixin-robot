@@ -455,6 +455,13 @@ webot.set('guess my sex', {
 ## 测试辅助：
 
 提供可执行文件 `webot` 用于发送测试消息。
+请不要使用 `npm install weixin-robot -g` 命令来添加这个命令到全局。
+只在你自己的微信机器人项目里安装 `weixin-robot` 。
+并通过添加 `./node_modules/.bin/` 目录到 $PATH 环境变量来访问此命令。
+
+```bash
+export PATH=./node_modules/.bin:$PATH
+```
 
 ```
   Usage: webot [options]
@@ -464,14 +471,15 @@ webot.set('guess my sex', {
     -h, --help                 output usage information
     -V, --version              output the version number
     -l, --location             Send a <location> (geo, latlng)
-    -i, --image                Send a <image>, provide image url
-    -t, --token [value]        Provide weixin token
+    -i, --image                Send an <image>, provide image url
+    -e, --event                Send an <event>, with event type and event key
+    -t, --token [value]        Provide weixin token, defaults to process.env.WX_TOKEN or keyboardcat123
     -n, --host [value]         Set request hostname, defaults to 127.0.0.1
     -p, --port <n>             The port your service is listening to, defaults to 3000
-    -r, --route <n>            The route path, defaults to root path
-    -d, --destination [value]  The request destination url, will override "host" and "port"
-    -s, --sp [value]           The SP ID
-    -u, --user [value]         The User ID
+    -r, --route <n>            The route path, defaults to /
+    -d, --destination [value]  The request destination url, will override "host", "port" and "route"
+    -s, --sp [value]           The SP ID, defaults to webot
+    -u, --user [value]         The User ID defaults to client
 ```
 
 Have fun with wechat, and enjoy being a robot!

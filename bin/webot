@@ -18,7 +18,7 @@ program.version('0.0.1')
   .option('-n, --host [value]', 'Set request hostname, defaults to 127.0.0.1', '127.0.0.1')
   .option('-p, --port <n>', 'The port your service is listening to, defaults to 3000', 3000)
   .option('-r, --route <n>', 'The route path, defaults to /', '')
-  .option('-d, --destination [value]', 'The request destination url, will override "host" and "port"')
+  .option('-d, --destination [value]', 'The request destination url, will override "host", "port" and "route"')
   .option('-s, --sp [value]', 'The SP ID, defaults to webot', 'webot')
   .option('-u, --user [value]', 'The User ID defaults to client', 'client')
   .parse(process.argv);
