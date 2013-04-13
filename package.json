@@ -15,8 +15,6 @@
     "wind": "~0.7.3"
   },
   "devDependencies": {
-    "commander": "*",
-    "prettyjson": "*",
     "mocha": "*",
     "should": "*",
     "request": "*"
