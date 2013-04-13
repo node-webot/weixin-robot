@@ -197,36 +197,47 @@ rule 定义的具体可用参数如下：
 
 所有支持的格式：
  
-```
- {String}   如果是潜在的 RegExp （如 '/abc/igm' ），会被转为 RegExp 
-            如果以 '#' 打头，则完全匹配，否则模糊匹配
- {RegExp}   仅匹配文本消息正则式，匹配到的捕获组会被赋值给 info.param
- {Function} 第一个参数为 info ，返回布尔值，可用以处理特殊类型的消息
- {NULL}     为空则视为通过匹配
-```
+- {String}   如果是潜在的 RegExp （如 '/abc/igm' ），会被转为 RegExp，如果以 '#' 打头，则完全匹配，否则模糊匹配
+- {RegExp}   仅匹配文本消息正则式，匹配到的捕获组会被赋值给 info.param
+- {Function} 只接受一个参数 info ，返回布尔值，可用以处理特殊类型的消息
+- {NULL}     为空则视为通过匹配
 
 示例：
 
 ```javascript
+// 匹配下列所有消息：
+//
+//    你是机器人吗
+//    难道你是机器人？
+//    你是不是机器人？
+//    ...
+//
+webot.set('Blur match', {
+  pattern: '是机器人',
+  handler: '是的，我就是一名光荣的机器人'
+});
+
+// 完全匹配
+webot.set('Exact match', {
+  pattern: '#a',
+  handler: '只有回复「a」时才会看到本消息'
+});
+
+// 利用正则来匹配
 webot.set('your name', {
   pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
-  // handler: function(info, rule){
-  //   return '你好,' + info.param[1]
-  // }
-  // 或者更简单一点
   handler: '你好,{1}'
 });
 
+// 类正则的字符串会被还原为正则 
+webot.set('/(good\s*)morning/i', '早上好，先生');
+
+// 可以接受 function
 webot.set('pattern as fn', {
   pattern: function(info){
-    return info.isText() && info.text=='fn'
+    return info.eventKey === 'subscribe';
   },
-  handler: 'pattern支持函数'
-});
-
-webot.set('pattern as fn', {
-  pattern: '#a',
-  handler: '只有回复「a」时才会看到本消息'
+  handler: '你好，欢迎关注我'
 });
 
 ```
@@ -274,7 +285,8 @@ handler 可用的返回值：
 ### 星标消息
 
 微信允许你在回复消息时标记一个 `FuncFlag` ，可以在公共平台后台的「星标消息」中查看带标记的消息。
-适合你的机器人无法回复时使用。你只需在 handler 中给 `info.flag` 赋值 `true` 即可。
+适合你的机器人不懂如何回复用户消息时使用。
+你只需在 handler 中给 `info.flag` 赋值 `true` 即可。
 
 ```javascript
 // 把这句放到你的规则的最末尾
@@ -305,7 +317,7 @@ webot.set('test', function(info, next) {
 
 ### options.replies
 
-指定如何回复用户的回复。即用户回复根据当前规则回复的消息后，如何再次回复用户。
+指定如何**再次回复用户的回复**。即用户回复了根据当前规则回复的消息后，如何继续对话。
 
 ```javascript
 webot.set('guess my sex', {
@@ -328,7 +340,7 @@ webot.set('guess my sex', {
   
   // 也可以用一个函数搞定:
   // replies: function(info){
-  //   return 'haha, I wont tell you'
+  //   return '嘻嘻，不告诉你'
   // }
 
   // 也可以是数组格式，每个元素为一条rule
