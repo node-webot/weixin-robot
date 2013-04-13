@@ -1,6 +1,6 @@
 {
   "name": "weixin-robot",
-  "version": "0.3.0",
+  "version": "0.3.0-1",
   "homepage": "http://ktmud.github.com/weixin-robot/",
   "repository": "git://github.com/ktmud/weixin-robot.git",
   "description": "微信公众平台开放消息接口机器人",
@@ -16,18 +16,18 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "*",
-    "request": "*"
+    "should": "*"
   },
   "engines": {
     "node" : ">=0.6.0",
     "npm" : ">=1.1.6"
   },
-  "bin": {
-    "webot": "./bin/webot"
-  },
+  "keywords": [
+    "weixin",
+    "webot",
+    "wechat"
+  ],
   "scripts": {
-    "start": "node examples/app.js",
     "test": "./node_modules/mocha/bin/mocha"
   }
 }
