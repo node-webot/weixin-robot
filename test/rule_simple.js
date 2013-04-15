@@ -39,11 +39,11 @@ describe('rule_simple', function(){
 
   it('should return store data', function(done){
     webot.set('set', function(info){
-      webot.data(info.user, 'key', 'value');
+      webot.data(info.from, 'key', 'value');
     });
     
     webot.set('get', function(info){
-      return webot.data(info.user).key;
+      return webot.data(info.from).key;
     });
 
     data.Content = 'set';

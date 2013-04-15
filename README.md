@@ -1,5 +1,7 @@
 # 微信公共帐号机器人(Weixin Robot) [![Build Status](https://api.travis-ci.org/ktmud/weixin-robot.png?branch=master)](https://travis-ci.org/ktmud/weixin-robot)
 
+A node.js robot for wechat.
+
 [微信公众平台](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-index&lang=zh_CN)提供的[开放信息接口](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-callbackapi-doc&lang=zh_CN)的自动回复系统，基于`node.js` 实现。
 
 ## 功能：
@@ -8,7 +10,7 @@
 2. 基于正则表达式的对话设定，配置简单，可以给一句话随机回复不同内容
 3. 支持等待后续操作模式，如可以提示用户“需要我执行xxx操作吗？”
 
-添加微信帐号,试试效果
+添加微信帐号，试试效果
 
 ![豆瓣同城微信帐号二维码：douban-event](http://i.imgur.com/ijE19.jpg)
 ![微信机器人测试帐号：webot-test](http://i.imgur.com/6IcAJgH.jpg)
@@ -24,7 +26,7 @@ var app = express();
 // 指定回复消息
 webot.set('hi', '你好');
 
-// 接管消息请求
+// 接管消息请求，第二个参数为你在微信后台填写的 token 地址
 webot.watch(app, 'your1weixin2token');
 
 // 启动 Web 服务
@@ -46,6 +48,7 @@ app.listen(80);
 ## 贡献代码
 
 欢迎直接 fork 并提交 pull request ，提交前请确保 make test 能通过。
+如果是新加功能，请补全测试用例。
 
 更欢迎直接[认领 issues](https://github.com/ktmud/weixin-robot/issues?state=open)。
 
@@ -351,82 +354,119 @@ webot.set('guess my sex', {
 
 负责解析微信发来的消息，以及打包回复消息。
 
-### 消息属性
+### 请求消息属性
 
+与[微信官方文档](http://mp.weixin.qq.com/wiki/index.php?title=%E6%B6%88%E6%81%AF%E6%8E%A5%E5%8F%A3%E6%8C%87%E5%8D%97#.E6.B6.88.E6.81.AF.E6.8E.A8.E9.80.81)中的xml参数保持一致：
+
+    ToUserName      开发者微信号
+    FromUserName    发送方帐号（一个OpenID）
+    CreateTime      消息创建时间 （整型）
+    MsgId           消息id
+    MsgType         text / image / location / link / event
+
+    // MsgType == text
+    Content         文本消息内容
+
+    // MsgType == image
+    PicUrl          图片链接
+
+    // MsgType == location
+    Location_X      地理位置纬度
+    Location_Y      地理位置经度
+    Scale           地图缩放大小
+    Label  地理位置信息
+
+    // MsgType == link
+    Title           消息标题
+    Description     消息描述
+    Url             消息链接
+
+    // MsgType == event
+    Event           事件类型，subscribe(订阅)、unsubscribe(取消订阅)、CLICK(自定义菜单点击事件)
+    EventKey        事件KEY值，与自定义菜单接口中KEY值对应
+
+### 回复消息属性
+
+给 `info.reply` 赋值后，即可调用 `info.toXML()` 方法把消息打包成回复给微信服务器的 XML 内容。
+一般来说，你只需在 `rule.handler` 的返回值或 callbak 里提供回复消息的内容，
+`webot.watch` 自带的 `express` 中间件会自动帮你完成打包操作。
+
+支持的回复消息类型：
+
+- {String}   直接回复文本消息，不能超过2048字节
+- {Object}   单条 图文消息/音乐消息
+- {Array}    多条图文消息
+
+图文消息对象的参数定义：
+
+    title        消息标题
+    url          消息网址
+    description  消息秒速
+    picUrl       消息图片网址
+
+
+音乐消息必须指定 `reply.type` 为 `'music'`：
+
+    url          音乐链接
+    hq_url       高质量音乐链接，wifi 环境下会优先使用该链接播放音乐
+
+如：
 ```javascript
-/**
- * @cfg {String} 消息类型:
- *
- * - text: 文本消息
- * - location: 位置消息
- * - image: 图片消息
- */
-Info.prototype.type = 'text';
-
-/**
- * @cfg {String} 普通用户的微信号
- * 对应于原始字段: FromUserName
- */
-Info.prototype.user = null;
-
-/**
- * @cfg {String} 公众帐号的微信号
- * 对应于原始字段: ToUserName
- */
-Info.prototype.sp = null;
-
-/**
- * @cfg {Number} 消息接收时间,timestamp格式
- * 对应于原始字段: CreateTime
- */
-Info.prototype.createTime = null;
-
-/**
- * @cfg {String} 消息内容
- * 对应于原始字段: Content
- */
-Info.prototype.text = null;
-
-/**
- * @cfg {String} 纬度
- * 对应于原始字段: Location_X
- */
-Info.prototype.lat = null;
-
-/**
- * @cfg {String} 经度
- * 对应于原始字段: Location_Y
- */
-Info.prototype.lng = null;
-
-/**
- * @cfg {String} 地图缩放大小
- * 对应于原始字段: Scale
- */
-Info.prototype.scale = null;
-
-/**
- * @cfg {String} 地理位置信息
- * 对应于原始字段: Label
- */
-Info.prototype.label = null;
-
-/**
- * @cfg {String} 图片URL,需通过HTTP GET获取
- * 对应于原始字段: PicUrl
- */
-Info.prototype.pic = null;
+info.reply = {
+  type: 'music',
+  url: 'http://....x.mp3',
+  hq_url: 'http://....x.m4a'
+}
 ```
 
-### info.data()
+### info.flag
 
-暂存用户信息。会存在内存里，重启后失效。
+星标消息的标记，可以在微信公共平台后台看到所有星标消息和星标用户分组。
 
-TODO: 换用永久存储
+### info.toXML([mapping])
+
+根据 `info.reply` 打包回复消息为 XML 字符串。
+可选参数 `mapping` 指定如何对消息对象进行再包装。
+
+`mapping` 可以是：
+
+- {Function}  对每一条图文消息（item）都执行 `mapping(item, i, info)`
+- {Object}    标准属性值与回复对象属性值的对应关系
+
+如
+```javascript
+var mapping = {
+  pic: 'image',
+  description: 'desc'
+};
+
+var reply = {
+  title: '《奇迹之书》',
+  url: 'http://book.douban.com/...',
+  author: '谁谁谁',
+  desc: '本书由谁谁谁编写',
+  image: 'http://......'
+};
+
+// reply 会被标准化为
+{
+  title: '《奇迹之书》',
+  url: 'http://book.douban.com/...',
+  description: '本书由谁谁谁编写',
+  pic: 'http://......'
+};
+```
+
+### info.data([key, _[val]_)
+
+暂存或获取用户信息。使用方法与 jquery 的 `data` 类似。
+默认存在内存里，服务重启后失效。
+如果提供了 session 配置，会存在 session 里。
 
 ### info.wait(rule)
 
-等待用户回复。并且根据 `rule` 定义来回复用户。`rule` 可以是一个 function 或 object。
+等待用户回复。并根据 `rule` 定义来回复用户。
+`rule` 可以是一个 function 或 object。
 用法与 `webot.set` 的参数类似。
 
 ### info.rewait()
@@ -435,44 +475,11 @@ TODO: 换用永久存储
 
 以上两个方法为高级功能，具体用法请参看[示例](https://github.com/ktmud/weixin-robot-example)。
 
-### info.toXML()
-
-根据 info.reply 打包回复消息为 XML 字符串
-
-
-###回复消息属性
-
-```javascript
-/**
- * @property {String/Array} reply 回复消息
- * 
- * 支持格式(2选1):
- * 
- * - {String} 回复文字消息,大小限制在2048字节
- * - {Array}  回复多条图文消息信息. 默认第一个item为大图,限制为10条以内.
- * 
- *   - {String} title 图文消息标题
- *   - {String} description 图文消息描述
- *   - {String} pic 图片链接,支持JPG、PNG格式,较好的效果为大图(640x320),小图(80x80),
- *              限制图片链接的域名需要与开发者填写的基本资料中的Url一致
- *   - {String} url 点击图文消息跳转链接
- *
- *   注: 提供了映射功能,参见 {@link #config}
- */
-Info.prototype.reply = null;
-
-/**
- * @property {Number} 回复消息用的属性,对消息进行星标
- * 
- * - 星标: 1
- * - 不星标: 0
- */
-Info.prototype.flag = 0;
-```
 
 ## 命令行工具
 
-提供可执行文件 `webot` 用于发送测试消息。使用 `npm` 安装 [webot-cli](https://github.com/ktmud/webot-cli)：
+提供可执行文件 `webot` 用于发送测试消息。
+使用 `npm` 安装 [webot-cli](https://github.com/ktmud/webot-cli)：
 
     npm install webot-cli -g
 
