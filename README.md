@@ -4,18 +4,23 @@ A node.js robot for wechat.
 
 [微信公众平台](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-index&lang=zh_CN)提供的[开放信息接口](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-callbackapi-doc&lang=zh_CN)的自动回复系统，基于`node.js` 实现。
 
-## 功能：
+## 功能特色：
 
-1. 清晰独立的 router ，轻松实现文本匹配流程控制
+1. 方便灵活的规则定义，轻松实现文本匹配流程控制
 2. 基于正则表达式的对话设定，配置简单，可以给一句话随机回复不同内容
 3. 支持等待后续操作模式，如可以提示用户“需要我执行xxx操作吗？”
 
-添加微信帐号，试试效果
+## 使用示例：
+
+请参考 [weixin-robot-example](https://github.com/ktmud/weixin-robot-example)
+的 [rules.js](https://github.com/ktmud/weixin-robot-example/blob/master/rules.js) 文件。
+
+添加微信帐号，试试效果：
 
 ![豆瓣同城微信帐号二维码：douban-event](http://i.imgur.com/ijE19.jpg)
 ![微信机器人测试帐号：webot-test](http://i.imgur.com/6IcAJgH.jpg)
 
-## 快速入门
+## 快速入门 | [FAQ](https://github.com/ktmud/weixin-robot/wiki/FAQ)
 
 ```javascript
 var express = require('express');
@@ -25,6 +30,15 @@ var app = express();
 
 // 指定回复消息
 webot.set('hi', '你好');
+
+webot.set('subscribe', {
+  pattern: function(info) {
+    return info.event === 'subscribe';
+  },
+  handler: function(info) {
+    return '欢迎订阅微信机器人';
+  }
+});
 
 // 接管消息请求，第二个参数为你在微信后台填写的 token 地址
 webot.watch(app, 'your1weixin2token');
@@ -38,10 +52,6 @@ app.listen(80);
 // app.listen(process.env.PORT);
 // app.enable('trust proxy');
 ```
-
-## 示例
-
-请参考[weixin-robot-example](https://github.com/ktmud/weixin-robot-example)。
 
 如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/ktmud/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
 
@@ -73,7 +83,7 @@ webot.set({
 })
 ```
 
-我们建议你给每条规则都命名，以方便后台查看和维护。
+我们建议你给每条规则都命名，以方便规则之间互相调用。
 
 ```javascript
 webot.set('rule A', {
@@ -81,6 +91,8 @@ webot.set('rule A', {
   handler: function() {
   },
 });
+
+// webot.get('rule A') 即可获得刚才定义的规则
 
 // 可以省略 rule name ,
 // 直接用 match pattern 当名字
