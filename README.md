@@ -397,32 +397,62 @@ webot.set('guess my sex', {
     Event           事件类型，subscribe(订阅)、unsubscribe(取消订阅)、CLICK(自定义菜单点击事件)
     EventKey        事件KEY值，与自定义菜单接口中KEY值对应
 
-### 回复消息属性
+### info.reply
 
 给 `info.reply` 赋值后，即可调用 `info.toXML()` 方法把消息打包成回复给微信服务器的 XML 内容。
 一般来说，你只需在 `rule.handler` 的返回值或 callbak 里提供回复消息的内容，
-`webot.watch` 自带的 `express` 中间件会自动帮你完成打包操作。
+`webot.watch` 自带的 express 中间件（即 `webot.watch` ）会自动帮你完成打包操作。
 
-支持的回复消息类型：
+支持的数据类型：
 
 - {String}   直接回复文本消息，不能超过2048字节
 - {Object}   单条 图文消息/音乐消息
 - {Array}    多条图文消息
 
-图文消息对象的参数定义：
+#### 回复文本消息
+
+```javascript
+info.reply = '收到你的消息了，谢谢'
+```
+
+#### 回复图文消息
 
     title        消息标题
     url          消息网址
-    description  消息秒速
+    description  消息描述
     picUrl       消息图片网址
 
 
-音乐消息必须指定 `reply.type` 为 `'music'`：
+```javascript
+info = {
+  title: '消息标题',
+  url: 'http://example.com/...',
+  picUrl: 'http://example.com/....a.jpg',
+  description: '对消息的描述出现在这里',
+}
+
+// or
+
+info = [{
+  title: '消息1',
+  url: 'http://example.com/...',
+  picUrl: 'http://example.com/....a.jpg',
+  description: '对消息的描述出现在这里',
+}, {
+  title: '消息2',
+  url: 'http://example.com/...',
+  picUrl: 'http://example.com/....a.jpg',
+  description: '对消息的描述出现在这里',
+}]
+```
+
+### 回复音乐消息
 
     url          音乐链接
     hq_url       高质量音乐链接，wifi 环境下会优先使用该链接播放音乐
 
-如：
+需指定 `reply.type` 为 `'music'`：
+
 ```javascript
 info.reply = {
   type: 'music',
@@ -433,7 +463,7 @@ info.reply = {
 
 ### info.flag
 
-星标消息的标记，可以在微信公共平台后台看到所有星标消息和星标用户分组。
+是否标记为星标消息，可以在微信公共平台后台看到所有星标消息和星标用户分组。
 
 ### info.toXML([mapping])
 
