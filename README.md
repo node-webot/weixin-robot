@@ -64,19 +64,53 @@ webot.set(pattern, handler, replies)
 
 webot.set({
   name: 'rule name',
-  pattern: function(info, next) { ... },
+  pattern: function(info) { ... },
   handler: function(info, next) {
   }
 })
 ```
 
+我们建议你给每条规则都命名，以方便后台查看和维护。
+
+```javascript
+webot.set('rule A', {
+  pattern: /ruleA/,
+  handler: function() {
+  },
+});
+
+// 可以省略 rule name ,
+// 直接用 match pattern 当名字
+webot.set('你好', function() {
+  // 随机回复一句话
+  return ['你也好', '你好', '很高兴认识你'];
+});
+```
+
+你甚至还可以直接传入一个 Object ，
+其 key 为 pattern ， value 为 handler 
+（只要里面不包括 'handler' 这个 key）：
+
+```javascript
+webot.set({
+  '你好':  function() {
+    // 随机回复一句话
+    return ['你也好', '你好', '很高兴认识你'];
+  },
+  '你是谁': '我是你的小天使呀'
+});
+```
+
 ### wait(uid, rule)
 
-等待用户回复。 `rule` 可以是一个 function ，也可以类似于 `webot.set` 参数的具体规则定义。
+等待用户回复。并且根据 `rule` 定义来回复用户。`rule` 可以是一个 function 或 object。
+用法与 `webot.set` 的参数类似。
 
 ### rewait(uid)
 
-重试上次等待操作
+重试上次等待操作。一般在 `replies` 的 handler 里调用。
+
+此为高级功能，具体用法请参看[示例](https://github.com/ktmud/weixin-robot-example)。
 
 ### dialog(file1, _[file2, ...]_)
 
@@ -100,6 +134,8 @@ module.exports = {
   'hi': ['好吧', '你好']
 };
 ```
+
+#### 使用YAML
 
 你也可以在你的项目中 `require('js-yaml')` ，
 采用简洁的 yaml 语法来定义纯文本的对话规则：
@@ -144,7 +180,6 @@ yaml:
   name: 'test_yaml_object'
   handler: '这是一个yaml的object配置'
 ```
-      
 
 ## Rule(options)
 
@@ -157,39 +192,54 @@ rule 定义的具体可用参数如下：
 
 ### options.pattern
  
-匹配消息文本的方法。可以是正则表达式或函数。
+匹配用户发送的消息的方法。如果为正则表达式和字符串，
+则只在用户发送的时文本消息时才匹配。
 
-支持的格式:
+所有支持的格式：
  
- - {String}   直接返回字符串
- - {RegExp}   仅匹配文本消息正则式，匹配到的捕获组会被赋值给 info.param
- - {Function} 签名为fn(info):boolean
- - {NULL}     为空则视为通过匹配
+- {String}   如果是潜在的 RegExp （如 '/abc/igm' ），会被转为 RegExp，如果以 '#' 打头，则完全匹配，否则模糊匹配
+- {RegExp}   仅匹配文本消息正则式，匹配到的捕获组会被赋值给 info.param
+- {Function} 只接受一个参数 info ，返回布尔值，可用以处理特殊类型的消息
+- {NULL}     为空则视为通过匹配
 
 示例：
 
 ```javascript
-webot.set({
-  name: 'your_name',
-  description: '自我介绍下吧, 发送: I am [enter_your_name]',
+// 匹配下列所有消息：
+//
+//    你是机器人吗
+//    难道你是机器人？
+//    你是不是机器人？
+//    ...
+//
+webot.set('Blur match', {
+  pattern: '是机器人',
+  handler: '是的，我就是一名光荣的机器人'
+});
+
+// 完全匹配
+webot.set('Exact match', {
+  pattern: '#a',
+  handler: '只有回复「a」时才会看到本消息'
+});
+
+// 利用正则来匹配
+webot.set('your name', {
   pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
-  // handler: function(info, rule){
-  //   return '你好,' + info.param[1]
-  // }
-  
-  //或者更简单一点
   handler: '你好,{1}'
 });
 
-//pattern支持函数
-webot.set({
-  name: 'pattern_fn',
-  description: 'pattern支持函数,发送: fn',
+// 类正则的字符串会被还原为正则 
+webot.set('/(good\s*)morning/i', '早上好，先生');
+
+// 可以接受 function
+webot.set('pattern as fn', {
   pattern: function(info){
-    return info.isText() && info.text=='fn'
+    return info.eventKey === 'subscribe';
   },
-  handler: 'pattern支持函数'
+  handler: '你好，欢迎关注我'
 });
+
 ```
 
 ### options.handler
@@ -198,35 +248,21 @@ webot.set({
 
 当返回非真值(null/false)时继续执行下一个动作，否则返回值会被回复给用户。
 
-支持的格式:
+支持的定义格式:
 
 - {String}    直接返回字符串
-- {Array}     直接返回数组中的随机子元素
-- {Function}  签名为fn(info):String 直接执行函数并返回
-- {Function}  签名为fn(info, callback(err, reply)) 通过回调函数返回
-- {Object}    key为pattern,value为handler, 根据匹配的正则去执行对应的handler (注意: 因为是Object,所以执行顺序不一定从上到下)
+- {Array}     从数组中随机取一个作为 handler
+- {Object}    尝试生成为单条图文消息
+- {Function}  执行函数获取返回值
 
-示例：
+支持异步：
 
 ```javascript
-webot.set({
-  name: 'your_name',
-  description: '自我介绍下吧, 发送: I am [enter_your_name]',
-  pattern: /^(?:my name is|i am|我(?:的名字)?(?:是|叫)?)\s*(.*)$/i,
 
-  // handler: function(info, rule){
-  //   return '你好,' + info.query[1]
-  // }
-  handler: '你好,{1}'
-});
-
-// 异步操作
-webot.set({
-  name: 'search_database',
+webot.set('search_database', {
   description: 'Search a keyword from database',
   pattern: /^(?:s\s+)(.+)$/i,
   handler: function(info, next) {
-
     // assert(this.name == 'search_database');
     // 函数内的 this 变量即此规则
 
@@ -239,8 +275,35 @@ webot.set({
 });
 ```
 
+handler 可用的返回值：
+
+  - {false|null|undefined|''}  进入下一条规则
+  - {String}                   回复为文本消息
+  - {Object}                   回复为图文消息
+  - {Array}                    回复为(多)图文消息
+
+### 星标消息
+
+微信允许你在回复消息时标记一个 `FuncFlag` ，可以在公共平台后台的「星标消息」中查看带标记的消息。
+适合你的机器人不懂如何回复用户消息时使用。
+你只需在 handler 中给 `info.flag` 赋值 `true` 即可。
+
+```javascript
+// 把这句放到你的规则的最末尾
+webot.set('fallback', {
+  pattern: /.*/,
+  handler: function(info) {
+    info.flag = true;
+    return ['唔.. 暂时听不懂您说的什么呢',
+    '不好意思，我不太懂您说的什么意思',
+    '哎呀，听不懂啦！', 
+    '这个我不是很懂，不如我们聊点别的吧？']
+  }
+});
+```
+
 **注意**：`pattern` 并不支持异步，你可以把需要异步进行的 pattern 匹配
-视为一个 `handler` 。
+视为一个 `handler` 。此时，你只需在定义规则时省略钓 `pattern` 定义即可。
 
 ```javascript
 webot.set('test', function(info, next) {
@@ -252,35 +315,35 @@ webot.set('test', function(info, next) {
 });
 ```
 
-### replies
+### options.replies
 
-指定如何回复用户的回复。
+指定如何**再次回复用户的回复**。即用户回复了根据当前规则回复的消息后，如何继续对话。
 
 ```javascript
-// 等待下一次回复
-webot.set({
-  name: 'ask_sex',
-  description: '发送: sex? ,然后再回复girl或boy或both或其他',
-  pattern: /^sex\??$/i,
-  handler: '你猜猜看',
-  //下次回复动作,replies,可以是任何能转换为rule数组的对象,如Object,Array,String,Function等
-  //object格式,key为pattern,value为handler, 注意object是没有顺序的
+webot.set('guess my sex', {
+  pattern: /是男.还是女.|你.*男的女的/,
+  handler: '你猜猜看呐',
   replies: {
-    //正则作为key的时候,注意要转义
-    '/^g(irl)?\\??$/i': '猜错',
-    'boy': function(info, next){
-      // 可以通过 this.parent 获得父级 rule 定义
-      return next(null, '猜对了')
+    '/女|girl/i': '人家才不是女人呢',
+    '/男|boy/i': '是的，我就是翩翩公子一枚',
+    'both|不男不女': '你丫才不男不女呢',
+    '不猜': '好的，再见',
+    '/.*/': function(info) {
+      // 在 replies 的 handler 里可以获得等待回复的重试次数参数
+      if (info.rewaitCount < 2) {
+        webot.rewait(info.user);
+        return '你到底还猜不猜嘛！';
+      }
+      return '看来你真的不想猜啊';
     },
-    'both': '对你无语...'
   }
   
-  //也可以是直接的函数,同rule: function(info, [cb]) 
+  // 也可以用一个函数搞定:
   // replies: function(info){
-  //   return 'haha, I wont tell you'
+  //   return '嘻嘻，不告诉你'
   // }
 
-  //也可以是数组格式,每个元素为一个rule
+  // 也可以是数组格式，每个元素为一条rule
   // replies: [{
   //   pattern: '/^g(irl)?\\??$/i',
   //   handler: '猜错'
@@ -401,27 +464,11 @@ webot.set({
 把回复消息打包成XML
 
 
-## 测试辅助：
+## 命令行工具
 
-提供可执行文件 `webot` 用于发送测试消息。
+提供可执行文件 `webot` 用于发送测试消息。使用 `npm` 安装 [webot-cli](https://github.com/ktmud/webot-cli)：
 
-```
-  Usage: webot [options]
-
-  Options:
-
-    -h, --help                 output usage information
-    -V, --version              output the version number
-    -l, --location             Send a <location> (geo, latlng)
-    -i, --image                Send a <image>, provide image url
-    -t, --token [value]        Provide weixin token
-    -n, --host [value]         Set request hostname, defaults to 127.0.0.1
-    -p, --port <n>             The port your service is listening to, defaults to 3000
-    -r, --route <n>            The route path, defaults to root path
-    -d, --destination [value]  The request destination url, will override "host" and "port"
-    -s, --sp [value]           The SP ID
-    -u, --user [value]         The User ID
-```
+    npm install webot-cli -g
 
 Have fun with wechat, and enjoy being a robot!
 

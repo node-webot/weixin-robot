@@ -39,7 +39,7 @@ describe('rule_simple', function(){
 
   it('should return store data', function(done){
     webot.set('set', function(info){
-      webot.data(info.user, 'key','value');
+      webot.data(info.user, 'key', 'value');
     });
     
     webot.set('get', function(info){
@@ -50,7 +50,7 @@ describe('rule_simple', function(){
     webot.reply(data, function(err, info){
       data.Content = 'get';
       webot.reply(data, function(err, info){
-        should.equal(info.reply,'value');
+        should.equal(info.reply, 'value');
         done();
       });
     });
