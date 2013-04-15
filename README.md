@@ -101,17 +101,6 @@ webot.set({
 });
 ```
 
-### wait(uid, rule)
-
-等待用户回复。并且根据 `rule` 定义来回复用户。`rule` 可以是一个 function 或 object。
-用法与 `webot.set` 的参数类似。
-
-### rewait(uid)
-
-重试上次等待操作。一般在 `replies` 的 handler 里调用。
-
-此为高级功能，具体用法请参看[示例](https://github.com/ktmud/weixin-robot-example)。
-
 ### dialog(file1, _[file2, ...]_)
 
 增加对话规则
@@ -217,9 +206,9 @@ webot.set('Blur match', {
   handler: '是的，我就是一名光荣的机器人'
 });
 
-// 完全匹配
+// 当字符串 pattern 以 "=" 开头时，需要完全匹配
 webot.set('Exact match', {
-  pattern: '#a',
+  pattern: '=a',
   handler: '只有回复「a」时才会看到本消息'
 });
 
@@ -362,107 +351,124 @@ webot.set('guess my sex', {
 
 负责解析微信发来的消息，以及打包回复消息。
 
-###原始消息属性
+### 消息属性
 
 ```javascript
-    /**
-     * @cfg {String} 消息类型:
-     *
-     * - text: 文本消息
-     * - location: 位置消息
-     * - image: 图片消息
-     */
-    Info.prototype.type = 'text';
+/**
+ * @cfg {String} 消息类型:
+ *
+ * - text: 文本消息
+ * - location: 位置消息
+ * - image: 图片消息
+ */
+Info.prototype.type = 'text';
 
-    /**
-     * @cfg {String} 普通用户的微信号
-     * 对应于原始字段: FromUserName
-     */
-    Info.prototype.user = null;
+/**
+ * @cfg {String} 普通用户的微信号
+ * 对应于原始字段: FromUserName
+ */
+Info.prototype.user = null;
 
-    /**
-     * @cfg {String} 公众帐号的微信号
-     * 对应于原始字段: ToUserName
-     */
-    Info.prototype.sp = null;
+/**
+ * @cfg {String} 公众帐号的微信号
+ * 对应于原始字段: ToUserName
+ */
+Info.prototype.sp = null;
 
-    /**
-     * @cfg {Number} 消息接收时间,timestamp格式
-     * 对应于原始字段: CreateTime
-     */
-    Info.prototype.createTime = null;
+/**
+ * @cfg {Number} 消息接收时间,timestamp格式
+ * 对应于原始字段: CreateTime
+ */
+Info.prototype.createTime = null;
 
-    /**
-     * @cfg {String} 消息内容
-     * 对应于原始字段: Content
-     */
-    Info.prototype.text = null;
+/**
+ * @cfg {String} 消息内容
+ * 对应于原始字段: Content
+ */
+Info.prototype.text = null;
 
-    /**
-     * @cfg {String} 纬度
-     * 对应于原始字段: Location_X
-     */
-    Info.prototype.lat = null;
+/**
+ * @cfg {String} 纬度
+ * 对应于原始字段: Location_X
+ */
+Info.prototype.lat = null;
 
-    /**
-     * @cfg {String} 经度
-     * 对应于原始字段: Location_Y
-     */
-    Info.prototype.lng = null;
+/**
+ * @cfg {String} 经度
+ * 对应于原始字段: Location_Y
+ */
+Info.prototype.lng = null;
 
-    /**
-     * @cfg {String} 地图缩放大小
-     * 对应于原始字段: Scale
-     */
-    Info.prototype.scale = null;
+/**
+ * @cfg {String} 地图缩放大小
+ * 对应于原始字段: Scale
+ */
+Info.prototype.scale = null;
 
-    /**
-     * @cfg {String} 地理位置信息
-     * 对应于原始字段: Label
-     */
-    Info.prototype.label = null;
+/**
+ * @cfg {String} 地理位置信息
+ * 对应于原始字段: Label
+ */
+Info.prototype.label = null;
 
-    /**
-     * @cfg {String} 图片URL,需通过HTTP GET获取
-     * 对应于原始字段: PicUrl
-     */
-    Info.prototype.pic = null;
+/**
+ * @cfg {String} 图片URL,需通过HTTP GET获取
+ * 对应于原始字段: PicUrl
+ */
+Info.prototype.pic = null;
 ```
+
+### info.data()
+
+暂存用户信息。会存在内存里，重启后失效。
+
+TODO: 换用永久存储
+
+### info.wait(rule)
+
+等待用户回复。并且根据 `rule` 定义来回复用户。`rule` 可以是一个 function 或 object。
+用法与 `webot.set` 的参数类似。
+
+### info.rewait()
+
+重试上次等待操作。一般在 `replies` 的 handler 里调用。
+
+以上两个方法为高级功能，具体用法请参看[示例](https://github.com/ktmud/weixin-robot-example)。
+
+### info.toXML()
+
+根据 info.reply 打包回复消息为 XML 字符串
+
 
 ###回复消息属性
 
 ```javascript
-    /**
-     * @property {String/Array} reply 回复消息
-     * 
-     * 支持格式(2选1):
-     * 
-     * - {String} 回复文字消息,大小限制在2048字节
-     * - {Array}  回复多条图文消息信息. 默认第一个item为大图,限制为10条以内.
-     * 
-     *   - {String} title 图文消息标题
-     *   - {String} description 图文消息描述
-     *   - {String} pic 图片链接,支持JPG、PNG格式,较好的效果为大图(640x320),小图(80x80),
-     *              限制图片链接的域名需要与开发者填写的基本资料中的Url一致
-     *   - {String} url 点击图文消息跳转链接
-     *
-     *   注: 提供了映射功能,参见 {@link #config}
-     */
-    Info.prototype.reply = null;
+/**
+ * @property {String/Array} reply 回复消息
+ * 
+ * 支持格式(2选1):
+ * 
+ * - {String} 回复文字消息,大小限制在2048字节
+ * - {Array}  回复多条图文消息信息. 默认第一个item为大图,限制为10条以内.
+ * 
+ *   - {String} title 图文消息标题
+ *   - {String} description 图文消息描述
+ *   - {String} pic 图片链接,支持JPG、PNG格式,较好的效果为大图(640x320),小图(80x80),
+ *              限制图片链接的域名需要与开发者填写的基本资料中的Url一致
+ *   - {String} url 点击图文消息跳转链接
+ *
+ *   注: 提供了映射功能,参见 {@link #config}
+ */
+Info.prototype.reply = null;
 
-    /**
-     * @property {Number} 回复消息用的属性,对消息进行星标
-     * 
-     * - 星标: 1
-     * - 不星标: 0
-     */
-    Info.prototype.flag = 0;
+/**
+ * @property {Number} 回复消息用的属性,对消息进行星标
+ * 
+ * - 星标: 1
+ * - 不星标: 0
+ */
+Info.prototype.flag = 0;
 ```
-
-### toXML()
-
-把回复消息打包成XML
-
 
 ## 命令行工具
 
