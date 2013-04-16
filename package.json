@@ -3,11 +3,8 @@
   "version": "0.3.2",
   "homepage": "http://ktmud.github.com/weixin-robot/",
   "repository": "git://github.com/ktmud/weixin-robot.git",
-  "description": "微信公众平台开放消息接口机器人",
-  "contributors": [
-    "ktmud <jyyjcc@gmail.com> (http://ktmud.com)",
-    "TZ <atian25@qq.com> (http://atian25.iteye.com/)"
-  ],
+  "description": "微信公众平台开放消息接口机器人 A robot for wechat.",
+  "author": "Jesse Yang <kissmud@gmail.com> (https://github.com/ktmud)",
   "dependencies": {
     "debug": "~0.7.2",
     "xml2js": "~0.2.6",
@@ -23,6 +20,7 @@
   },
   "keywords": [
     "weixin",
+    "robot",
     "webot",
     "wechat"
   ],
