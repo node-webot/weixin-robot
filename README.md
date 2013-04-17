@@ -1,4 +1,4 @@
-# 微信公共帐号机器人(Weixin Robot) [![Build Status](https://api.travis-ci.org/ktmud/weixin-robot.png?branch=master)](https://travis-ci.org/ktmud/weixin-robot)
+# 微信公共帐号机器人(Weixin Robot) [![Build Status](https://api.travis-ci.org/node-webot/weixin-robot.png?branch=master)](https://travis-ci.org/node-webot/weixin-robot)
 
 A node.js robot for wechat.
 
@@ -12,15 +12,15 @@ A node.js robot for wechat.
 
 ## 使用示例：
 
-请参考 [weixin-robot-example](https://github.com/ktmud/weixin-robot-example)
-的 [rules.js](https://github.com/ktmud/weixin-robot-example/blob/master/rules.js) 文件。
+请参考 [weixin-robot-example](https://github.com/node-webot/webot-example)
+的 [rules.js](https://github.com/node-webot/webot-example/blob/master/rules.js) 文件。
 
 添加微信帐号，试试效果：
 
 ![豆瓣同城微信帐号二维码：douban-event](http://i.imgur.com/ijE19.jpg)
 ![微信机器人测试帐号：webot-test](http://i.imgur.com/6IcAJgH.jpg)
 
-## 快速入门 | [FAQ](https://github.com/ktmud/weixin-robot/wiki/FAQ)
+## 快速入门 | [FAQ](https://github.com/node-webot/weixin-robot/wiki/FAQ)
 
 ```javascript
 var express = require('express');
@@ -53,14 +53,14 @@ app.listen(80);
 // app.enable('trust proxy');
 ```
 
-如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/ktmud/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
+如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/node-webot/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
 
 ## 贡献代码
 
 欢迎直接 fork 并提交 pull request ，提交前请确保 make test 能通过。
 如果是新加功能，请补全测试用例。
 
-更欢迎直接[认领 issues](https://github.com/ktmud/weixin-robot/issues?state=open)。
+更欢迎直接[认领 issues](https://github.com/node-webot/weixin-robot/issues?state=open)。
 
 # API 参考
 
@@ -517,13 +517,13 @@ var reply = {
 
 重试上次等待操作。一般在 `replies` 的 handler 里调用。
 
-以上两个方法为高级功能，具体用法请参看[示例](https://github.com/ktmud/weixin-robot-example)。
+以上两个方法为高级功能，具体用法请参看[示例](https://github.com/node-webot/weixin-robot-example)。
 
 
 ## 命令行工具
 
 提供可执行文件 `webot` 用于发送测试消息。
-使用 `npm` 安装 [webot-cli](https://github.com/ktmud/webot-cli)：
+使用 `npm` 安装 [webot-cli](https://github.com/node-webot/webot-cli)：
 
     npm install webot-cli -g
 
