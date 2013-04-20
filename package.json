@@ -7,7 +7,7 @@
   "dependencies": {
     "debug": "~0.7.2",
     "webot": "~0.1",
-    "wechat-mp": "~0.0.1"
+    "wechat": "~0.4.0"
   },
   "devDependencies": {
     "mocha": "*",
