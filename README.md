@@ -5,9 +5,9 @@ A node.js robot for wechat.
 [微信公众平台](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-index&lang=zh_CN)提供的[开放信息接口](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-callbackapi-doc&lang=zh_CN)的自动回复系统。
 
 
-`weixin-robot` 是 [webot](https://github.com/node-webot/webot) 和 [wechat-mp](https://github.com/node-webot/wechat-mp) 的
+`weixin-robot` 是 [webot](https://github.com/node-webot/webot) 和 [wechat](https://github.com/node-webot/wechat) 的
 高级包装。如果你并不是为微信公共账号创建自动回复机器人，可直接使用 `webot` 来实现，
-如果你的微信公众账号并不需要太复杂的文本回复，只需加入编程支持，可以只用 `wechat-mp` 。
+如果你的微信公众账号并不需要太复杂的文本回复，只需加入编程支持，可以只用 `wechat` 。
 
 功能特色：
 
