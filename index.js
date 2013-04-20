@@ -1,1 +1,1 @@
-module.exports = require('./lib/webot');
+module.exports = require('./lib/weixin.js');
