@@ -11,7 +11,11 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "*"
+    "should": "*",
+    "jscover": "*",
+    "supertest": "*",
+    "ejs": "*",
+    "connect": "*"
   },
   "engines": {
     "node" : ">=0.6.0",
@@ -24,7 +28,7 @@
     "wechat"
   ],
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/mocha/bin/mocha -R spec"
   },
   "license": "MIT"
 }
