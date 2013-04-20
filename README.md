@@ -5,9 +5,9 @@ A node.js robot for wechat.
 [微信公众平台](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-index&lang=zh_CN)提供的[开放信息接口](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-callbackapi-doc&lang=zh_CN)的自动回复系统。
 
 
-`weixin-robot` 是 [webot](https://github.com/node-webot/webot) 和 [weixin-mp](https://github.com/node-webot/wechat-mp) 的
+`weixin-robot` 是 [webot](https://github.com/node-webot/webot) 和 [wechat-mp](https://github.com/node-webot/wechat-mp) 的
 高级包装。如果你并不是为微信公共账号创建自动回复机器人，可直接使用 `webot` 来实现，
-如果你的微信公众账号并不需要太复杂的文本回复，只需加入编程支持，可以只用 `weixin-mp` 。
+如果你的微信公众账号并不需要太复杂的文本回复，只需加入编程支持，可以只用 `wechat-mp` 。
 
 功能特色：
 
@@ -77,7 +77,6 @@ weixin-robot 0.4 版本弃用了部分老旧 API ，详见 [History.md](https://
 ## info 对象
 
 webot rule 的 handler 接收到的 info 对象，有一些针对微信的高级属性。
-以下逻辑在 [wechat-mp](https://github.com/node-webot/wechat-mp) 中处理。
 
 ### 星标消息
 
@@ -133,15 +132,34 @@ webot.set('fallback', {
 
 `webot` 的 `info` 把这些值包装为了更符合 js 命名规则的值，并根据 `MsgType` 的不同，
 将额外参数存入了 `info.param` 对象。这样做能保证 `info` 对象的标准化，方便你在
-不同平台使用相同的机器人。具体的属性值对应，请参考 [wechat-mp](https://github.com/node-webot/wechat-mp) 文档。
+不同平台使用相同的机器人。例如，地理位置消息( MsgType === 'location') 会被转化为：
+
+```javascript
+{
+  uid: 'the_FromUserName',
+  sp: 'the_ToUserName',
+  id: 'the_MsgId',
+  type: 'location',
+  param: {
+    lat: 'the_Location_X',
+    lng: 'the_Location_Y',
+    scale: 'the_Scale',
+    Label: 'the_Label'
+  }
+}
+```
+
+大部分属性值只是把首字母大写换成了小写。
+
+更详细的属性值对应，请查看本模块源码。
 
 ### info.reply
 
-给 `info.reply` 赋值后，即可调用 `info.toXML()` 方法把消息打包成回复给微信服务器的 XML 内容。
-一般来说，你只需在 `rule.handler` 的返回值或 callbak 里提供回复消息的内容，
-`webot.watch` 自带的 express 中间件（即 `webot.watch` ）会自动帮你完成打包操作。
+你只需在 `rule.handler` 的返回值或 callbak 里提供回复消息的内容，
+`webot.watch` 自带的 express 中间件会自动给 `info.reply` 赋值，
+并将其打包成 XML 发送给微信服务器。
 
-支持的数据类型：
+`info.reply` 支持的数据类型：
 
 - {String}   直接回复文本消息，不能超过2048字节
 - {Object}   单条 图文消息/音乐消息
