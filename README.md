@@ -40,8 +40,8 @@ webot.set('subscribe', {
   }
 });
 
-// 接管消息请求，第二个参数为你在微信后台填写的 token 地址
-webot.watch(app, 'your1weixin2token');
+// 接管消息请求
+webot.watch(app, { token: 'your1weixin2token' });
 
 // 如果需要多个实例：
 webot2 = webot();
@@ -49,7 +49,10 @@ webot2.set({
   '/hi/i': 'Hello',
   '/who (are|r) (you|u)/i': 'I\'m a robot.'
 });
-webot2.watch(app, '/wechat_en', 'your1wechat2token3');
+webot2.watch(app, {
+  token: 'your1wechat2token3',
+  path: '/wechat_en',
+});
 
 // 启动 Web 服务
 // 微信后台只允许 80 端口
@@ -63,30 +66,25 @@ app.listen(80);
 
 如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/node-webot/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
 
-## 贡献代码
-
-欢迎直接 fork 并提交 pull request ，提交前请确保 make test 能通过。
-如果是新加功能，请补全测试用例。
-
-更欢迎直接[认领 issues](https://github.com/node-webot/weixin-robot/issues?state=open)。
-
 ## weixin-robot 0.3 -> weixin-robot 0.4
 
 weixin-robot 0.4 版本弃用了部分老旧 API ，详见 [History.md](https://github.com/node-webot/weixin-robot/blob/master/History.md)
 
 # API 参考
 
-请参考 [webot](https://github.com/node-webot/webot) 的文档。
+关于规则定义部分，请参考 [webot](https://github.com/node-webot/webot) 的文档。
 
 ## info 对象
 
 webot rule 的 handler 接收到的 info 对象，有一些针对微信的高级属性。
+以下逻辑在 [wechat-mp](https://github.com/node-webot/wechat-mp) 中处理。
 
 ### 星标消息
 
-微信允许你在回复消息时标记一个 `FuncFlag` ，可以在公共平台后台的「星标消息」中查看带标记的消息。
+微信允许你在回复消息时标记一个 `FuncFlag` ，
+可以在公共平台后台的「星标消息」中查看带标记的消息。
 适合你的机器人不懂如何回复用户消息时使用。
-你只需在 handler 中给 `info.flag` 赋值 `true` 即可。
+在 `webot` 中，你只需在 handler 中给 `info.flag` 赋值 `true` 即可。
 
 ```javascript
 // 把这句放到你的规则的最末尾
@@ -119,8 +117,8 @@ webot.set('fallback', {
     PicUrl          图片链接
 
     // MsgType == location
-    Location_X      地理位置纬度
-    Location_Y      地理位置经度
+    Location_X      地理位置纬度(lat)
+    Location_Y      地理位置经度(lng)
     Scale           地图缩放大小
     Label  地理位置信息
 
@@ -135,7 +133,7 @@ webot.set('fallback', {
 
 `webot` 的 `info` 把这些值包装为了更符合 js 命名规则的值，并根据 `MsgType` 的不同，
 将额外参数存入了 `info.param` 对象。这样做能保证 `info` 对象的标准化，方便你在
-不同平台使用相同的机器人。
+不同平台使用相同的机器人。具体的属性值对应，请参考 [wechat-mp](https://github.com/node-webot/wechat-mp) 文档。
 
 ### info.reply
 
@@ -164,7 +162,7 @@ info.reply = '收到你的消息了，谢谢'
 
 
 ```javascript
-info = {
+info.reply = {
   title: '消息标题',
   url: 'http://example.com/...',
   picUrl: 'http://example.com/....a.jpg',
@@ -173,7 +171,7 @@ info = {
 
 // or
 
-info = [{
+info.reply = [{
   title: '消息1',
   url: 'http://example.com/...',
   picUrl: 'http://example.com/....a.jpg',
@@ -200,29 +198,6 @@ info.reply = {
   hq_url: 'http://....x.m4a'
 }
 ```
-
-### info.flag
-
-是否标记为星标消息，可以在微信公共平台后台看到所有星标消息和星标用户分组。
-
-### info.data(key, _[val]_)
-
-暂存或获取用户信息。使用方法与 jquery 的 `data` 类似。
-默认存在内存里，服务重启后失效。
-如果提供了 session 配置，会存在 session 里。
-
-### info.wait(rule)
-
-等待用户回复。并根据 `rule` 定义来回复用户。
-`rule` 可以是一个 function 或 object。
-用法与 `webot.set` 的参数类似。
-
-### info.rewait()
-
-重试上次等待操作。一般在 `replies` 的 handler 里调用。
-
-以上两个方法为高级功能，具体用法请参看[示例](https://github.com/node-webot/weixin-robot-example)。
-
 
 ## 命令行工具
 
