@@ -23,3 +23,5 @@ grails-*.zip
 .DS_Store
 
 examples
+coverage.html
+lib-cov
