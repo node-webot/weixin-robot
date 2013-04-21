@@ -16,6 +16,13 @@ describe('weixin.js', function () {
 
       // 指定回复消息
       webot.set('hi', '你好');
+      webot.set('news', { url: 'http://example.com', title: 'Good job, your grace!' });
+      webot.set('music', { type: 'music', url: 'http://example.com' });
+      webot.set(function is_location(info) {
+        return info.is('location');
+      }, function(info) {
+        return JSON.stringify(info.param);
+      });
 
       // 接管消息请求
       webot.watch(app, { token: 'your1weixin2token' });
@@ -66,6 +73,79 @@ describe('weixin.js', function () {
           body.should.include('<MsgType><![CDATA[text]]></MsgType>');
           body.should.include('<Content><![CDATA[你好]]></Content>');
           body.should.include('<FuncFlag>0</FuncFlag>');
+          done();
+        });
+      });
+    });
+
+    describe('reply with Object', function () {
+      it('should reply news', function (done) {
+        var info = {
+          sp: 'nvshen',
+          user: 'diaosi',
+          type: 'text',
+          text: 'news'
+        };
+
+        request(app)
+        .post('/' + tail('your1weixin2token'))
+        .send(template(info))
+        .expect(200)
+        .end(function(err, res){
+          if (err) return done(err);
+          var body = res.text.toString();
+          body.should.include('<MsgType><![CDATA[news]]></MsgType>');
+          done();
+        });
+      });
+      it('should reply music', function (done) {
+        var info = {
+          sp: 'nvshen',
+          user: 'diaosi',
+          type: 'text',
+          text: 'music'
+        };
+
+        request(app)
+        .post('/' + tail('your1weixin2token'))
+        .send(template(info))
+        .expect(200)
+        .end(function(err, res){
+          if (err) return done(err);
+          var body = res.text.toString();
+          body.should.include('<MsgType><![CDATA[music]]></MsgType>');
+          done();
+        });
+      });
+    });
+
+    describe('extra param', function () {
+      it('should in info.param', function (done) {
+        var info = {
+          sp: 'nvshen',
+          user: 'diaosi',
+          type: 'location',
+          lat: '100',
+          lng: '30',
+          scale: '15',
+          label: "Ya'an"
+        };
+
+        var param = {
+          lat: '100',
+          lng: '30',
+          scale: '15',
+          label: "Ya'an"
+        };
+
+        request(app)
+        .post('/' + tail('your1weixin2token'))
+        .send(template(info))
+        .expect(200)
+        .end(function(err, res){
+          if (err) return done(err);
+          var body = res.text.toString();
+          body.should.include('<Content><![CDATA[' + JSON.stringify(param) + ']]></Content>');
           done();
         });
       });

@@ -12,6 +12,9 @@ test:
 		--timeout $(TIMEOUT) \
 		$(TESTS)
 
+cov: test-cov
+	@open coverage.html
+
 test-cov: lib-cov
 	@NODE_WEBOT_COV=1 $(MAKE) test REPORTER=dot
 	@NODE_WEBOT_COV=1 $(MAKE) test REPORTER=html-cov > coverage.html
