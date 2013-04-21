@@ -1,4 +1,7 @@
 .travis.yml
+test
+lib-cov
 examples
 doc
-
+coverage.html
+Makefile
