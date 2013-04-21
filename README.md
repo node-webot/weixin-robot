@@ -15,10 +15,16 @@ A node.js robot for wechat.
 2. 基于正则表达式的对话设定，配置简单，可以给一句话随机回复不同内容
 3. 支持等待后续操作模式，如可以提示用户“需要我执行xxx操作吗？”
 
+
+## 使用示例：
+
 添加微信帐号，试试效果：
 
 ![豆瓣同城微信帐号二维码：douban-event](http://i.imgur.com/ijE19.jpg)
 ![微信机器人测试帐号：webot-test](http://i.imgur.com/6IcAJgH.jpg)
+
+- webot-test 源码：[webot-example](https://github.com/node-webot/webot-example)
+- douban-event 源码：[webot-douban-event](https://github.com/node-webot/webot-douban-event)
 
 ## 快速入门 | [FAQ](https://github.com/node-webot/weixin-robot/wiki/FAQ)
 
@@ -33,7 +39,7 @@ webot.set('hi', '你好');
 
 webot.set('subscribe', {
   pattern: function(info) {
-    return info.event === 'subscribe';
+    return info.is('event') && info.param.event === 'subscribe';
   },
   handler: function(info) {
     return '欢迎订阅微信机器人';
@@ -144,7 +150,7 @@ webot.set('fallback', {
     lat: 'the_Location_X',
     lng: 'the_Location_Y',
     scale: 'the_Scale',
-    Label: 'the_Label'
+    label: 'the_Label'
   }
 }
 ```
@@ -204,16 +210,19 @@ info.reply = [{
 
 ### 回复音乐消息
 
-    url          音乐链接
-    hq_url       高质量音乐链接，wifi 环境下会优先使用该链接播放音乐
+    title             标题
+    description       描述
+    musicUrl          音乐链接
+    hqMusicUrl        高质量音乐链接，wifi 环境下会优先使用该链接播放音乐
 
 需指定 `reply.type` 为 `'music'`：
 
 ```javascript
 info.reply = {
   type: 'music',
-  url: 'http://....x.mp3',
-  hq_url: 'http://....x.m4a'
+  title: 'Music 101',
+  musicUrl: 'http://....x.mp3',
+  hqMusicUrl: 'http://....x.m4a'
 }
 ```
 
