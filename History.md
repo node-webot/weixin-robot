@@ -2,6 +2,9 @@ webot 0.4.1
 ===============
 ```
 [+] 增加 `webot.waitRule` ，创建等待回复时专用的规则
+[+] 增加 `webot.use()` 方法，可以在回复每条消息前对请求消息预处理
+[+] 增加 `webot.config.beforeSend` ，回复消息的预处理，替代 mapping 的功能
+[-] 删掉打包消息时的 `mapping` 支持
 ```
 
 weixin-robot 0.4
@@ -15,7 +18,6 @@ weixin-robot 0.4
     值得注意的时，`info.pic` 属性被替换为了 `info.param.picUrl`
 [*] `webot.checkSig`, `webot.bodyParser` 等 middleware 不再支持直接调用。
     但可以通过 `webot.wechat` 访问到一些 `wechat` 组件的方法。
-
 [-] `webot.wait` 和 `webot.data` 方法已弃用，请总是使用 `info.wait`
 [*] `info.wait` 需要 session 支持，请使用 connect 的 cookieSession 中间件为请求附加 session
 [-] 去掉 `info.isLocation` 等判断消息类型的 API ，避免新增类型支持时需要穷举
