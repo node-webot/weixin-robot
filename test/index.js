@@ -152,6 +152,44 @@ describe('weixin.js', function () {
     });
   });
 
+  describe('watch path', function () {
+    var app;
+    before(function () {
+      app = connect();
+      app.use(connect.query());
+
+      // 指定回复消息
+      webot.set('hi', '你好');
+
+      // 接管消息请求
+      webot.watch(app, { token: 'your1weixin2token', path: '/wechat' });
+    });
+
+    describe('valid path', function () {
+      it('should 401', function (done) {
+        request(app)
+        .get('/wechat')
+        .expect(401)
+        .expect('Invalid signature', done);
+      });
+
+      it('should 200', function (done) {
+        request(app)
+        .get('/wechat' + tail('your1weixin2token'))
+        .expect(200)
+        .expect('hehe', done);
+      });
+    });
+
+    describe('invalid path', function () {
+      it('should 404', function (done) {
+        request(app)
+        .get('/')
+        .expect(404, done)
+      });
+    });
+  });
+
   describe('watch string', function () {
     var app;
     before(function () {
