@@ -1,16 +1,14 @@
-TESTS = test/*.js
 REPORTER = spec
-TIMEOUT = 10000
+TIMEOUT = 100 
 JSCOVERAGE = ./node_modules/jscover/bin/jscover
 
 authors:
 	@git log --format='%aN <%aE>' | sort -u > AUTHORS
 
 test:
-	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
+	@DEBUG= NODE_ENV=test ./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER) \
-		--timeout $(TIMEOUT) \
-		$(TESTS)
+		--timeout $(TIMEOUT)
 
 cov: test-cov
 	@open coverage.html
