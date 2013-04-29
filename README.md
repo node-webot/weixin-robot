@@ -69,6 +69,19 @@ app.listen(80);
 
 如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/node-webot/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
 
+## 命令行工具
+
+提供可执行文件 `webot` 用于发送测试消息。
+使用 `npm` 安装 [webot-cli](https://github.com/node-webot/webot-cli)：
+
+    npm install webot-cli -g
+
+## 自定义菜单
+
+**webot-cli** 提供处理微信自定义菜单的功能，安装好之后执行：
+
+    webot help menu
+
 ## weixin-robot 0.3 -> weixin-robot 0.4
 
 weixin-robot 0.4 版本弃用了部分老旧 API ，详见 [History.md](https://github.com/node-webot/weixin-robot/blob/master/History.md)
@@ -226,13 +239,6 @@ info.reply = {
   hqMusicUrl: 'http://....x.m4a'
 }
 ```
-
-## 命令行工具
-
-提供可执行文件 `webot` 用于发送测试消息。
-使用 `npm` 安装 [webot-cli](https://github.com/node-webot/webot-cli)：
-
-    npm install webot-cli -g
 
 Have fun with wechat, and enjoy being a robot!
 
