@@ -133,6 +133,10 @@ webot.set('fallback', {
     Event           事件类型，subscribe(订阅)、unsubscribe(取消订阅)、CLICK(自定义菜单点击事件)
     EventKey        事件KEY值，与自定义菜单接口中KEY值对应
 
+    // MsgType == audio
+    MediaId         媒体文件的 id
+    Format          音频文件的格式
+
 `webot` 的 `info` 把这些值包装为了更符合 js 命名规则的值，并根据 `MsgType` 的不同，
 将额外参数存入了 `info.param` 对象。这样做能保证 `info` 对象的标准化，方便你在
 不同平台使用相同的机器人。例如，地理位置消息( MsgType === 'location') 会被转化为：
