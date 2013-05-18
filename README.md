@@ -20,10 +20,7 @@ A node.js robot for wechat.
 ![豆瓣同城微信帐号二维码：douban-event](http://i.imgur.com/ijE19.jpg)
 ![微信机器人测试帐号：webot-test](http://i.imgur.com/6IcAJgH.jpg)
 
-- webot-test 源码：[webot-example](https://github.com/node-webot/webot-example)
-- douban-event 源码：[webot-douban-event](https://github.com/node-webot/webot-douban-event)
-
-## 快速入门 | [FAQ](https://github.com/node-webot/weixin-robot/wiki/FAQ)
+## 快速入门 | [FAQ](https://github.com/node-webot/weixin-robot/wiki/FAQ) | [示例](https://github.com/node-webot/webot-example)
 
 ```javascript
 var express = require('express');
