@@ -76,83 +76,65 @@ app.listen(80);
 
     npm install webot-cli -g
 
-## 自定义菜单
+## 微信公共账号自定义菜单
 
 **webot-cli** 提供处理微信自定义菜单的功能，安装好之后执行：
 
     webot help menu
 
-## weixin-robot 0.3 -> weixin-robot 0.4
-
-weixin-robot 0.4 版本弃用了部分老旧 API ，详见 [History.md](https://github.com/node-webot/weixin-robot/blob/master/History.md)
-
 # API 参考
 
-关于规则定义部分，请参考 [webot](https://github.com/node-webot/webot) 的文档。
+&gt; 具体的规则定义部分，请参考 [webot](https://github.com/node-webot/webot) 的文档。
 
 ## info 对象
 
-webot rule 的 handler 接收到的 info 对象，有一些针对微信的高级属性。
-
-### 星标消息
-
-微信允许你在回复消息时标记一个 `FuncFlag` ，
-可以在公共平台后台的「星标消息」中查看带标记的消息。
-适合你的机器人不懂如何回复用户消息时使用。
-在 `webot` 中，你只需在 handler 中给 `info.flag` 赋值 `true` 即可。
-
-```javascript
-// 把这句放到你的规则的最末尾
-webot.set('fallback', {
-  pattern: /.*/,
-  handler: function(info) {
-    info.flag = true;
-    return ['唔.. 暂时听不懂您说的什么呢',
-    '不好意思，我不太懂您说的什么意思',
-    '哎呀，听不懂啦！', 
-    '这个我不是很懂，不如我们聊点别的吧？']
-  }
-});
-```
+webot rule 的 handler 接收到的 info 对象，包含请求消息内容和 session 支持。
 
 ### 请求消息属性
 
-你可以通过 `info.original` 拿到与[微信官方文档](http://mp.weixin.qq.com/wiki/index.php?title=%E6%B6%88%E6%81%AF%E6%8E%A5%E5%8F%A3%E6%8C%87%E5%8D%97#.E6.B6.88.E6.81.AF.E6.8E.A8.E9.80.81)中的 xml 一致的属性值：
-
-    ToUserName      开发者微信号
-    FromUserName    发送方帐号（一个OpenID）
-    CreateTime      消息创建时间 （整型）
-    MsgId           消息id
-    MsgType         text / image / location / link / event
-
-    // MsgType == text
-    Content         文本消息内容
-
-    // MsgType == image
-    PicUrl          图片链接
-
-    // MsgType == location
-    Location_X      地理位置纬度(lat)
-    Location_Y      地理位置经度(lng)
-    Scale           地图缩放大小
-    Label  地理位置信息
-
-    // MsgType == link
-    Title           消息标题
-    Description     消息描述
-    Url             消息链接
-
-    // MsgType == event
-    Event           事件类型，subscribe(订阅)、unsubscribe(取消订阅)、CLICK(自定义菜单点击事件)
-    EventKey        事件KEY值，与自定义菜单接口中KEY值对应
-
-    // MsgType == audio
-    MediaId         媒体文件的 id
-    Format          音频文件的格式
-
-`webot` 的 `info` 把这些值包装为了更符合 js 命名规则的值，并根据 `MsgType` 的不同，
+`wexin-robot` 的 `info` 把微信的请求内容包装为了更符合 js 命名规则的值，并根据 `MsgType` 的不同，
 将额外参数存入了 `info.param` 对象。这样做能保证 `info` 对象的标准化，方便你在
-不同平台使用相同的机器人。例如，地理位置消息( MsgType === 'location') 会被转化为：
+不同平台使用相同的机器人。
+
+你可以通过 `info.original` 拿到与[微信官方文档](http://mp.weixin.qq.com/wiki/index.php?title=%E6%B6%88%E6%81%AF%E6%8E%A5%E5%8F%A3%E6%8C%87%E5%8D%97#.E6.B6.88.E6.81.AF.E6.8E.A8.E9.80.81)一致的参数对象。
+
+原始请求参数与 info 属性的对照表：
+
+    官方参数名        定义                        info对象属性                     备注 
+    -------------------------------------------------------------------------------------------------------
+
+    ToUserName      开发者微信号                   info.uid
+    FromUserName    发送方帐号（一个OpenID）       info.sp                     sp means "service provider"
+    CreateTime      消息创建时间 （整型）         
+    MsgId           消息id                         info.id
+    MsgType         消息类型                       info.type
+    -------------------------------------------------------------------------------------------------------
+    Content         文本消息内容                   info.text                    MsgType == text
+    -------------------------------------------------------------------------------------------------------
+    PicUrl          图片链接                       info.param.picUrl            MsgType == image
+    -------------------------------------------------------------------------------------------------------
+    Location_X      地理位置纬度(lat)              info.param.lat               MsgType == location
+    Location_Y      地理位置经度(lng)              info.param.lng
+    Scale           地图缩放大小                   info.param.scale           
+    Label           地点名                         info.param.label             可能为空
+    -------------------------------------------------------------------------------------------------------
+    Title           消息标题                       info.param.title              MsgType == link
+    Description     消息描述                       info.param.description
+    Url             消息链接                       info.param.url
+    -------------------------------------------------------------------------------------------------------
+    Event           事件类型                       info.param.event              MsgType == event
+                    subscribe(订阅)、
+                    unsubscribe(取消订阅)、
+                    CLICK(自定义菜单点击事件)
+
+    EventKey        事件KEY值，与自定义菜单接      info.param.eventKey
+                    口中KEY值对应
+    --------------------------------------------------------------------------------------------------------
+    MediaId         媒体文件的 id                  info.param.mediaId             MsgType == audio
+    Format          音频文件的格式                 info.param.format
+
+
+例如，地理位置消息( MsgType === 'location') 会被转化为：
 
 ```javascript
 {
@@ -169,11 +151,11 @@ webot.set('fallback', {
 }
 ```
 
-大部分属性值只是把首字母大写换成了小写。
-
-更详细的属性值对应，请查看本模块源码。
+大部分属性值只是把首字母大写换成了小写。地理信息的 Location_X 和 Location_Y 除外。
 
 ### info.reply
+
+**大部分时候你并不需要直接给 info.reply 赋值**。
 
 你只需在 `rule.handler` 的返回值或 callbak 里提供回复消息的内容，
 `webot.watch` 自带的 express 中间件会自动给 `info.reply` 赋值，
@@ -241,6 +223,27 @@ info.reply = {
 ```
 
 Have fun with wechat, and enjoy being a robot!
+
+### info.flag
+
+微信允许你在回复消息时标记一个 `FuncFlag` ，
+可以在公共平台后台的「**星标消息**」中查看带标记的消息。
+适合你的机器人不懂如何回复用户消息时使用。
+在 `webot` 中，你只需在 handler 中给 `info.flag` 赋值 `true` 即可。
+
+```javascript
+// 把这句放到你的规则的最末尾
+webot.set('fallback', {
+  pattern: /.*/,
+  handler: function(info) {
+    info.flag = true;
+    return ['唔.. 暂时听不懂您说的什么呢',
+    '不好意思，我不太懂您说的什么意思',
+    '哎呀，听不懂啦！', 
+    '这个我不是很懂，不如我们聊点别的吧？']
+  }
+});
+```
 
 ## LICENSE
 
