@@ -93,7 +93,7 @@ webot rule 的 handler 接收到的 info 对象，包含请求消息内容和 se
 将额外参数存入了 `info.param` 对象。这样做能保证 `info` 对象的标准化，方便你在
 不同平台使用相同的机器人。
 
-你可以通过 `info.original` 拿到与[微信官方文档](http://mp.weixin.qq.com/wiki/index.php?title=%E6%B6%88%E6%81%AF%E6%8E%A5%E5%8F%A3%E6%8C%87%E5%8D%97#.E6.B6.88.E6.81.AF.E6.8E.A8.E9.80.81)一致的参数对象。
+你可以通过 `info.raw` 拿到与[微信官方文档](http://mp.weixin.qq.com/wiki/index.php?title=%E6%B6%88%E6%81%AF%E6%8E%A5%E5%8F%A3%E6%8C%87%E5%8D%97#.E6.B6.88.E6.81.AF.E6.8E.A8.E9.80.81)一致的参数对象。
 
 原始请求参数与 info 属性的对照表：
 
