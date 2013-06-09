@@ -41,17 +41,17 @@ webot.set('subscribe', {
 });
 
 // 接管消息请求
-webot.watch(app, { token: 'your1weixin2token' });
+webot.watch(app, { token: 'your1weixin2token', path: '/wechat' });
 
 // 如果需要多个实例：
-webot2 = webot();
+webot2 = new webot.Webot();
 webot2.set({
   '/hi/i': 'Hello',
   '/who (are|r) (you|u)/i': 'I\'m a robot.'
 });
 webot2.watch(app, {
-  token: 'your1wechat2token3',
-  path: '/wechat_en',
+  token: 'token2',
+  path: '/wechat_en', // 这个path不能为之前已经监听过的path的子目录
 });
 
 // 启动 Web 服务
