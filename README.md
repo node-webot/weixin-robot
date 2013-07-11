@@ -43,8 +43,8 @@ webot.set('subscribe', {
 // 接管消息请求
 webot.watch(app, { token: 'your1weixin2token', path: '/wechat' });
 
-// 如果需要多个实例：
-webot2 = new webot.Webot();
+// 如果需要多个实例（即为多个微信账号提供不同回复）：
+var webot2 = new webot.Webot();
 webot2.set({
   '/hi/i': 'Hello',
   '/who (are|r) (you|u)/i': 'I\'m a robot.'
@@ -63,6 +63,9 @@ app.listen(80);
 // app.listen(process.env.PORT);
 // app.enable('trust proxy');
 ```
+
+然后你就可以在微信公众平台后台填入你的接口地址和 token ，
+或者使用 [webot-cli](https://github.com/node-webot/webot-cli) 来调试消息。
 
 如果一切顺利，你也搭建好了自己的机器人，欢迎到[此项目的 Wiki 页面](https://github.com/node-webot/weixin-robot/wiki/%E4%BD%BF%E7%94%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%BE%AE%E4%BF%A1%E5%B8%90%E5%8F%B7)添加你的帐号。
 
