@@ -253,4 +253,42 @@ describe('weixin.js', function () {
       });
     });
   });
+
+  describe('ignore some types of message', function() {
+    var app;
+    before(function () {
+      app = connect();
+      app.use(connect.query());
+      // 指定不回复的消息的类型
+      webot.set('ignore', {
+        pattern: function(info) {
+         return !info.is('text');
+        },
+        handler: function(info) {
+         info.noReply = true;
+         return;
+        }
+     });
+
+      // 接管消息请求
+      webot.watch(app, 'your1weixin2token');
+    });
+
+    describe('ignore no text type message', function(done) {
+      it('should 204', function (done) {
+        var info = {
+          sp: 'test',
+          user: 'test',
+          type: 'voice',
+          mediaId: '123',
+          format: 'mp3'
+        };
+        request(app)
+        .post('/' + tail('your1weixin2token'))
+        .send(template(info))
+        .expect(204)
+        .end(done);
+      });
+    });
+  });
 });
