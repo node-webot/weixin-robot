@@ -248,10 +248,10 @@ webot.set('fallback', {
 ```
 ### info.noReply
 
-如果对于某一条消息，不想回复的话可以设置info.noReply = true
+如果对不想回复的消息，可设置 `info.noReply = true`
 
 ```javascript
-// 比如对于语音类型的消息不想回复
+// 比如对于语音类型的消息不回复
 webot.set('ignore', {
   pattern: function(info) {
     return info.is('voice');
