@@ -105,8 +105,8 @@ webot rule 的 handler 接收到的 info 对象，包含请求消息内容和 se
     官方参数名        定义                        info对象属性                     备注
     -------------------------------------------------------------------------------------------------------
 
-    ToUserName      开发者微信号                   info.uid
-    FromUserName    发送方帐号（一个OpenID）       info.sp                     sp means "service provider"
+    ToUserName      开发者微信号                   info.sp                      sp means "service provider"
+    FromUserName    发送方帐号（一个OpenID）       info.uid
     CreateTime      消息创建时间 （整型）
     MsgId           消息id                         info.id
     MsgType         消息类型                       info.type
