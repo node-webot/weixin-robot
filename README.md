@@ -134,7 +134,7 @@ webot rule 的 handler 接收到的 info 对象，包含请求消息内容和 se
                     口中KEY值对应
     --------------------------------------------------------------------------------------------------------
     MediaId         媒体文件的 id                  info.param.mediaId             MsgType == voice / video
-    Recongnition    语音识别的文本                 info.param.recongnition        MsgType == voice
+    Recognition     语音识别的文本                 info.param.recognition         MsgType == voice
     ThumbMediaId    视频消息缩略图的媒体id         info.param.thumbMediaId        MsgType == video
     Format          音频文件的格式                 info.param.format
 
@@ -142,7 +142,7 @@ webot rule 的 handler 接收到的 info 对象，包含请求消息内容和 se
 **注意：**
 
  - 大部分属性值只是把首字母大写换成了小写。地理信息的 `Location_X` 和 `Location_Y` 除外。
- - recongnition 参数需要开通微信的语音识别功能，同时为方便调用，此文本也会直接存到 info.text
+ - recognition 参数需要开通微信的语音识别功能，同时为方便调用，此文本也会直接存到 info.text
    也就是说，语音识别消息与普通文本消息都有 `info.text` ，只不过 `info.type` 不同
 
 

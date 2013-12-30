@@ -29,7 +29,7 @@ describe('weixin.js', function () {
       webot.set(function(info) {
         return info.is('voice');
       }, function(info) {
-        return info.param.recongnition + info.text;
+        return info.param.recognition + info.text;
       });
 
       // 接管消息请求
@@ -157,14 +157,14 @@ describe('weixin.js', function () {
           done();
         });
       });
-      it('should pass recongnition to text', function(done) {
+      it('should pass recognition to text', function(done) {
         var info = {
           sp: 'nvshen',
           user: 'diaosi',
           type: 'voice',
           mediaId: 'abced',
           format: 'amr',
-          recongnition: '这是文本'
+          recognition: '这是文本'
         };
 
         request(app)
@@ -174,7 +174,7 @@ describe('weixin.js', function () {
         .end(function(err, res){
           if (err) return done(err);
           var body = res.text.toString();
-          body.should.include('<Content><![CDATA[' + (info.recongnition + info.recongnition) + ']]></Content>');
+          body.should.include('<Content><![CDATA[' + (info.recognition + info.recognition) + ']]></Content>');
           done();
         });
       });
