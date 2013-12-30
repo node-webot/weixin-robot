@@ -17,11 +17,19 @@ describe('weixin.js', function () {
       // 指定回复消息
       webot.set('hi', '你好');
       webot.set('news', { url: 'http://example.com', title: 'Good job, your grace!' });
+      // 回复音乐消息
       webot.set('music', { type: 'music', url: 'http://example.com' });
+      // 收到地理位置消息
       webot.set(function is_location(info) {
         return info.is('location');
       }, function(info) {
         return JSON.stringify(info.param);
+      });
+      // 收到语音消息
+      webot.set(function(info) {
+        return info.is('voice');
+      }, function(info) {
+        return info.param.recongnition + info.text;
       });
 
       // 接管消息请求
@@ -146,6 +154,27 @@ describe('weixin.js', function () {
           if (err) return done(err);
           var body = res.text.toString();
           body.should.include('<Content><![CDATA[' + JSON.stringify(param) + ']]></Content>');
+          done();
+        });
+      });
+      it('should pass recongnition to text', function(done) {
+        var info = {
+          sp: 'nvshen',
+          user: 'diaosi',
+          type: 'voice',
+          mediaId: 'abced',
+          format: 'amr',
+          recongnition: '这是文本'
+        };
+
+        request(app)
+        .post('/' + tail('your1weixin2token'))
+        .send(template(info))
+        .expect(200)
+        .end(function(err, res){
+          if (err) return done(err);
+          var body = res.text.toString();
+          body.should.include('<Content><![CDATA[' + (info.recongnition + info.recongnition) + ']]></Content>');
           done();
         });
       });
