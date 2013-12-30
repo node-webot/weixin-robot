@@ -1,5 +1,7 @@
 # 微信公共帐号机器人(Weixin Robot)
 
+[![Build Status](https://api.travis-ci.org/node-webot/weixin-robot.png?branch=master)](https://travis-ci.org/node-webot/weixin-robot) [![repo dependency](https://david-dm.org/node-webot/weixin-robot.png)](https://david-dm.org/node-webot/weixin-robot)
+
 A node.js robot for wechat.
 
 [微信公众平台](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-index&lang=zh_CN)提供的[开放信息接口](http://mp.weixin.qq.com/cgi-bin/indexpage?t=wxm-callbackapi-doc&lang=zh_CN)的自动回复系统。
@@ -234,26 +236,6 @@ info.reply = {
 
 Have fun with wechat, and enjoy being a robot!
 
-### info.flag
-
-微信允许你在回复消息时标记一个 `FuncFlag` ，
-可以在公共平台后台的「**星标消息**」中查看带标记的消息。
-适合你的机器人不懂如何回复用户消息时使用。
-在 `webot` 中，你只需在 handler 中给 `info.flag` 赋值 `true` 即可。
-
-```javascript
-// 把这句放到你的规则的最末尾
-webot.set('fallback', {
-  pattern: /.*/,
-  handler: function(info) {
-    info.flag = true;
-    return ['唔.. 暂时听不懂您说的什么呢',
-    '不好意思，我不太懂您说的什么意思',
-    '哎呀，听不懂啦！',
-    '这个我不是很懂，不如我们聊点别的吧？']
-  }
-});
-```
 ### info.noReply
 
 如果对不想回复的消息，可设置 `info.noReply = true`

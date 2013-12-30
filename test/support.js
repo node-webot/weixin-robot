@@ -18,7 +18,7 @@ var tpl = [
     '<% } else if (type === "voice") { %>',
       '<MediaId><%=mediaId%></MediaId>',
       '<% if (typeof recognition !== "undefined") { %>',
-        '<Recongnition><%= recognition %></Recongnition>',
+        '<Recognition><%= recognition %></Recognition>',
       '<% } %>',
       '<Format><%=format%></Format>',
     '<% } else if (type === "link") { %>',
@@ -34,7 +34,7 @@ var tpl = [
     '<% } %>',
     '<% } %>',
   '</xml>'
-].join('');
+].join('\n');
 
 exports.tail = function (token) {
   var q = {

@@ -10,9 +10,9 @@
     "wechat": "~0.4.2"
   },
   "devDependencies": {
-    "mocha": "~1.13.0",
-    "should": "~2.0.1",
-    "ejs": "~0.8.4",
+    "mocha": "~1.16.2",
+    "should": "~2.1.1",
+    "ejs": "~0.8.5",
     "jscover": "*",
     "supertest": "*",
     "connect": "*"

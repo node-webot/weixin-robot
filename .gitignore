@@ -1,5 +1,6 @@
 # common #
 *.log
+*.bak
 logs/
 tmp/
 temp/

@@ -80,7 +80,6 @@ describe('weixin.js', function () {
           body.should.match(/<CreateTime>\d{13}<\/CreateTime>/);
           body.should.include('<MsgType><![CDATA[text]]></MsgType>');
           body.should.include('<Content><![CDATA[你好]]></Content>');
-          body.should.include('<FuncFlag>0</FuncFlag>');
           done();
         });
       });
@@ -136,14 +135,14 @@ describe('weixin.js', function () {
           lat: '100',
           lng: '30',
           scale: '15',
-          label: "Ya'an"
+          label: "Yaan"
         };
 
         var param = {
           lat: '100',
           lng: '30',
           scale: '15',
-          label: "Ya'an"
+          label: "Yaan"
         };
 
         request(app)
@@ -276,7 +275,6 @@ describe('weixin.js', function () {
           body.should.match(/<CreateTime>\d{13}<\/CreateTime>/);
           body.should.include('<MsgType><![CDATA[text]]></MsgType>');
           body.should.include('<Content><![CDATA[你好]]></Content>');
-          body.should.include('<FuncFlag>0</FuncFlag>');
           done();
         });
       });
