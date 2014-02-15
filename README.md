@@ -86,6 +86,13 @@ app.listen(80);
 
     webot help menu
 
+## 版本历史 | [详细](https://github.com/node-webot/weixin-robot/blob/master/History.md)
+
+- 0.5.0 - 换用更精简的 [wechat-mp](https://github.com/node-webot/wechat-mp) 模块
+
+  注意： 现在如果要启用session支持，`webot.watch` 必须在 `app.use(connect.session())` 之前
+
+
 # API 参考
 
 &gt; 具体的规则定义部分，请参考 [webot](https://github.com/node-webot/webot) 的文档。

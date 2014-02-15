@@ -1,3 +1,12 @@
+weixin-robot 0.5
+==================
+
+Breaking change!
+
+- [*] 使用`wechat-mp` 模块来处理与微信之间的关系，各 middlewares 拆分细化
+- [+] 新增 `webot.middleware()` 接口来调用 `webot.reply()` 
+
+
 weixin-robot 0.4.6
 ==================
 
