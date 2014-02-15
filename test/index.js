@@ -73,11 +73,14 @@ describe('weixin.js', function () {
         .send(template(info))
         .expect(200)
         .end(function(err, res){
-          if (err) return done(err);
+          if (err) {
+            console.log(res.text)
+            return done(err);
+          }
           var body = res.text.toString();
           body.should.include('<ToUserName><![CDATA[diaosi]]></ToUserName>');
           body.should.include('<FromUserName><![CDATA[nvshen]]></FromUserName>');
-          body.should.match(/<CreateTime>\d{13}<\/CreateTime>/);
+          body.should.match(/<CreateTime>\d{10}<\/CreateTime>/);
           body.should.include('<MsgType><![CDATA[text]]></MsgType>');
           body.should.include('<Content><![CDATA[你好]]></Content>');
           done();
@@ -272,7 +275,7 @@ describe('weixin.js', function () {
           var body = res.text.toString();
           body.should.include('<ToUserName><![CDATA[diaosi]]></ToUserName>');
           body.should.include('<FromUserName><![CDATA[nvshen]]></FromUserName>');
-          body.should.match(/<CreateTime>\d{13}<\/CreateTime>/);
+          body.should.match(/<CreateTime>\d{10}<\/CreateTime>/);
           body.should.include('<MsgType><![CDATA[text]]></MsgType>');
           body.should.include('<Content><![CDATA[你好]]></Content>');
           done();
@@ -302,7 +305,7 @@ describe('weixin.js', function () {
     });
 
     describe('ignore no text type message', function(done) {
-      it('should 204', function (done) {
+      it('should be empty', function (done) {
         var info = {
           sp: 'test',
           user: 'test',
@@ -313,8 +316,15 @@ describe('weixin.js', function () {
         request(app)
         .post('/' + tail('your1weixin2token'))
         .send(template(info))
-        .expect(204)
-        .end(done);
+        .expect(200)
+        .end(function(err, res){
+          if (err) {
+            return done(err);
+          }
+          var body = res.text.toString();
+          body.should.include('<Content><![CDATA[]]></Content>');
+          done();
+        });
       });
     });
   });
