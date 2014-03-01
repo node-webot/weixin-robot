@@ -95,6 +95,11 @@ app.listen(80);
 
 # API 参考
 
+### 微信自动回复API流程图
+
+![Wechat API flow](https://github.com/node-webot/weixin-robot/blob/master/wechat-api-flow.png?raw=true)
+
+
 &gt; 具体的规则定义部分，请参考 [webot](https://github.com/node-webot/webot) 的文档。
 
 ## info 对象
