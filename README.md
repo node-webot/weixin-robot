@@ -14,6 +14,7 @@ A node.js robot for wechat.
 1. 方便灵活的规则定义，轻松实现文本匹配流程控制
 2. 基于正则表达式的对话设定，配置简单，可以给一句话随机回复不同内容
 3. 支持等待后续操作模式，如可以提示用户“需要我执行xxx操作吗？”
+4. 可直接从 yaml 或 json 文件中载入对话规则
 
 ## 使用示例：
 
@@ -43,6 +44,28 @@ webot.set('subscribe', {
     return '欢迎订阅微信机器人';
   }
 });
+
+webot.set('test', {
+  pattern: /^test/i,
+  handler: function(info, next) {
+    next(null, 'roger that!')
+  }
+})
+
+// 你可以获取已定义的 rule
+//
+// webot.get('subscribe') ->
+//
+// {
+//   name: 'subscribe',
+//   pattern: function(info) {
+//     return info.is('event') && info.param.event === 'subscribe';
+//   },
+//   handler: function(info) {
+//     return '欢迎订阅微信机器人';
+//   }
+// }
+//
 
 // 接管消息请求
 webot.watch(app, { token: 'your1weixin2token', path: '/wechat' });
@@ -99,8 +122,15 @@ app.listen(80);
 
 ![Wechat API flow](https://github.com/node-webot/weixin-robot/blob/master/wechat-api-flow.png?raw=true)
 
+## 规则定义
 
 &gt; 具体的规则定义部分，请参考 [webot](https://github.com/node-webot/webot) 的文档。
+
+主要API:
+
+- [webot.set()](https://github.com/node-webot/webot#webotsetpattern-handler--replies)
+- [webot.waitRule()](https://github.com/node-webot/webot#webotwaitrulename-handler)
+- [webot.loads()](https://github.com/node-webot/webot#webotloadsfile1-file2-)
 
 ## info 对象
 
