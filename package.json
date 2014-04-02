@@ -6,7 +6,7 @@
   "author": "Jesse Yang <kissmud@gmail.com> (https://github.com/ktmud)",
   "dependencies": {
     "debug": "0.7.x",
-    "webot": "0.1.7",
+    "webot": "0.1.8",
     "wechat-mp": "~0.2.0"
   },
   "devDependencies": {
