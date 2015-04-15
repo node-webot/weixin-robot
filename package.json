@@ -11,11 +11,12 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "*",
+    "should": "^6.0.0",
     "ejs": "*",
     "jscover": "*",
     "supertest": "*",
-    "connect": "*"
+    "connect": "^3.3.3",
+		"connect-query": "^0.2.0"
   },
   "engines": {
     "node" : ">=0.6.0",

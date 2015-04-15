@@ -7,6 +7,8 @@ var tail = require('./support').tail;
 var connect = require('connect');
 var webot = require('../');
 
+connect.query = require('connect-query');
+
 describe('weixin.js', function () {
   describe('watch option', function () {
     var app;
@@ -78,11 +80,11 @@ describe('weixin.js', function () {
             return done(err);
           }
           var body = res.text.toString();
-          body.should.include('<ToUserName><![CDATA[diaosi]]></ToUserName>');
-          body.should.include('<FromUserName><![CDATA[nvshen]]></FromUserName>');
+          body.should.containEql('<ToUserName><![CDATA[diaosi]]></ToUserName>');
+          body.should.containEql('<FromUserName><![CDATA[nvshen]]></FromUserName>');
           body.should.match(/<CreateTime>\d{10}<\/CreateTime>/);
-          body.should.include('<MsgType><![CDATA[text]]></MsgType>');
-          body.should.include('<Content><![CDATA[你好]]></Content>');
+          body.should.containEql('<MsgType><![CDATA[text]]></MsgType>');
+          body.should.containEql('<Content><![CDATA[你好]]></Content>');
           done();
         });
       });
@@ -104,7 +106,7 @@ describe('weixin.js', function () {
         .end(function(err, res){
           if (err) return done(err);
           var body = res.text.toString();
-          body.should.include('<MsgType><![CDATA[news]]></MsgType>');
+          body.should.containEql('<MsgType><![CDATA[news]]></MsgType>');
           done();
         });
       });
@@ -123,7 +125,7 @@ describe('weixin.js', function () {
         .end(function(err, res){
           if (err) return done(err);
           var body = res.text.toString();
-          body.should.include('<MsgType><![CDATA[music]]></MsgType>');
+          body.should.containEql('<MsgType><![CDATA[music]]></MsgType>');
           done();
         });
       });
@@ -155,7 +157,7 @@ describe('weixin.js', function () {
         .end(function(err, res){
           if (err) return done(err);
           var body = res.text.toString();
-          body.should.include('<Content><![CDATA[' + JSON.stringify(param) + ']]></Content>');
+          body.should.containEql('<Content><![CDATA[' + JSON.stringify(param) + ']]></Content>');
           done();
         });
       });
@@ -176,7 +178,7 @@ describe('weixin.js', function () {
         .end(function(err, res){
           if (err) return done(err);
           var body = res.text.toString();
-          body.should.include('<Content><![CDATA[' + (info.recognition + info.recognition) + ']]></Content>');
+          body.should.containEql('<Content><![CDATA[' + (info.recognition + info.recognition) + ']]></Content>');
           done();
         });
       });
@@ -273,11 +275,11 @@ describe('weixin.js', function () {
         .end(function(err, res){
           if (err) return done(err);
           var body = res.text.toString();
-          body.should.include('<ToUserName><![CDATA[diaosi]]></ToUserName>');
-          body.should.include('<FromUserName><![CDATA[nvshen]]></FromUserName>');
+          body.should.containEql('<ToUserName><![CDATA[diaosi]]></ToUserName>');
+          body.should.containEql('<FromUserName><![CDATA[nvshen]]></FromUserName>');
           body.should.match(/<CreateTime>\d{10}<\/CreateTime>/);
-          body.should.include('<MsgType><![CDATA[text]]></MsgType>');
-          body.should.include('<Content><![CDATA[你好]]></Content>');
+          body.should.containEql('<MsgType><![CDATA[text]]></MsgType>');
+          body.should.containEql('<Content><![CDATA[你好]]></Content>');
           done();
         });
       });
@@ -322,7 +324,7 @@ describe('weixin.js', function () {
             return done(err);
           }
           var body = res.text.toString();
-          body.should.include('<Content><![CDATA[]]></Content>');
+          body.should.equal('');
           done();
         });
       });
