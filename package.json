@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "^4.4.1",
+    "should": "^4.6.5",
     "ejs": "*",
     "jscover": "*",
     "supertest": "*",
